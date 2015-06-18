@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<meta charset='utf-8'>
-  <link href="dist/css/zui.css" rel="stylesheet">
+    <link href="dist/css/zui.min.css" rel="stylesheet">	
   <link href="static/css/cf640.css" rel="stylesheet">
-  <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
+    <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
 		<title>ws</title>
 	</head>
   <script src="dist/js/jquery-2.0.3.min.js"></script>
@@ -16,7 +16,31 @@
 <body>
  hello wx shop
         <script type="text/javascript" src="static/js/util.js"></script>
+        <form action="pay.jsp" method="post">
+<nav class="menu" data-toggle="menu" style="width: 90%">
+  <ul class="nav nav-primary"  id="catDiv">
+    <li>
+      <a href="#">一，手工定制产品(肉粽，咸鸭蛋)</a>
+      <ul class="nav">
+        <table><tr><td>fdafad</td></tr><tr><td>fdafad</td></tr></table>
+        <table>
+        <tr><td><img src="static/img/bt_minus.png">茅山网</td></tr>
+        <tr><td>desc</td></tr>
+        <tr><td>ps</td></tr>
+        <tr><td><li><img class='wsgoods_count' onclick="countGoods(-1)"><input type="text" id="goodsCount" value="0" class='wsgoods_value'><img class='wsgoods_count add' onclick="countGoods(1)"></td></tr>
+        </table>
+        ...
+      </ul>
+    </li>
+    
+  </ul>
+</nav>	      
        <script type="text/javascript" src="static/js/main.js"></script>
+       微信号:<input name="wxhao" type="text" value=""><br>
+       支付方式:<input name="wxhao" type="text" value=""><br>
+       地址:<input name="address" type="text" value=""><br>
+       <input name="submit" type="submit" value="购买"><br>
+       </form>
     	</body>	
     	
 </html>

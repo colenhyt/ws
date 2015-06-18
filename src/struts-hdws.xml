@@ -9,6 +9,11 @@
 		</action>
 	</package>
 	    
+	<package name="goods" extends="struts-default" namespace="/">
+		<action name="goods_*" method="{1}" class="cn.hd.ws.action.WsGoodsAction">
+		</action>
+	</package>
+		    
 	<package name="order" extends="struts-default" namespace="/">
 		<action name="order_*" method="{1}" class="cn.hd.ws.action.WsOrderAction">
 		</action>

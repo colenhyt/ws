@@ -3,6 +3,7 @@ package cn.hd.ws.dao;
 import java.util.List;
 
 import cn.hd.base.BaseService;
+import cn.hd.ws.dao.EcsGoodsExample.Criteria;
 
 public class EcsGoodsService extends BaseService {
 	private EcsGoodsMapper ecsgoodsMapper;
@@ -33,8 +34,12 @@ public class EcsGoodsService extends BaseService {
 		return ecscategoryMapper.selectByExample(example);
 	}
 	
-	public List<EcsGoods> list(){
+	public List<EcsGoods> goods(short catID){
 		EcsGoodsExample example = new EcsGoodsExample();
+		if (catID>0){
+			Criteria criteria = example.createCriteria();
+			criteria.andCatIdEqualTo(catID);
+		}
 		return ecsgoodsMapper.selectByExample(example);
 	}
 	
@@ -51,6 +56,7 @@ public class EcsGoodsService extends BaseService {
 	
 	public static void main(String[] args){
 		EcsGoodsService ss = new EcsGoodsService();
-		System.out.println(ss.cat().size());
+		List<EcsGoods> goods = ss.goods((short)4);
+		System.out.println(goods.get(1).getGoodsName()+";"+goods.get(1).getGoodsImg());
 	}
 }
