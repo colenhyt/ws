@@ -1,5 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
+String wxhao = request.getParameter("wxhao");
+out.println(wxhao);
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
@@ -11,6 +13,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<title>微信支付页面</title>
 	</head>
 	<body>
+	hao :${wxhao}<br/>
 	公众号：${appid}<br/>
 	时间戳：${timeStamp}<br/>
 	随机串：${nonceStr}<br/>

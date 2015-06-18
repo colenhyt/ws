@@ -28,6 +28,7 @@ function queryGroupCats(){
 }
 
 function queryGroupGoods(catId){
+ 
 	var item = {catId:catId};
 	var dataParam = obj2ParamStr("ecsGoods",item);
 	//alert(dataParam);

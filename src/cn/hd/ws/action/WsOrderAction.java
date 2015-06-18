@@ -30,6 +30,14 @@ public class WsOrderAction extends BaseAction {
 		this.wxorder = wxorder;
 	}
 	
+	public String order(){
+		String wxhao = this.getHttpRequest().getParameter("wxhao");
+		String paytype = this.getHttpRequest().getParameter("paytype");
+		String address = this.getHttpRequest().getParameter("address");
+		System.out.println("wxhao:"+wxhao+paytype+address);
+		return null;
+	}
+	
 	public String add(){
 		wxorder.setOrderid("orderid1");
 		wxorder.setCrdate(new Date());

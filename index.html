@@ -16,7 +16,9 @@
 <body>
  hello wx shop
         <script type="text/javascript" src="static/js/util.js"></script>
-        <form action="pay.jsp" method="post">
+       <script type="text/javascript" src="static/js/htmlutil.js"></script>
+       <script type="text/javascript" src="static/js/cart.js"></script>
+        <form action="order_order.do" method="post" id="groupForm">
 <nav class="menu" data-toggle="menu" style="width: 90%">
   <ul class="nav nav-primary"  id="catDiv">
     <li>
@@ -36,10 +38,12 @@
   </ul>
 </nav>	      
        <script type="text/javascript" src="static/js/main.js"></script>
-       微信号:<input name="wxhao" type="text" value=""><br>
-       支付方式:<input name="wxhao" type="text" value=""><br>
-       地址:<input name="address" type="text" value=""><br>
-       <input name="submit" type="submit" value="购买"><br>
+       微信号*:<input name="wxhao" id="wxhao" type="text"><br>
+       支付方式*:<br>
+       <input name="paytype" id="paytype" type="radio" checked="true">微信支付<br>
+       <input name="paytype" type="radio">货到付款<br>
+       送货地址*:<input name="address" id="address" type="text" value=""><br>
+       <input type="button" value="购买" onclick="g_cart.show()"><br>
        </form>
     	</body>	
     	
