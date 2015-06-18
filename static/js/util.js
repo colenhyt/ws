@@ -265,6 +265,18 @@ obj2ParamStr = function(objName,objProp)
 	}
 	return str;
 }
+/** 
+* json对象转字符串形式 
+*/ 
+function json2str(o) { 
+var arr = []; 
+var fmt = function(s) { 
+if (typeof s == 'object' && s != null) return json2str(s); 
+return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s; 
+} 
+for (var i in o) arr.push("'" + i + "':" + fmt(o[i])); 
+return '{' + arr.join(',') + '}'; 
+} 
 
 itemStr = function(items,split){
     var itemDesc = "";

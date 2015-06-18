@@ -29,7 +29,7 @@
         <tr><td><img src="static/img/bt_minus.png">茅山网</td></tr>
         <tr><td>desc</td></tr>
         <tr><td>ps</td></tr>
-        <tr><td><li><img class='wsgoods_count' onclick="countGoods(-1)"><input type="text" id="goodsCount" value="0" class='wsgoods_value'><img class='wsgoods_count add' onclick="countGoods(1)"></td></tr>
+        <tr><td><li><img class='wsgoods_count'><input type="text" id="goodsCount" value="0" class='wsgoods_value'><img class='wsgoods_count add'></td></tr>
         </table>
         ...
       </ul>
@@ -40,10 +40,11 @@
        <script type="text/javascript" src="static/js/main.js"></script>
        微信号*:<input name="wxhao" id="wxhao" type="text"><br>
        支付方式*:<br>
-       <input name="paytype" id="paytype" type="radio" checked="true">微信支付<br>
-       <input name="paytype" type="radio">货到付款<br>
+       <input name="paytype" id="paytype" type="radio" checked="true" value=0>微信支付<br>
+       <input name="paytype" id="paytype" type="radio" value=1>货到付款<br>
        送货地址*:<input name="address" id="address" type="text" value=""><br>
        <input type="button" value="购买" onclick="g_cart.show()"><br>
+       
        </form>
     	</body>	
     	

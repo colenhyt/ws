@@ -71,7 +71,7 @@ public class BaseService extends Base{
      * @param beanClass  
      * @return  
      */
-	public <T> List<T> jsonToBeanList(String jsonString, Class<T> beanClass) {
+	static public <T> List<T> jsonToBeanList(String jsonString, Class<T> beanClass) {
     	 
         JSONArray jsonArray = JSONArray.fromObject(jsonString);
         JSONObject jsonObject;

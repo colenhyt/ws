@@ -42,19 +42,13 @@ function queryGroupGoods(catId){
     content += "    <tr><td><img src='"+item.goodsImg+"'>"+item.goodsName+"</td></tr>"
     content += "    <tr><td>"+item.goodsDesc+"</td></tr>"
     content += "    <tr><td>ps:"+item.shopPrice+"</td></tr>"
-    content += "    <tr><td><li><img class='wsgoods_count' onclick=\"countGoods("+item.goodsId+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\"countGoods("+item.goodsId+",1)\"></td></tr>"
+    var func = "g_cart.count("+item.goodsId+",'"+item.goodsName+"',"+item.shopPrice;
+    
+    content += "    <tr><td><li><img class='wsgoods_count' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\""+func+",1)\"></td></tr>"
 	content += "</table>";
     }
     tag.innerHTML = content;
     
-}
-
-function countGoods(goodsId,count){
-var tag = document.getElementById("goodsCount"+goodsId);
-var currCount = parseInt(tag.value);
-	currCount += count;
-	if (currCount>=0)
-    tag.value = currCount;
 }
 
 function addOrder(){
