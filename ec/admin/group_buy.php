@@ -103,9 +103,9 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit')
 
 	$cats = get_all_cats();
 	$catids = explode(',',$group_buy['act_cats']);
-	foreach ($cats as $key => $cat)
+	foreach ($catids as $catid)
 	{
-	 foreach ($catids as $catid)
+	 foreach ($cats as $key => $cat)
 	 {
 		if ($cat['cat_id']==$catid){
 			$cats[$key]['hasCheck'] = 1;
@@ -140,6 +140,12 @@ elseif ($_REQUEST['act'] =='insert_update')
 {
     /* 取得团购活动id */
     $group_buy_id = intval($_POST['act_id']);
+	$cats = $_POST['group_cats'];
+	$catids = '';
+	foreach ($cats as $catid){
+		$catids = $catids.$catid.',';
+	}
+
     if (isset($_POST['finish']) || isset($_POST['succeed']) || isset($_POST['fail']) || isset($_POST['mail']))
     {
         if ($group_buy_id <= 0)
@@ -176,263 +182,6 @@ elseif ($_REQUEST['act'] =='insert_update')
         );
         sys_msg($_LANG['edit_success'], 0, $links);
     }
-    elseif (isset($_POST['succeed']))
-    {
-        /* 设置活动成功 */
-
-        /* 判断订单状态 */
-        if ($group_buy['status'] != GBS_FINISHED)
-        {
-            sys_msg($_LANG['error_status'], 1);
-        }
-
-        /* 如果有订单，更新订单信息 */
-        if ($group_buy['total_order'] > 0)
-        {
-            /* 查找该团购活动的已确认或未确认订单（已取消的就不管了） */
-            $sql = "SELECT order_id " .
-                    "FROM " . $ecs->table('order_info') .
-                    " WHERE extension_code = 'group_buy' " .
-                    "AND extension_id = '$group_buy_id' " .
-                    "AND (order_status = '" . OS_CONFIRMED . "' or order_status = '" . OS_UNCONFIRMED . "')";
-            $order_id_list = $db->getCol($sql);
-
-            /* 更新订单商品价 */
-            $final_price = $group_buy['trans_price'];
-            $sql = "UPDATE " . $ecs->table('order_goods') .
-                    " SET goods_price = '$final_price' " .
-                    "WHERE order_id " . db_create_in($order_id_list);
-            $db->query($sql);
-
-            /* 查询订单商品总额 */
-            $sql = "SELECT order_id, SUM(goods_number * goods_price) AS goods_amount " .
-                    "FROM " . $ecs->table('order_goods') .
-                    " WHERE order_id " . db_create_in($order_id_list) .
-                    " GROUP BY order_id";
-            $res = $db->query($sql);
-            while ($row = $db->fetchRow($res))
-            {
-                $order_id = $row['order_id'];
-                $goods_amount = floatval($row['goods_amount']);
-
-                /* 取得订单信息 */
-                $order = order_info($order_id);
-
-                /* 判断订单是否有效：余额支付金额 + 已付款金额 >= 保证金 */
-                if ($order['surplus'] + $order['money_paid'] >= $group_buy['deposit'])
-                {
-                    /* 有效，设为已确认，更新订单 */
-
-                    // 更新商品总额
-                    $order['goods_amount'] = $goods_amount;
-
-                    // 如果保价，重新计算保价费用
-                    if ($order['insure_fee'] > 0)
-                    {
-                        $shipping = shipping_info($order['shipping_id']);
-                        $order['insure_fee'] = shipping_insure_fee($shipping['shipping_code'], $goods_amount, $shipping['insure']);
-                    }
-
-                    // 重算支付费用
-                    $order['order_amount'] = $order['goods_amount'] + $order['shipping_fee']
-                        + $order['insure_fee'] + $order['pack_fee'] + $order['card_fee']
-                        - $order['money_paid'] - $order['surplus'];
-                    if ($order['order_amount'] > 0)
-                    {
-                        $order['pay_fee'] = pay_fee($order['pay_id'], $order['order_amount']);
-                    }
-                    else
-                    {
-                        $order['pay_fee'] = 0;
-                    }
-
-                    // 计算应付款金额
-                    $order['order_amount'] += $order['pay_fee'];
-
-                    // 计算付款状态
-                    if ($order['order_amount'] > 0)
-                    {
-                        $order['pay_status'] = PS_UNPAYED;
-                        $order['pay_time'] = 0;
-                    }
-                    else
-                    {
-                        $order['pay_status'] = PS_PAYED;
-                        $order['pay_time'] = gmtime();
-                    }
-
-                    // 如果需要退款，退到帐户余额
-                    if ($order['order_amount'] < 0)
-                    {
-                        // todo （现在手工退款）
-                    }
-
-                    // 订单状态
-                    $order['order_status'] = OS_CONFIRMED;
-                    $order['confirm_time'] = gmtime();
-
-                    // 更新订单
-                    $order = addslashes_deep($order);
-                    update_order($order_id, $order);
-                }
-                else
-                {
-                    /* 无效，取消订单，退回已付款 */
-
-                    // 修改订单状态为已取消，付款状态为未付款
-                    $order['order_status'] = OS_CANCELED;
-                    $order['to_buyer'] = $_LANG['cancel_order_reason'];
-                    $order['pay_status'] = PS_UNPAYED;
-                    $order['pay_time'] = 0;
-
-                    /* 如果使用余额或有已付款金额，退回帐户余额 */
-                    $money = $order['surplus'] + $order['money_paid'];
-                    if ($money > 0)
-                    {
-                        $order['surplus'] = 0;
-                        $order['money_paid'] = 0;
-                        $order['order_amount'] = $money;
-
-                        // 退款到帐户余额
-                        order_refund($order, 1, $_LANG['cancel_order_reason'] . ':' . $order['order_sn']);
-                    }
-
-                    /* 更新订单 */
-                    $order = addslashes_deep($order);
-                    update_order($order['order_id'], $order);
-                }
-            }
-        }
-
-        /* 修改团购活动状态为成功 */
-        $sql = "UPDATE " . $ecs->table('goods_activity') .
-                " SET is_finished = '" . GBS_SUCCEED . "' " .
-                "WHERE act_id = '$group_buy_id' LIMIT 1";
-        $db->query($sql);
-
-        /* 清除缓存 */
-        clear_cache_files();
-
-        /* 提示信息 */
-        $links = array(
-            array('href' => 'group_buy.php?act=list', 'text' => $_LANG['back_list'])
-        );
-        sys_msg($_LANG['edit_success'], 0, $links);
-    }
-    elseif (isset($_POST['fail']))
-    {
-        /* 设置活动失败 */
-
-        /* 判断订单状态 */
-        if ($group_buy['status'] != GBS_FINISHED)
-        {
-            sys_msg($_LANG['error_status'], 1);
-        }
-
-        /* 如果有有效订单，取消订单 */
-        if ($group_buy['valid_order'] > 0)
-        {
-            /* 查找未确认或已确认的订单 */
-            $sql = "SELECT * " .
-                    "FROM " . $ecs->table('order_info') .
-                    " WHERE extension_code = 'group_buy' " .
-                    "AND extension_id = '$group_buy_id' " .
-                    "AND (order_status = '" . OS_CONFIRMED . "' OR order_status = '" . OS_UNCONFIRMED . "') ";
-            $res = $db->query($sql);
-            while ($order = $db->fetchRow($res))
-            {
-                // 修改订单状态为已取消，付款状态为未付款
-                $order['order_status'] = OS_CANCELED;
-                $order['to_buyer'] = $_LANG['cancel_order_reason'];
-                $order['pay_status'] = PS_UNPAYED;
-                $order['pay_time'] = 0;
-
-                /* 如果使用余额或有已付款金额，退回帐户余额 */
-                $money = $order['surplus'] + $order['money_paid'];
-                if ($money > 0)
-                {
-                    $order['surplus'] = 0;
-                    $order['money_paid'] = 0;
-                    $order['order_amount'] = $money;
-
-                    // 退款到帐户余额
-                    order_refund($order, 1, $_LANG['cancel_order_reason'] . ':' . $order['order_sn'], $money);
-                }
-
-                /* 更新订单 */
-                $order = addslashes_deep($order);
-                update_order($order['order_id'], $order);
-            }
-        }
-
-        /* 修改团购活动状态为失败，记录失败原因（活动说明） */
-        $sql = "UPDATE " . $ecs->table('goods_activity') .
-                " SET is_finished = '" . GBS_FAIL . "', " .
-                    "act_desc = '$_POST[act_desc]' " .
-                "WHERE act_id = '$group_buy_id' LIMIT 1";
-        $db->query($sql);
-
-        /* 清除缓存 */
-        clear_cache_files();
-
-        /* 提示信息 */
-        $links = array(
-            array('href' => 'group_buy.php?act=list', 'text' => $_LANG['back_list'])
-        );
-        sys_msg($_LANG['edit_success'], 0, $links);
-    }
-    elseif (isset($_POST['mail']))
-    {
-        /* 发送通知邮件 */
-
-        /* 判断订单状态 */
-        if ($group_buy['status'] != GBS_SUCCEED)
-        {
-            sys_msg($_LANG['error_status'], 1);
-        }
-
-        /* 取得邮件模板 */
-        $tpl = get_mail_template('group_buy');
-
-        /* 初始化订单数和成功发送邮件数 */
-        $count = 0;
-        $send_count = 0;
-
-        /* 取得有效订单 */
-        $sql = "SELECT o.consignee, o.add_time, g.goods_number, o.order_sn, " .
-                    "o.order_amount, o.order_id, o.email " .
-                "FROM " . $ecs->table('order_info') . " AS o, " .
-                    $ecs->table('order_goods') . " AS g " .
-                "WHERE o.order_id = g.order_id " .
-                "AND o.extension_code = 'group_buy' " .
-                "AND o.extension_id = '$group_buy_id' " .
-                "AND o.order_status = '" . OS_CONFIRMED . "'";
-        $res = $db->query($sql);
-        while ($order = $db->fetchRow($res))
-        {
-            /* 邮件模板赋值 */
-            $smarty->assign('consignee',    $order['consignee']);
-            $smarty->assign('add_time',     local_date($_CFG['time_format'], $order['add_time']));
-            $smarty->assign('goods_name',   $group_buy['goods_name']);
-            $smarty->assign('goods_number', $order['goods_number']);
-            $smarty->assign('order_sn',     $order['order_sn']);
-            $smarty->assign('order_amount', price_format($order['order_amount']));
-            $smarty->assign('shop_url',     $ecs->url() . 'user.php?act=order_detail&order_id='.$order['order_id']);
-            $smarty->assign('shop_name',    $_CFG['shop_name']);
-            $smarty->assign('send_date',    local_date($_CFG['date_format']));
-
-            /* 取得模板内容，发邮件 */
-            $content = $smarty->fetch('str:' . $tpl['template_content']);
-            if (send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content, $tpl['is_html']))
-            {
-                $send_count++;
-            }
-            $count++;
-        }
-
-        /* 提示信息 */
-        sys_msg(sprintf($_LANG['mail_result'], $count, $send_count));
-    }
     else
     {
         /* 保存团购信息 */
@@ -465,7 +214,8 @@ elseif ($_REQUEST['act'] =='insert_update')
                     'restrict_amount'   => $restrict_amount,
                     'gift_integral'     => $gift_integral,
                     'deposit'           => $deposit
-                    ))
+                    )),
+			'act_cats'      => $catids,
         );
 
         /* 清除缓存 */
@@ -743,12 +493,6 @@ function group_buy_list()
     $arr = array('item' => $list, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
 
     return $arr;
-}
-
-function get_group_cat_info($cat_id)
-{
-    $sql = "SELECT * FROM " .$GLOBALS['ecs']->table('category'). " WHERE cat_id='$cat_id' LIMIT 1";
-    return $GLOBALS['db']->getRow($sql);
 }
 
 function get_all_cats()

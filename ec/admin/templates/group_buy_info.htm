@@ -31,7 +31,7 @@
   <tr>
     <td class="label">此次活动关联类别:</td>
     <td>{foreach from=$group_cats item=cat}
-      <input type="checkbox" name='group_cats' {if $cat.hasCheck } checked {/if}/>{$cat.cat_name}
+      <input type="checkbox" id='group_cats' name='group_cats[]' value='{$cat.cat_id}' {if $cat.hasCheck } checked {/if}/>{$cat.cat_name}
 	  {/foreach}
     </td>
   </tr>
@@ -59,12 +59,23 @@ function validate()
 {
   validator = new Validator("theForm");
   var eles = document.forms['theForm'].elements;
-
-  var goods_id = eles['goods_id'].value;
-  if (goods_id <= 0)
+  var act_name = eles['act_name'].value;
+  if (act_name.length<=0)
   {
-    validator.addErrorMsg(error_goods_null);
+    validator.addErrorMsg('活动名称不能为空');
+	return validator.passed();
   }
+   var objList  = document.getElementsByName('group_cats'); 
+   var checkCats = '';
+       for(var i = 0; i < objList.length; i++)  
+    { 
+	var obj = objList[i]; 
+	 if (obj.checked)
+	 {
+	   checkCats += obj.value+",";
+	 }
+
+	}
   validator.isNumber('deposit', error_deposit, false);
   validator.isInt('restrict_amount', error_restrict_amount, false);
   validator.isInt('gift_integral', error_gift_integral, false);
