@@ -385,7 +385,12 @@
 
      validator.required('shop_price', shop_price_not_null);
       validator.isNumber('shop_price', shop_price_not_number, true);
- 
+     var obj = document.forms['theForm'].elements['shop_price'];
+    obj.value = Utils.trim(obj.value);
+	if (parseFloat(obj.value)<=0)
+      {
+		 validator.addErrorMsg(shop_price_not_null);
+      }
 
       var callback = function(res)
      {

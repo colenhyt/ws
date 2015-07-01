@@ -109,6 +109,30 @@ var Validator = function(name)
   }
 
   /* *
+  * 检查输入的内容是否大于零
+  *
+  * @param :  controlId   表单元素的ID
+  * @param :  msg         错误提示信息
+  * @param :  required    是否必须
+  */
+  this.isBiggerZero = function(controlId, msg)
+  {
+	  alert('aaa');
+    var obj = document.forms[this.formName].elements[controlId];
+    obj.value = Utils.trim(obj.value);
+	alert((obj.value));
+	alert(parseFloat(obj.value));
+      if ( ! Utils.isNumber(obj.value))
+      {
+        this.addErrorMsg(msg);
+      }else if (parseFloat(obj.value)<=0)
+      {
+		 this.addErrorMsg(msg);
+      }
+	
+  }
+
+  /* *
   * 检查输入的内容是否是一个数字
   *
   * @param :  controlId   表单元素的ID

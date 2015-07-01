@@ -101,10 +101,25 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit')
         $group_buy = group_buy_info($group_buy_id);
     }
 
+	$cats = get_all_cats();
+	$catids = explode(',',$group_buy['act_cats']);
+	foreach ($cats as $key => $cat)
+	{
+	 foreach ($catids as $catid)
+	 {
+		if ($cat['cat_id']==$catid){
+			$cats[$key]['hasCheck'] = 1;
+			break;
+		}
+	 }
+	}
+
 	/* 创建 html editor */
     create_html_editor('act_desc', $group_buy['act_desc']);
 
     $smarty->assign('group_buy', $group_buy);
+
+    $smarty->assign('group_cats', $cats);
 
     /* 模板赋值 */
     $smarty->assign('ur_here', $_LANG['add_group_buy']);
@@ -730,6 +745,24 @@ function group_buy_list()
     return $arr;
 }
 
+function get_group_cat_info($cat_id)
+{
+    $sql = "SELECT * FROM " .$GLOBALS['ecs']->table('category'). " WHERE cat_id='$cat_id' LIMIT 1";
+    return $GLOBALS['db']->getRow($sql);
+}
+
+function get_all_cats()
+{
+    $sql = "SELECT cat_id,cat_name FROM " .$GLOBALS['ecs']->table('category'). " WHERE parent_id=0 ";
+    $res = $GLOBALS['db']->getAll($sql);
+	$arr = array();
+	foreach ($res AS $key => $val)
+	{
+		$arr[] = $val;
+
+	}
+	return $arr;
+}
 /**
  * 取得某商品的团购活动
  * @param   int     $goods_id   商品id

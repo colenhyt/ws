@@ -29,6 +29,13 @@
     </td>
   </tr>
   <tr>
+    <td class="label">此次活动关联类别:</td>
+    <td>{foreach from=$group_cats item=cat}
+      <input type="checkbox" name='group_cats' {if $cat.hasCheck } checked {/if}/>{$cat.cat_name}
+	  {/foreach}
+    </td>
+  </tr>
+  <tr>
     <td class="label">&nbsp;</td>
     <td>
       <input name="act_id" type="hidden" id="act_id" value="{$group_buy.act_id}">
