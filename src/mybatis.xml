@@ -44,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="cn/hd/ws/dao/WxorderMapper.xml"/>
 		<mapper resource="cn/hd/ws/dao/EcsGoodsMapper.xml"/>
 		<mapper resource="cn/hd/ws/dao/EcsCategoryMapper.xml"/>
-					    
+		<mapper resource="cn/hd/ws/dao/EcsGoodsActivityMapper.xml"/>
+							    
 																							</mappers>
 </configuration>
