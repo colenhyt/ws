@@ -27,10 +27,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/htmllexer.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/htmlparser.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/httpclient-4.2.5.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/httpclient-cache-4.2.5.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/httpcore-4.2.4.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/javassist-3.11.0.GA.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jdom-2.0.5-contrib.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jdom-2.0.5.jar"/>
@@ -78,5 +74,9 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="C:/tomcat-7.0.57/lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="C:/tomcat-7.0.57/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/httpclient-cache-4.5.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/httpmime-4.5.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
