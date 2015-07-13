@@ -21,12 +21,12 @@ public class UnifiedOrderReqData {
 
     //每个字段具体的意思请查看API文档
     private String appid = "";
-    private String attach = "";
-    private String body = "";
-    private String mch_id = "";
-    private String nonce_str = "";
+    private String attach = null;
+    private String body = null;
+    private String mch_id = null;
+    private String nonce_str = null;
     private String notify_url = "";
-    private String openid = "";
+    private String openid = null;
     private String out_trade_no = "";
 	private String spbill_create_ip = "";
     private int total_fee = 0;
@@ -88,7 +88,7 @@ public class UnifiedOrderReqData {
      * @param timeExpire 订单失效时间，格式同上
      * @param goodsTag 商品标记，微信平台配置的商品标记，用于优惠券或者满减使用
      */
-    public UnifiedOrderReqData(String body,String attach,String outTradeNo,int totalFee,String nofityurl,String spBillCreateIP,String timeStart,String timeExpire,String goodsTag){
+    public UnifiedOrderReqData(String body,String outTradeNo,int totalFee,String nofityurl,String spBillCreateIP){
 
         //微信分配的公众号ID（开通公众号之后可以获取到）
         setAppid(Configure.getAppid());
@@ -106,9 +106,6 @@ public class UnifiedOrderReqData {
         //商户系统内部的订单号,32个字符内可包含字母, 确保在商户系统唯一
         setOut_trade_no(outTradeNo);
 
-        setTimeStart(timeStart);
-        setTimeExpire(timeExpire);
-        
         //订单总金额，单位为“分”，只能整数
         setTotal_fee(totalFee);
 

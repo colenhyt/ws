@@ -12,12 +12,9 @@ public class Main {
         try {
 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
-        	String notifyUrl = "112.74.108.46";
+        	String notifyUrl = "http://egonctg.com/ws/payment/";
         	String spBillCreateIP = "12.74.108.46";
-        	String timeStart = "";
-        	String timeExpire = "";
-        	String goodsTag = "101";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("AA","bb","123",1,notifyUrl,spBillCreateIP,timeStart,timeExpire,goodsTag);
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("bb","123",1,notifyUrl,spBillCreateIP);
         	reqdata.setTrade_type("NATIVE");
         	UnifiedOrderResult rst = new UnifiedOrderResult();
         	bus.run(reqdata, rst);
