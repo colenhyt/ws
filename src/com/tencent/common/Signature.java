@@ -63,8 +63,18 @@ public class Signature {
         String result = sb.toString();
         result += "key=" + Configure.getKey();
         Util.log("Sign Before MD5:" + result);
+        
+//        MD5 md5 = MD5.Create();
+//        byte[] bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(result));
+//
+//        StringBuilder result2 = new StringBuilder();
+//        for (int i = 0; i < bytes.length; i++)
+//        {
+//            result2.Append(bytes[i].ToString("X2"));
+//        }
+        
         result = MD5.MD5Encode(result).toUpperCase();
-        //Util.log("Sign Result:" + result);
+        Util.log("Sign Result:" + result);
         return result;
     }
 
