@@ -3,13 +3,15 @@ package cn.hd.ws.action;
 import java.util.Date;
 import java.util.List;
 
-import com.tencent.common.Configure;
-
+import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
 import cn.hd.base.BaseService;
+import cn.hd.base.Message;
 import cn.hd.ws.dao.EcsGoods;
 import cn.hd.ws.dao.Wxorder;
 import cn.hd.ws.dao.WxorderService;
+
+import com.tencent.common.Configure;
 
 public class WsOrderAction extends BaseAction {
 	private Wxorder wxorder;
@@ -57,7 +59,16 @@ public class WsOrderAction extends BaseAction {
 		order.setPhone(phone);
 		order.setRemark(remark);
 		order.setStatus((byte)1);
-		wxorderService.add(order);
+		boolean ret = wxorderService.add(order);
+		
+		Message msg = new Message();
+		if (ret){
+			msg.setCode(RetMsg.MSG_OK);
+			msg.setDesc(order.getOrderid());
+		}else
+		 msg.setCode(RetMsg.MSG_SQLExecuteError);
+		JSONObject obj = JSONObject.fromObject(msg);
+		write(obj.toString(),"utf-8");			
 		System.out.println("goods:"+strgoods+";wxhao:"+wxhao+"pay:"+paytype+",address:"+address);
 		return null;
 	}

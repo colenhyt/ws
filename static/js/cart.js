@@ -11,7 +11,6 @@ Cart.prototype.init = function(){
      var content =     "";
     content += "<div id='"+this.pagename+"'>"
     content += "</div>"
-    content += " <button onclick=\"g_cart.doBuy()\" class='button2'>确认订单</button>"
     page.addContent(content);
     document.write(page.toString()); 
 }
@@ -45,8 +44,8 @@ Cart.prototype.show = function(){
 var itemlength  = Object.keys(this.data).length ;
 
  if (itemlength<=0){
-//  alert('未挑选任何商品');
-//  return;
+  alert('未挑选任何商品');
+  return;
  }
  
  var tag = document.getElementById(this.pagename);
@@ -72,6 +71,8 @@ var itemlength  = Object.keys(this.data).length ;
  content += "<td style='text-align:center'>￥&nbsp"+totalps;
      content += "</td></tr>"
  	content += "</table>";
+ 	content += "<br>"
+    content += " <button onclick=\"g_cart.doBuy()\" class='button2'>确认订单</button>"
 	
  tag.innerHTML = content;
  
@@ -118,11 +119,26 @@ Cart.prototype.doBuy = function(){
 	//alert(dataParam);
 	try    {
 		$.ajax({type:"post",url:"/ws/order_order.do",data:dataParam,success:function(data){
+		 g_cart.buyCallback(data);
 		}});
 	}   catch  (e)   {
 	    alert(e.name);
 	}
 }
+
+Cart.prototype.buyCallback = function(data){
+ var ret = cfeval(data);
+ var content;
+ if (ret.code==0){
+  content = '购买成功，订单号:'+ret.desc;
+ }else
+  content = "购买失败，错误码:"+ret.code;
+ var tag = document.getElementById(this.pagename);
+ tag.innerHTML = content;  
+ 
+ // $('#'+g_cart.tagname).modal('hide');  
+}
+
 
 var g_cart = new Cart();
  g_cart.init();

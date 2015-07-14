@@ -21,10 +21,10 @@ public class WxorderService extends BaseService {
 		try {
 			wxorderMapper.insert(record);
 			DBCommit();
+			return true;
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
 		}		
-		return false;
 	}
 }
