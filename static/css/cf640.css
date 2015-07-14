@@ -2,8 +2,60 @@
 img{ max-width:100%;} 
 
 body {
+margin-left:20px;
   font-size:36px;
   width:580px;
+  background-color:#FAFAD2;
+}
+
+div {
+margin-top:20px;
+margin-bottom:20px;
+}
+
+.groupDesc {
+font-size:25px;
+width:90%;
+}
+
+button {
+background-color:#EECFA1;
+width:90%;
+}
+
+table {
+background-color:#ffffff;
+width:90%;
+}
+
+td {
+border:1px solid #D9D9D9;
+padding:5px;
+padding-left:20px;
+height:200%;
+}
+
+
+input {
+width: 90%;
+}
+
+.rr {
+width:5%;
+}
+.menu2
+{
+  background-color:#EECFA1;
+
+}
+.nav.cat{
+  background-color:#EECFA1;
+}
+
+.nav.nav-primary
+{
+ background-color:#EECFA1;
+
 }
 
 .wsgoods_value {
@@ -19,6 +71,9 @@ border:none;
 background:url('../../static/img/bt_minus.png') no-repeat;
 -moz-background-size:100% 100%;  
     background-size:100% 100%;  
+}
+
+.wxhao {
 }
 
 .wsgoods_count.add {

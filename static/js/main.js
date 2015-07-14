@@ -47,6 +47,7 @@ function queryGroupGoods(catId){
     content += "    <tr><td><li><img class='wsgoods_count' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\""+func+",1)\"></td></tr>"
 	content += "</table>";
     }
+ 	content += "<br>"
     tag.innerHTML = content;
     
 }
@@ -63,6 +64,36 @@ function addOrder(){
 	}
 }
 
-queryGroupCats();
+function queryGroup()
+{
+	var dataobj = $.ajax({type:"post",url:"/ws/goods_group.do",async:false});
+	var group = cfeval(dataobj.responseText);
+	var content = "";
+	content += "<div class='header'>"
+	content += group.actName;
+	content += "</div>"
+	content += "<div class='groupDesc'>"
+	var desc = group.actDesc.replace('/ec/images','ec/images');
+	content += desc;
+	content += "</div>"
+	
+	var tag = document.getElementById("groupDiv");
+	tag.innerHTML = content;
+	
+}
+
+function choosePay(index){
+	var tags = document.getElementsByName("paytype");
+	if (index==0){
+	 tags[0].checked = true;
+	 tags[1].checked = false;
+	}else {
+	 tags[0].checked = false;
+	 tags[1].checked = true;
+	}
+}
+
+queryGroup();
+//queryGroupCats();
 //queryGroupGoods(3);
 //addOrder();

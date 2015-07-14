@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset='utf-8'>
-    <link href="dist/css/zui.min.css" rel="stylesheet">	
+    <link href="dist/css/zui.css" rel="stylesheet">	
   <link href="static/css/cf640.css" rel="stylesheet">
     <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
 		<title>ws</title>
@@ -14,15 +14,15 @@
   </script>
 </head>
 <body>
- hello wx shop
+<div id='groupDiv'>
+</div>
         <script type="text/javascript" src="static/js/util.js"></script>
        <script type="text/javascript" src="static/js/htmlutil.js"></script>
        <script type="text/javascript" src="static/js/cart.js"></script>
-        <form action="order_order.do" method="post" id="groupForm">
 <nav class="menu" data-toggle="menu" style="width: 90%">
   <ul class="nav nav-primary"  id="catDiv">
     <li>
-      <a href="#">一，手工定制产品(肉粽，咸鸭蛋)</a>
+      <a href="#" class='menu2'>一，手工定制产品(肉粽，咸鸭蛋)</a>
       <ul class="nav">
         <table><tr><td>fdafad</td></tr><tr><td>fdafad</td></tr></table>
         <table>
@@ -38,14 +38,27 @@
   </ul>
 </nav>	      
        <script type="text/javascript" src="static/js/main.js"></script>
-       微信号*:<input name="wxhao" id="wxhao" type="text"><br>
-       支付方式*:<br>
-       <input name="paytype" id="paytype" type="radio" checked="true" value=0>微信支付<br>
-       <input name="paytype" id="paytype" type="radio" value=1>货到付款<br>
-       送货地址*:<input name="address" id="address" type="text" value=""><br>
-       <input type="button" value="购买" onclick="g_cart.show()"><br>
+       <div>
+       微信号*<br>
+       <input name="wxhao" id="wxhao" type="text" class='wxhao'>
+       </div>
+       <div>
+       付款方式*:<br>
+       <table>
+       <tr onclick='choosePay(0)'><td>
+       <input name="paytype" id="paytype" type="radio" checked="true" value=0 class='rr'> 微信支付
+       </td></tr>
+       <tr onclick='choosePay(1)'><td>
+       <input name="paytype" id="paytype" type="radio" value=1 class='rr'> 货到付款
+       </td></tr>
+       </table>
+       </div>
+       <div>收货人姓名*:<br><input name="name" id="name" type="text" value=""></div>
+       <div>收货人电话*:<br><input name="phone" id="phone" type="text" value=""></div>
+       <div>送货地址*:<br><input name="address" id="address" type="text" value=""></div>
+       <div>备注: <br><input name="name" id="name" type="text" value=""></div>
+       <button onclick="g_cart.show()">购买</button><br><br>
        
-       </form>
     	</body>	
     	
 </html>
