@@ -37,9 +37,16 @@ function queryGroupGoods(catId){
     var content = "";
     for (var i=0;i<items.length;i++){
     var item = items[i];
+    var imgSrc = "";
+    if (item.originalImg.length>0)
+     imgSrc = item.originalImg;
+    else if (item.goodsImg.length>0)
+     imgSrc = item.goodsImg;
+    else if (item.goodsThumb.length>0)
+     imgSrc = item.goodsThumb;
 	content += "<table class='goods'>";
-    content += "    <tr><td class='goods img'><img src='a.gif' class='goodsImg'></td><td class='goods'><img src='"+item.goodsImg+"'>"+item.goodsName+"</td></tr>"
-    content += "    <tr><td class='goods' colspan=2>"+item.goodsDesc+"</td></tr>"
+    content += "    <tr><td class='goods img'><img src='"+imgSrc+"' class='goodsImg'></td><td class='goods title'>"+item.goodsName+"</td></tr>"
+    content += "    <tr><td class='goods desc' colspan=2>"+item.goodsDesc+"</td></tr>"
     content += "    <tr><td class='goods ps' colspan=2> ￥"+item.shopPrice+"</td></tr>"
     var func = "g_cart.count("+item.goodsId+",'"+item.goodsName+"',"+item.shopPrice;
     

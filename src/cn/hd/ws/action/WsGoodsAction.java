@@ -84,7 +84,7 @@ public class WsGoodsAction extends BaseAction {
 		
 		JSONArray jsonObject = JSONArray.fromObject(goods);
 		write(jsonObject.toString(),"utf-8");
-		System.out.println("goods:"+goods.get(1).getGoodsDesc());
+		System.out.println("goods:"+jsonObject.toString());
 		return null;
 	}	
 }
