@@ -3,6 +3,8 @@ package cn.hd.ws.action;
 import java.util.Date;
 import java.util.List;
 
+import com.tencent.common.Configure;
+
 import cn.hd.base.BaseAction;
 import cn.hd.base.BaseService;
 import cn.hd.ws.dao.EcsGoods;
@@ -36,11 +38,27 @@ public class WsOrderAction extends BaseAction {
 	public String order(){
 		String strgoods = this.getHttpRequest().getParameter("goods");
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
+		Wxorder order = new Wxorder();
 		//EcsGoods[] goods = (EcsGoods[])items.toArray();
 		String wxhao = this.getHttpRequest().getParameter("wxhao");
 		String paytype = this.getHttpRequest().getParameter("paytype");
+		String contact = this.getHttpRequest().getParameter("contact");
+		String phone = this.getHttpRequest().getParameter("phone");
+		String remark = this.getHttpRequest().getParameter("remark");
 		String address = this.getHttpRequest().getParameter("address");
-		System.out.println(items.get(0).getGoodsNumber()+"wxhao:"+wxhao+"pay:"+paytype+",add:"+address);
+		
+		order.setOrderid(DataManager.getInstance().assignOrderId());
+		order.setAppid(Configure.getAppid());
+		order.setMchid(Configure.getMchid());
+		order.setAddress(address);
+		order.setCrdate(new Date());
+		order.setContact(contact);
+		order.setGoods(strgoods);
+		order.setPhone(phone);
+		order.setRemark(remark);
+		order.setStatus((byte)1);
+		wxorderService.add(order);
+		System.out.println("goods:"+strgoods+";wxhao:"+wxhao+"pay:"+paytype+",address:"+address);
 		return null;
 	}
 	

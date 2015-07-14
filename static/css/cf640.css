@@ -2,7 +2,7 @@
 img{ max-width:100%;} 
 
 body {
-margin-left:20px;
+margin-left:30px;
   font-size:36px;
   width:580px;
   background-color:#FAFAD2;
@@ -21,6 +21,12 @@ width:30%;
 
 .goods.ps {
 color:red;
+width:30%;
+}
+
+.goods.no {
+text-align:right;
+font-size:30px;
 }
 
 .goods.title{
@@ -54,17 +60,17 @@ margin-bottom:20px;
 
 .groupDesc {
 font-size:25px;
-width:90%;
+width:100%;
 }
 
-button {
+.button2 {
 background-color:#EECFA1;
-width:90%;
+width:100%;
 }
 
 table {
 background-color:#ffffff;
-width:90%;
+width:100%;
 }
 
 td {
@@ -76,7 +82,7 @@ height:200%;
 
 
 input {
-width: 90%;
+width: 100%;
 }
 
 .rr {
@@ -98,7 +104,7 @@ width:5%;
 }
 
 .wsgoods_value {
-width:180px;
+width:70%;
 text-align:center;
 }
 

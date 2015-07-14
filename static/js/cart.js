@@ -7,39 +7,72 @@ Cart = function(){
 
 Cart.prototype.init = function(){
      var page = new PageUtil(this.tagname);
-    page.buildSingleTab();
-     var content =     "<div class='tab-pane in active'>";
+   // page.buildSingleTab();
+     var content =     "";
     content += "<div id='"+this.pagename+"'>"
     content += "</div>"
-    content += " <input type=\"button\" value=\"确认\" onclick=\"g_cart.doBuy()\">"
-    content += " <button type='button' data-dismiss='modal'>返回</button><br>"
-    content += "</div>"
+    content += " <button onclick=\"g_cart.doBuy()\" class='button2'>确认订单</button>"
     page.addContent(content);
     document.write(page.toString()); 
 }
 
 Cart.prototype.show = function(){
- var tag = document.getElementById('wxhao');
- if (tag.value.length<=0){
-  alert('请填上你的微信号');
-  return;
- }
- 
-tag = document.getElementById('address');
- if (tag.value.length<=0){
-  alert('请填上你的送货地址');
-  return;
+
+// var tag = document.getElementById('wxhao');
+// if (tag.value.length<=0){
+//  alert('请填上你的微信号');
+//  return;
+// }
+//   
+//tag = document.getElementById('contact');
+// if (tag.value.length<=0){
+//  alert('请填上收货人姓名');
+//  return;
+// }
+//  
+//tag = document.getElementById('phone');
+// if (tag.value.length<=0){
+//  alert('请填上收货人电话');
+//  return;
+// }
+// 
+//tag = document.getElementById('address');
+// if (tag.value.length<=0){
+//  alert('请填上你的送货地址');
+//  return;
+// }
+
+var itemlength  = Object.keys(this.data).length ;
+
+ if (itemlength<=0){
+//  alert('未挑选任何商品');
+//  return;
  }
  
  var tag = document.getElementById(this.pagename);
  var content = "";
  var totalps = 0;
+ content += "<table class='goods'>";
+  content += "<tr>"
+  content += "<td>商品</td>"
+  content += "<td>数量</td>"
+  content += "<td>单价</td>"
+     content += "</tr>"
  for (var key in this.data){
   var item = this.data[key];
- content += item.goodsName+",数量:"+item.count+",ps:"+item.shopPrice+"<br>";
+  content += "<tr>"
+ content += "<td>"+item.goodsName+"</td>";
+ content += "<td style='text-align:center'>"+item.count+"</td>";
+ content += "<td style='text-align:center'>￥&nbsp"+item.shopPrice+"</td>";
  totalps += item.count*item.shopPrice
+     content += "</tr>"
  }
- content += "总价:"+totalps;
+  content += "<tr><td colspan=2 style='text-align:right'>"
+ content += "总金额:</td>"
+ content += "<td style='text-align:center'>￥&nbsp"+totalps;
+     content += "</td></tr>"
+ 	content += "</table>";
+	
  tag.innerHTML = content;
  
  $('#'+this.tagname).modal({position:100,show: true}); 
@@ -49,15 +82,18 @@ Cart.prototype.count = function(goodsId,goodsName,shopPrice,count){
 var tag = document.getElementById("goodsCount"+goodsId);
 var currCount = parseInt(tag.value);
 	currCount += count;
+	var currNo = findGoodsNo(goodsId);
+	if (currCount>currNo){
+	 alert('购买数量不能大于剩余数');
+	 return;
+	}
 	if (currCount>=0){
     tag.value = currCount;
-    this.data[goodsId] = {count:currCount,goodsName:goodsName,shopPrice:shopPrice};
+    this.data[goodsId] = {goodsId:goodsId,count:currCount,goodsName:goodsName,shopPrice:shopPrice};
     }
 }
 
 Cart.prototype.doBuy = function(){
-// var form = document.getElementById('groupForm');
-// form.submit();
  
  	var dataParam = "goods=[";
  	for (var key in this.data){
@@ -68,8 +104,14 @@ Cart.prototype.doBuy = function(){
  	dataParam += "]";
  	var tag = document.getElementById('wxhao');
   	dataParam += "&wxhao="+tag.value;
+  	tag = document.getElementById('contact');
+  	dataParam += "&contact="+tag.value;
+  	tag = document.getElementById('phone');
+  	dataParam += "&phone="+tag.value;
   	tag = document.getElementById('address');
   	dataParam += "&address="+tag.value;
+  	tag = document.getElementById('remark');
+  	dataParam += "&remark="+tag.value;
    	tag = document.getElementById('paytype');
   	dataParam += "&paytype="+tag.value; 	
   	
@@ -84,3 +126,4 @@ Cart.prototype.doBuy = function(){
 
 var g_cart = new Cart();
  g_cart.init();
+ // g_cart.show();
