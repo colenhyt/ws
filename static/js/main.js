@@ -14,7 +14,6 @@ content += "</a>";
 content += "<ul class=\"nav\" id='cat"+cat.catId+"'>";
 content += "</ul>";
 content += "</li>";
-content += "<br>";
 }
 tag.innerHTML = content;
 }
@@ -38,16 +37,18 @@ function queryGroupGoods(catId){
     var content = "";
     for (var i=0;i<items.length;i++){
     var item = items[i];
-	content += "<table>";
-    content += "    <tr><td><img src='"+item.goodsImg+"'>"+item.goodsName+"</td></tr>"
-    content += "    <tr><td>"+item.goodsDesc+"</td></tr>"
-    content += "    <tr><td>ps:"+item.shopPrice+"</td></tr>"
+	content += "<table class='goods'>";
+    content += "    <tr><td class='goods img'><img src='a.gif' class='goodsImg'></td><td class='goods'><img src='"+item.goodsImg+"'>"+item.goodsName+"</td></tr>"
+    content += "    <tr><td class='goods' colspan=2>"+item.goodsDesc+"</td></tr>"
+    content += "    <tr><td class='goods ps' colspan=2> ￥"+item.shopPrice+"</td></tr>"
     var func = "g_cart.count("+item.goodsId+",'"+item.goodsName+"',"+item.shopPrice;
     
-    content += "    <tr><td><li><img class='wsgoods_count' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\""+func+",1)\"></td></tr>"
+    content += "    <tr><td class='goods' colspan=2><li><img class='wsgoods_count' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\""+func+",1)\"></td></tr>"
 	content += "</table>";
+	content += "<div class=\"line\"></div>"
     }
  	content += "<br>"
+ 	
     tag.innerHTML = content;
     
 }
@@ -94,6 +95,6 @@ function choosePay(index){
 }
 
 queryGroup();
-//queryGroupCats();
+queryGroupCats();
 //queryGroupGoods(3);
 //addOrder();

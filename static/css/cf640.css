@@ -8,6 +8,37 @@ margin-left:20px;
   background-color:#FAFAD2;
 }
 
+.goods {
+width:100%;
+}
+
+.goods {
+border:none;
+}
+.goods.img {
+width:30%;
+}
+
+.goods.ps {
+color:red;
+}
+
+.line {
+width:100%;
+height:1px;
+margin:0px auto;
+padding-top:5px;
+padding-bottom:5px;
+padding:0px;
+background-color:#D5D5D5;
+overflow:hidden;
+}
+
+.goodsImg{
+width:150px;
+height:150px;
+}
+
 div {
 margin-top:20px;
 margin-bottom:20px;
