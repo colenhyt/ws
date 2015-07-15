@@ -3638,6 +3638,7 @@ elseif ($_REQUEST['act'] == 'operate_post')
         foreach ($goods_list as $key => $value)
         {
             // 商品（超值礼包）
+
             if ($value['extension_code'] == 'package_buy')
             {
                 foreach ($value['package_goods_list'] as $pg_key => $pg_value)
