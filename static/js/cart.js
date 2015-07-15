@@ -118,7 +118,7 @@ Cart.prototype.doBuy = function(){
   	
 	//alert(dataParam);
 	try    {
-		$.ajax({type:"post",url:"/ws/order_order.do",data:dataParam,success:function(data){
+		$.ajax({type:"post",url:"/ec/order_order.do",data:dataParam,success:function(data){
 		 g_cart.buyCallback(data);
 		}});
 	}   catch  (e)   {

@@ -1,6 +1,7 @@
 package cn.hd.ws.action;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import cn.hd.ws.dao.EcsGoods;
 import cn.hd.ws.dao.EcsGoodsService;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
+import cn.hd.ws.dao.EcsUserService;
 import cn.hd.ws.dao.Wxorder;
 
 import com.tencent.business.UnifiedOrderBusiness;
@@ -22,6 +24,15 @@ import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
 public class WsOrderAction extends BaseAction {
 	private Wxorder wxorder;
 	private EcsOrderService ecsorderService;
+	private EcsUserService ecsuserService;
+	
+	public EcsUserService getEcsuserService() {
+		return ecsuserService;
+	}
+
+	public void setEcsuserService(EcsUserService ecsuserService) {
+		this.ecsuserService = ecsuserService;
+	}
 
 	public EcsOrderService getEcsorderService() {
 		return ecsorderService;
@@ -32,7 +43,7 @@ public class WsOrderAction extends BaseAction {
 	}
 
 	public WsOrderAction(){
-		init("ecsorderService");
+		init("ecsorderService","ecsuserService");
 	}
 	
 	public Wxorder getWxorder() {
@@ -71,13 +82,19 @@ public class WsOrderAction extends BaseAction {
 	public String order(){
 		String strgoods = this.getHttpRequest().getParameter("goods");
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
-		int totalfee = 0;
+		float totalFee = 0;
 		EcsGoodsService  goodsService = new EcsGoodsService();
 		for (int i=0;i<items.size();i++){
 			EcsGoods item = items.get(i);
 			EcsGoods item2 = goodsService.find(item.getGoodsId());
+			item.setGoodsSn(item2.getGoodsSn());
+			item.setShopPrice(item2.getShopPrice());
+			item.setGoodsId(item2.getGoodsId());
+			item.setGoodsName(item2.getGoodsName());
+			
+			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
 		}
-		Wxorder order = new Wxorder();
+		
 		//EcsGoods[] goods = (EcsGoods[])items.toArray();
 		String wxhao = this.getHttpRequest().getParameter("wxhao");
 		String paytype = this.getHttpRequest().getParameter("paytype");
@@ -86,35 +103,31 @@ public class WsOrderAction extends BaseAction {
 		String remark = this.getHttpRequest().getParameter("remark");
 		String address = this.getHttpRequest().getParameter("address");
 		
-		order.setOrderid(DataManager.getInstance().assignOrderSn());
-		order.setAppid(Configure.getAppid());
-		order.setMchid(Configure.getMchid());
-		order.setAddress(address);
-		order.setCrdate(new Date());
-		order.setContact(contact);
-		order.setGoods(strgoods);
-		order.setPhone(phone);
-		order.setRemark(remark);
-		order.setIpaddr(getIpAddress());
-		order.setStatus((byte)1);
+		int userId = ecsuserService.findUserIdOrAdd(wxhao);
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
+		orderInfo.setUserId(userId);
 		orderInfo.setAddress(address);
+		orderInfo.setGoodsAmount(BigDecimal.valueOf(totalFee));
 		orderInfo.setConsignee(contact);
 		orderInfo.setMobile(phone);
 		orderInfo.setOrderStatus(false);
 		orderInfo.setShippingStatus(false);
+		orderInfo.setPayId(Integer.valueOf(paytype).byteValue());
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
 		
 		boolean ret = false;
 		ret = ecsorderService.add(orderInfo);
+		if (ret){
+			ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
+		}
 		
 		Message msg = new Message();
 		if (ret){
 			msg.setCode(RetMsg.MSG_OK);
-			msg.setDesc(order.getOrderid());
+			msg.setDesc(orderInfo.getOrderSn());
 		}else {
 		  msg.setCode(RetMsg.MSG_SQLExecuteError);
 		}

@@ -38,7 +38,7 @@ function findGoodsNo(goodsId)
 
 function queryGroupCats(){
 	//alert(dataParam);
-	var dataobj = $.ajax({type:"post",url:"/ws/goods_cat.do",async:false});
+	var dataobj = $.ajax({type:"post",url:"/ec/goods_cat.do",async:false});
 	 var obj = cfeval(dataobj.responseText);
 	 
 	 renderGroupCats(obj);
@@ -51,7 +51,7 @@ function queryGroupGoods(catId){
 		var item = {catId:catId};
 		var dataParam = obj2ParamStr("ecsGoods",item);
 		//alert(dataParam);
-		var dataobj = $.ajax({type:"post",url:"/ws/goods_goods.do",data:dataParam,async:false});
+		var dataobj = $.ajax({type:"post",url:"/ec/goods_goods.do",data:dataParam,async:false});
 	    items = cfeval(dataobj.responseText);
 	    catGoods[catId] = items;
  	}else {
@@ -70,7 +70,7 @@ function queryGroupGoods(catId){
     else if (item.goodsThumb.length>0)
      imgSrc = item.goodsThumb;
     else
-     imgSrc = "ec/images/upload/Image/"+item.goodsSn+".jpg";
+     imgSrc = "/ec/images/upload/Image/"+item.goodsSn+".jpg";
     var goodsno = item.goodsNumber;
 	content += "<table class='goods'>";
     content += "    <tr><td class='goods img'><img src='"+imgSrc+"' class='goodsImg'></td><td class='goods title'>"+item.goodsName+"</td></tr>"
@@ -103,7 +103,7 @@ function addOrder(){
 	var dataParam = obj2ParamStr("wxorder",item);
 	//alert(dataParam);
 	try    {
-		$.ajax({type:"post",url:"/ws/order_add.do",data:dataParam,success:function(data){
+		$.ajax({type:"post",url:"/ec/order_add.do",data:dataParam,success:function(data){
 		}});
 	}   catch  (e)   {
 	    alert(e.name);
@@ -112,14 +112,14 @@ function addOrder(){
 
 function queryGroup()
 {
-	var dataobj = $.ajax({type:"post",url:"/ws/goods_group.do",async:false});
+	var dataobj = $.ajax({type:"post",url:"/ec/goods_group.do",async:false});
 	var group = cfeval(dataobj.responseText);
 	var content = "";
 	content += "<div class='header'>"
 	content += group.actName;
 	content += "</div>"
 	content += "<div class='groupDesc'>"
-	var desc = group.actDesc.replace('/ec/images','ec/images');
+	var desc = group.actDesc;
 	content += desc;
 	content += "</div>"
 	
