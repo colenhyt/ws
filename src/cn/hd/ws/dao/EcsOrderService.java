@@ -30,8 +30,12 @@ public class EcsOrderService extends BaseService {
 	}
 	
 	public static void main(String[] args){
+		EcsUserService userService= new EcsUserService();
+		int userid = userService.findUserIdOrAdd("colen黄3334");
+		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
+		orderInfo.setUserId(userid);
 		orderInfo.setAddress("add");
 		orderInfo.setConsignee("contact");
 		orderInfo.setMobile("123");
