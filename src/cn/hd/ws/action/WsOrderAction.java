@@ -88,6 +88,7 @@ public class WsOrderAction extends BaseAction {
 			EcsGoods item = items.get(i);
 			EcsGoods item2 = goodsService.find(item.getGoodsId());
 			item.setGoodsSn(item2.getGoodsSn());
+			item.setIsReal(item2.getIsReal());
 			item.setShopPrice(item2.getShopPrice());
 			item.setGoodsId(item2.getGoodsId());
 			item.setGoodsName(item2.getGoodsName());
