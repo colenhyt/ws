@@ -14,7 +14,7 @@ public class Main {
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String notifyUrl = "http://egonctg.com/ws/payment/";
         	String spBillCreateIP = "112.74.108.46";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("bb","123",1,notifyUrl,spBillCreateIP);
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("bb","123",1,spBillCreateIP);
         	reqdata.setTrade_type("NATIVE");
         	UnifiedOrderResult rst = new UnifiedOrderResult();
         	bus.run(reqdata, rst);

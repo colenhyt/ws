@@ -26,6 +26,8 @@ public class Configure {
 		Configure.in = in;
 	}
 
+	private static String notifyUrl = "http://egonctg.com/ws/payment/";
+
 	private static String key = "1977carson24075043841976jidofdaf";
 
 	//微信分配的公众号ID（开通公众号之后可以获取到）
@@ -73,7 +75,14 @@ public class Configure {
 
 	//7) 统计上报API
 	public static String REPORT_API = "https://api.mch.weixin.qq.com/payitil/report";
+	
+	public static String getNotifyUrl() {
+		return notifyUrl;
+	}
 
+	public static void setNotifyUrl(String notifyUrl) {
+		Configure.notifyUrl = notifyUrl;
+	}
 	public static boolean isUseThreadToDoReport() {
 		return useThreadToDoReport;
 	}

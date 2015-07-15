@@ -40,30 +40,7 @@ public class WsGoodsAction extends BaseAction {
 		write(jsonObject.toString(),"utf-8");
 		System.out.println("cat:"+cats.size());
 		
-//    	UnifiedOrderBusiness bus = null;
-//    	InputStream in = getHttpSession().getServletContext().getResourceAsStream("/WEB-INF/cert/apiclient_cert.p12");
-//    	Configure.setIn(in);
-//		try {
-//			bus = new UnifiedOrderBusiness();
-//	    	String notifyUrl = "http://egonctg.com/ws/payment/";
-//	    	String spBillCreateIP = "112.74.108.46";
-//	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("bb","123",1,notifyUrl,spBillCreateIP);
-//	    	reqdata.setTrade_type("NATIVE");
-//	    	UnifiedOrderResult rst = new UnifiedOrderResult();
-//	    	bus.run(reqdata, rst);
-//	    } catch (IllegalAccessException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InstantiationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 
     	
 		return null;

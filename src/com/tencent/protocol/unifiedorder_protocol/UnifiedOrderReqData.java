@@ -88,7 +88,7 @@ public class UnifiedOrderReqData {
      * @param timeExpire 订单失效时间，格式同上
      * @param goodsTag 商品标记，微信平台配置的商品标记，用于优惠券或者满减使用
      */
-    public UnifiedOrderReqData(String body,String outTradeNo,int totalFee,String nofityurl,String spBillCreateIP){
+    public UnifiedOrderReqData(String body,String outTradeNo,int totalFee,String spBillCreateIP){
 
         //微信分配的公众号ID（开通公众号之后可以获取到）
         setAppid(Configure.getAppid());
@@ -109,8 +109,8 @@ public class UnifiedOrderReqData {
         //订单总金额，单位为“分”，只能整数
         setTotal_fee(totalFee);
 
-        //商户自己定义的扫码支付终端设备号，方便追溯这笔交易发生在哪台终端设备上
-        setNotify_url(nofityurl);
+        //调用返回
+        setNotify_url(Configure.getNotifyUrl());
 
         //订单生成的机器IP
         setSpbill_create_ip(spBillCreateIP);

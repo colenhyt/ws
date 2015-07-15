@@ -26,20 +26,20 @@ public class DataManager {
     		queue.offer(orderid);
     	}    	
     }
-	public String assignOrderId(){
-		String orderId;
+	public String assignOrderSn(){
+		String orderSn;
 		if (queue.size()>0){
-			orderId = queue.poll();
+			orderSn = queue.poll();
 		}else {
 			genOrderIds();
-			orderId = queue.poll();
+			orderSn = queue.poll();
 		}
-		return orderId;
+		return orderSn;
 	}
 	
     public static void main(String[] args) {
     	DataManager stmgr = DataManager.getInstance();
     	for (int i=0;i<5000;i++)
-    		System.out.println(stmgr.assignOrderId());
+    		System.out.println(stmgr.assignOrderSn());
     }
 }

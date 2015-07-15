@@ -63,6 +63,17 @@ public class EcsGoodsService extends BaseService {
 		return groups.get(0);
 	}
 	
+	public EcsGoods find(int goodsid){
+		EcsGoodsExample example = new EcsGoodsExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(goodsid);
+		List<EcsGoods> goods =  ecsgoodsMapper.selectByExampleWithBLOBs(example);
+		if (goods.size()>0)
+			return goods.get(0);
+		
+		return null;
+	}
+	
 	public List<EcsGoods> goods(short catID){
 		EcsGoodsExample example = new EcsGoodsExample();
 		if (catID>0){

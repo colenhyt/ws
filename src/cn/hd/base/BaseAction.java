@@ -1,10 +1,6 @@
 package cn.hd.base;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -16,8 +12,6 @@ import javax.servlet.jsp.PageContext;
 import net.sf.json.JSONObject;
 
 import org.apache.struts2.ServletActionContext;
-
-import cn.hd.base.Message;
 
 
 /**
@@ -92,7 +86,27 @@ public class BaseAction extends BaseService{
 			e.printStackTrace();
 		}
 	}
-	
+	  public String getIpAddress() { 
+		  HttpServletRequest request = getHttpRequest();
+		    String ip = request.getHeader("x-forwarded-for"); 
+		    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
+		      ip = request.getHeader("Proxy-Client-IP"); 
+		    } 
+		    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
+		      ip = request.getHeader("WL-Proxy-Client-IP"); 
+		    } 
+		    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
+		      ip = request.getHeader("HTTP_CLIENT_IP"); 
+		    } 
+		    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
+		      ip = request.getHeader("HTTP_X_FORWARDED_FOR"); 
+		    } 
+		    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
+		      ip = request.getRemoteAddr(); 
+		    } 
+		    return ip; 
+		  }
+	  
 	public void writeMsg(int code){
 		Message msg = new Message();
 		msg.setCode(code);
