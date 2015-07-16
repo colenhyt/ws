@@ -33,6 +33,9 @@ public class Configure {
 	//微信分配的公众号ID（开通公众号之后可以获取到）
 	private static String appID = "wx14be2d51e8ad9693";
 
+	//微信分配的公众号secret（开通公众号之后可以获取到）
+	private static String appSecret = "e781d90c43531e5ee0ef53b7d20a10c8";
+
 	//微信支付分配的商户号ID（开通公众号的微信支付功能之后可以获取到）
 	private static String mchID = "1245767202";
 
@@ -40,7 +43,7 @@ public class Configure {
 	private static String subMchID = "";
 
 	//HTTPS证书的本地路径
-	private static String certLocalPath = "WEB-INF/cert/apiclient_cert.p12";
+	private static String certLocalPath = "/WEB-INF/cert/apiclient_cert.p12";
 
 	//HTTPS证书密码，默认密码等于商户号MCHID
 	private static String certPassword = "1245767202";
@@ -50,6 +53,12 @@ public class Configure {
 
 	//机器IP
 	private static String ip = "112.74.108.46";
+
+	//用户授权获取access_token:
+	public static String TOKEN_API = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appSecret+"&grant_type=authorization_code";
+
+	//获取用户资料:
+	public static String USERINFO_API = "https://api.weixin.qq.com/sns/userinfo?";
 
 	//以下是几个API的路径：
 	//1）统一下单API
@@ -113,6 +122,14 @@ public class Configure {
 		Configure.certLocalPath = certLocalPath;
 	}
 
+	public static String getAuthTokonAPI(String code){
+		return TOKEN_API+"&code="+code;
+	}
+	
+	public static String getUserInfoAPI(String access_token,String openid){
+		return USERINFO_API+"access_token="+access_token+"&openid="+openid+"&lang=zh_CN";
+	}
+	
 	public static void setCertPassword(String certPassword) {
 		Configure.certPassword = certPassword;
 	}

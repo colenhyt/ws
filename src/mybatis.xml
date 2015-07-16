@@ -49,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="cn/hd/ws/dao/EcsOrderGoodsMapper.xml"/>
 		<mapper resource="cn/hd/ws/dao/EcsUsersMapper.xml"/>
 		<mapper resource="cn/hd/ws/dao/EcsUserAddressMapper.xml"/>
-															    
+		<mapper resource="cn/hd/ws/dao/EcsRegionMapper.xml"/>
+																	    
 																							</mappers>
 </configuration>

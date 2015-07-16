@@ -6,6 +6,8 @@
 <struts>
 	<package name="login" extends="struts-default" namespace="/">
 		<action name="login_*" method="{1}" class="cn.hd.ws.action.LoginAction">
+		    <result  name="index">/index.html</result>
+		    <result  name="group">/group.html</result>
 		</action>
 	</package>
 	    
@@ -18,4 +20,10 @@
 		<action name="order_*" method="{1}" class="cn.hd.ws.action.WsOrderAction">
 		</action>
 	</package>
+	
+		    
+	<package name="weixin" extends="struts-default" namespace="/">
+		<action name="wx_*" method="{1}" class="cn.hd.ws.action.WxAction">
+		</action>
+	</package>	
 </struts>
