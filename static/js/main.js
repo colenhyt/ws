@@ -1,4 +1,5 @@
 var catGoods = {};
+var g_user = null;
 
 function wxpayrequest(){
 
@@ -126,6 +127,53 @@ function queryGroup()
 	var tag = document.getElementById("groupDiv");
 	tag.innerHTML = content;
 	
+	var tag2 = document.getElementById("userinfo");
+	g_user = cfeval(tag2.value);
+		
+	content = ""
+	content += "<select onchange=\"selectRegion(this[selectedIndex].value)\">"
+	for (var i=0;i<data_region.length;i++){
+	 var pro = data_region[i];
+	 content += "<option value='"+pro+"'";
+	 if (g_user.province==pro)
+	  content += " selected";
+	 content += ">"
+	 content += pro+"</option>"
+	}
+	content += "</select>"	
+	
+	content += "&nbsp&nbsp&nbsp"
+	
+	var cities = data_subregion[data_region[0]];
+	if (data_subregion[g_user.province]){
+	 cities = data_subregion[g_user.province];
+	}
+	content += "<select id='region_city'>"
+	for (var i=0;i<cities.length;i++){
+	 content += "<option value='"+cities[i]+"'";
+	 if (g_user.city==cities[i])
+	  content += " selected";
+	 content += ">"
+	 content += cities[i]+"</option>"
+	}
+	content += "</select>"	
+	var tagRegion = document.getElementById("regionDIV");
+	tagRegion.innerHTML = content;
+}
+
+function selectRegion(province){
+	var tagCity = document.getElementById("region_city"); 
+	 while (tagCity.options.length>0)
+    {
+     tagCity.options.remove(tagCity.options.length-1);
+    }
+    var cities = data_subregion[province];
+    for (var i=0;i<cities.length;i++){
+	 var city =cities[i];
+     tagCity.options.add(new Option(city,city));    
+    }
+
+    
 }
 
 function choosePay(index){
