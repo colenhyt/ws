@@ -7,19 +7,17 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 
-import org.slf4j.LoggerFactory;
-
 import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
 import cn.hd.wx.WxUserInfo;
 
 import com.tencent.common.Configure;
 import com.tencent.common.HttpsRequest;
-import com.tencent.common.Log;
 import com.tencent.common.Util;
 
 public class LoginAction extends BaseAction {
-    
+    private String loginUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx14be2d51e8ad9693&redirect_uri=http://www.egonctg.com/ec/login_wxlogincallback.do&response_type=code&scope=snsapi_userinfo&state=aaa#wechat_redirect";
+
 	public String wxlogincallback()
 	{
 		String code = this.getHttpRequest().getParameter("code");
@@ -44,10 +42,14 @@ public class LoginAction extends BaseAction {
 					String openid = jsonobj.getString("openid");
 					url = Configure.getUserInfoAPI(access_token, openid);
 					result = request.sendUrlPost(url);
-					jsonobj = JSONObject.fromObject(result);
-					WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-					Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
-					return "group";
+					if (result.indexOf("nickname")>0){
+						jsonobj = JSONObject.fromObject(result);
+						WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+						getHttpRequest().setAttribute("userinfo", result);
+						Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
+						return "group";						
+					}
+
 				}
 			} catch (UnrecoverableKeyException e) {
 				// TODO Auto-generated catch block
@@ -66,6 +68,7 @@ public class LoginAction extends BaseAction {
 				e.printStackTrace();
 			}
 		}
-		return "index";
+		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东','city':'深圳'}");
+		return "group";
 	}
 }

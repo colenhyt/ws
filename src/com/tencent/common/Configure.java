@@ -54,6 +54,9 @@ public class Configure {
 	//机器IP
 	private static String ip = "112.74.108.46";
 
+	//用户授权请求API:
+	public static String AUTH_API = "https://open.weixin.qq.com/connect/oauth2/authorize?";
+
 	//用户授权获取access_token:
 	public static String TOKEN_API = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appSecret+"&grant_type=authorization_code";
 
@@ -122,6 +125,14 @@ public class Configure {
 		Configure.certLocalPath = certLocalPath;
 	}
 
+	public static String getAuthAPI(String appid,String redirect_uri,int scopeType,String state){
+		String scope = "snsapi_base";
+		if (scopeType!=0)
+			scope = "snsapi_userinfo";
+		
+		return AUTH_API+"appid="+appid+"&redirect_uri="+redirect_uri+"&scope="+scope+"&state="+state+"#wechat_redirect";
+	}
+	
 	public static String getAuthTokonAPI(String code){
 		return TOKEN_API+"&code="+code;
 	}
