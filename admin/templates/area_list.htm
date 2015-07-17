@@ -27,6 +27,7 @@
 {/if}
 
 {if count($city_list)>0 }
+    <form method="post" action="area_manage.php?act=area_update" name="theForm">
     <table cellspacing='1' cellpadding='3' id='citylistTable' style="width:40%;">
         <tr>
             <td><b>城市</b></td>
@@ -35,12 +36,14 @@
         {foreach from=$city_list item=region_city}
         <tr>
             <td>{$region_city.region_name}</td>
-            <td><input type="text" value="{$region_city.freight}"></td>
+            <td><input type="text" style="text-align: center;width:100px" name="area_freight" value="{$region_city.freight}"> 元</td>
         </tr>
         {/foreach}
         </tr>
-        <tr><td colspan="2" style="text-align: right"><input type="button" value="保存"></td> </tr>
+        <tr><td colspan="2" style="text-align: center">
+            <input type="submit" name="submit" class="button" value="更新运费"></td> </tr>
     </table>
+    </form>
 {/if}
 
 <table cellspacing='1' cellpadding='3' id='listTable'>
