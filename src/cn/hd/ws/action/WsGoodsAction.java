@@ -81,7 +81,7 @@ public class WsGoodsAction extends BaseAction {
 	}
 	
 	public String group(){
-		queryWxpay(null);
+//		queryWxpay(null);
 		EcsGoodsActivityWithBLOBs group = ecsGoodsService.activeGroup();
 		JSONObject jsonObject = JSONObject.fromObject(group);
 		write(jsonObject.toString(),"utf-8");

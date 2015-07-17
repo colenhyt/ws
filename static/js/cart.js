@@ -103,12 +103,16 @@ Cart.prototype.doBuy = function(){
  	 dataParam += str+","
  	}
  	dataParam += "]";
- 	var tag = document.getElementById('wxhao');
-  	dataParam += "&wxhao="+tag.value;
+ 	var tag = document.getElementById('userinfo');
+  	dataParam += "&userinfo="+tag.value;
   	tag = document.getElementById('contact');
   	dataParam += "&contact="+tag.value;
   	tag = document.getElementById('phone');
   	dataParam += "&phone="+tag.value;
+  	tag = document.getElementById('region_province');
+  	dataParam += "&province="+tag.value;
+  	tag = document.getElementById('region_city');
+  	dataParam += "&city="+tag.value;
   	tag = document.getElementById('address');
   	dataParam += "&address="+tag.value;
   	tag = document.getElementById('remark');
@@ -116,7 +120,7 @@ Cart.prototype.doBuy = function(){
    	tag = document.getElementById('paytype');
   	dataParam += "&paytype="+tag.value; 	
   	
-	//alert(dataParam);
+	alert(dataParam);
 	try    {
 		$.ajax({type:"post",url:"/ec/order_order.do",data:dataParam,success:function(data){
 		 g_cart.buyCallback(data);

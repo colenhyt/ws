@@ -45,7 +45,7 @@ public class DataOutputer {
 					pname += "市";
 				else
 					pname += "省";
-				out.write(("'"+pname+"',").getBytes());
+				out.write(("["+r.getRegionId()+",'"+pname+"'],").getBytes());
 				System.out.println(pname);
 				
 			    EcsRegionExample example22 = new EcsRegionExample();
@@ -64,7 +64,7 @@ public class DataOutputer {
 				List<EcsRegion> regons = regonsMap.get(pname);
 				for (int i=0;i<regons.size();i++){
 					EcsRegion reg = regons.get(i);
-					out.write(("'"+reg.getRegionName()+"市',").getBytes());
+					out.write(("["+reg.getRegionId()+",'"+reg.getRegionName()+"市'],").getBytes());
 				}
 				
 				out.write(("],\n").getBytes());

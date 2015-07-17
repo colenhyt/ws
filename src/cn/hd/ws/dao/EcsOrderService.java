@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.hd.base.BaseService;
 import cn.hd.ws.action.DataManager;
+import cn.hd.wx.WxUserInfo;
 
 public class EcsOrderService extends BaseService {
 	private EcsOrderInfoMapper ecsOrderInfoMapper;
@@ -76,7 +77,10 @@ public class EcsOrderService extends BaseService {
 	
 	public static void main(String[] args){
 		EcsUserService userService= new EcsUserService();
-		int userid = userService.findUserIdOrAdd("colen黄3334");
+		WxUserInfo userinfo = new WxUserInfo();
+		userinfo.setNickname("aaa");
+		userinfo.setOpenid("1334");
+		int userid = userService.findUserIdOrAdd(userinfo);
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
@@ -91,6 +95,6 @@ public class EcsOrderService extends BaseService {
 		
 		EcsOrderService ecsorderService = new EcsOrderService();
 		boolean ret = false;
-		ret = ecsorderService.add(orderInfo);		
+//		ret = ecsorderService.add(orderInfo);		
 	}
 }

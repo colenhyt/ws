@@ -2,7 +2,6 @@ package cn.hd.ws.action;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -15,6 +14,7 @@ import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsUserService;
 import cn.hd.ws.dao.Wxorder;
+import cn.hd.wx.WxUserInfo;
 
 import com.tencent.business.UnifiedOrderBusiness;
 import com.tencent.business.UnifiedOrderResult;
@@ -97,18 +97,24 @@ public class WsOrderAction extends BaseAction {
 		}
 		
 		//EcsGoods[] goods = (EcsGoods[])items.toArray();
-		String wxhao = this.getHttpRequest().getParameter("wxhao");
+		String userinfo = this.getHttpRequest().getParameter("userinfo");
 		String paytype = this.getHttpRequest().getParameter("paytype");
 		String contact = this.getHttpRequest().getParameter("contact");
 		String phone = this.getHttpRequest().getParameter("phone");
 		String remark = this.getHttpRequest().getParameter("remark");
+		String province = this.getHttpRequest().getParameter("province");
+		String city = this.getHttpRequest().getParameter("city");
 		String address = this.getHttpRequest().getParameter("address");
 		
-		int userId = ecsuserService.findUserIdOrAdd(wxhao);
+		JSONObject jsonobj = JSONObject.fromObject(userinfo);
+		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+		int userId = ecsuserService.findUserIdOrAdd(info);
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
 		orderInfo.setUserId(userId);
+		orderInfo.setProvince(Short.valueOf(province));
+		orderInfo.setCity(Short.valueOf(city));
 		orderInfo.setAddress(address);
 		orderInfo.setGoodsAmount(BigDecimal.valueOf(totalFee));
 		orderInfo.setConsignee(contact);
@@ -134,7 +140,7 @@ public class WsOrderAction extends BaseAction {
 		}
 		JSONObject obj = JSONObject.fromObject(msg);
 		write(obj.toString(),"utf-8");			
-		System.out.println("goods:"+strgoods+";wxhao:"+wxhao+"pay:"+paytype+",address:"+address);
+		System.out.println("goods:"+strgoods+";userinfo:"+userinfo+"pay:"+paytype+",address:"+address);
 		return null;
 	}
 

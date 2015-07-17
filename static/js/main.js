@@ -99,18 +99,6 @@ function queryGroupGoods(catId){
     
 }
 
-function addOrder(){
-	var item = {appid:"appidtestaaa",prepayid:392,goods:"goodsaaa",sign:"sign333",mchid:"mchid",noncestr:"nonceStr"};
-	var dataParam = obj2ParamStr("wxorder",item);
-	//alert(dataParam);
-	try    {
-		$.ajax({type:"post",url:"/ec/order_add.do",data:dataParam,success:function(data){
-		}});
-	}   catch  (e)   {
-	    alert(e.name);
-	}
-}
-
 function queryGroup()
 {
 	var dataobj = $.ajax({type:"post",url:"/ec/goods_group.do",async:false});
@@ -131,30 +119,31 @@ function queryGroup()
 	g_user = cfeval(tag2.value);
 		
 	content = ""
-	content += "<select onchange=\"selectRegion(this[selectedIndex].value)\">"
+	content += "<select id='region_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	for (var i=0;i<data_region.length;i++){
 	 var pro = data_region[i];
-	 content += "<option value='"+pro+"'";
-	 if (g_user.province==pro)
+	 content += "<option value='"+pro[0]+"'";
+	 if (g_user.province==pro[1])
 	  content += " selected";
 	 content += ">"
-	 content += pro+"</option>"
+	 content += pro[1]+"</option>"
 	}
 	content += "</select>"	
 	
 	content += "&nbsp&nbsp&nbsp"
 	
-	var cities = data_subregion[data_region[0]];
+	var cities = data_subregion[data_region[0][1]];
 	if (data_subregion[g_user.province]){
 	 cities = data_subregion[g_user.province];
 	}
 	content += "<select id='region_city'>"
 	for (var i=0;i<cities.length;i++){
-	 content += "<option value='"+cities[i]+"'";
-	 if (g_user.city==cities[i])
+	var city = cities[i];
+	 content += "<option value='"+city[0]+"'";
+	 if (g_user.city==city[1])
 	  content += " selected";
 	 content += ">"
-	 content += cities[i]+"</option>"
+	 content += city[1]+"</option>"
 	}
 	content += "</select>"	
 	var tagRegion = document.getElementById("regionDIV");
@@ -170,7 +159,7 @@ function selectRegion(province){
     var cities = data_subregion[province];
     for (var i=0;i<cities.length;i++){
 	 var city =cities[i];
-     tagCity.options.add(new Option(city,city));    
+     tagCity.options.add(new Option(city[1],city[0]));    
     }
 
     

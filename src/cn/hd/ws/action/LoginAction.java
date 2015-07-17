@@ -70,7 +70,7 @@ public class LoginAction extends BaseAction {
 				e.printStackTrace();
 			}
 		}
-		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东','city':'深圳'}");
+		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东省','city':'深圳市'}");
 		return "group";
 	}
 }
