@@ -36,7 +36,7 @@
         {foreach from=$city_list item=region_city}
         <tr>
             <td>{$region_city.region_name}</td>
-            <td><input type="text" style="text-align: center;width:100px" name="area_freight" value="{$region_city.freight}"> 元</td>
+            <td><input type="text" style="text-align: center;width:100px" name="area_freight[{$region_city.region_id}]" value="{$region_city.freight}"> 元</td>
         </tr>
         {/foreach}
         </tr>

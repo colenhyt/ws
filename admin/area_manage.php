@@ -144,20 +144,21 @@ elseif ($_REQUEST['act'] == 'add_area')
 /*------------------------------------------------------ */
 elseif ($_REQUEST['act'] =='area_update')
 {
-    $id = 3;
-    $area_freight      = intval($_POST['area_freight']);
-    $freight = 10;
-    echo "更新运费成功:".$area_freight;
+    $area_freight      = ($_POST['area_freight']);
 
-    if ($exc->edit("freight = '$freight'", $id))
-    {
-        admin_log($freight, 'edit', 'area');
-        make_json_result(stripslashes($region_name));
+    foreach($area_freight as $id=>$freight){
+        if ($exc->edit("freight = '$freight'", $id))
+        {
+            admin_log($freight, 'edit', 'area');
+        }
+        else
+        {
+            make_json_error($db->error());
+        }
     }
-    else
-    {
-        make_json_error($db->error());
-    }
+
+    echo "城市运费更新成功:".count($area_freight);
+
 }
 /*------------------------------------------------------ */
 //-- 编辑区域名称
