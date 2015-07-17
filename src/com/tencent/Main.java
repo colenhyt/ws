@@ -18,22 +18,21 @@ public class Main {
         try {
 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
-        	String spBillCreateIP = "112.74.108.46";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("goods","123",1,spBillCreateIP);
+        	String spBillCreateIP = "120.196.99.5";
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","1217752501201407033233368018",1,spBillCreateIP);
         	reqdata.setTrade_type("NATIVE");
         	UnifiedOrderResult rst = new UnifiedOrderResult();
-//        	bus.run(reqdata, rst);
+        	bus.run(reqdata, rst);
         	
         	RefundQueryBusiness bus2 = new RefundQueryBusiness();
         	RefundQueryReqData req = new RefundQueryReqData("1","1","1","1","1");
         	RefundQueryResult rr = new RefundQueryResult();
 //        	bus2.run(req, rr);
         	
-        	
         	OrderQueryBusiness bus3 = new OrderQueryBusiness();
         	OrderQueryReqData req2 = new OrderQueryReqData();
         	OrderQueryResult rr2 = new OrderQueryResult();
-        	bus3.run(req2, rr2);        	
+//        	bus3.run(req2, rr2);        	
 //        	String result = "{'privilege':['a','b','daa']}";
 //        	JSONObject jsonobj = JSONObject.fromObject(result);
 //        	WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);

@@ -22,7 +22,7 @@ public class UnifiedOrderReqData {
     //每个字段具体的意思请查看API文档
     private String appid = "";
     private String attach = null;
-    private String sdk_version = "";
+    private String sdk_version = null;
 	private String body = null;
     private String mch_id = null;
     private String nonce_str = null;
@@ -33,12 +33,30 @@ public class UnifiedOrderReqData {
     private int total_fee = 0;
     private String trade_type = "";
     private String sign = "";
-    private String product_id = "";
-	private String time_start = "";
-    private String time_expire = "";
-    private String goods_tag = "";
+    private String product_id = null;
+	private String time_start = null;
+    private String time_expire = null;
+    private String goods_tag = null;
+    private String device_info = null;
+    private String fee_type = null;
     
-    public String getSdk_version() {
+    public String getFee_type() {
+		return fee_type;
+	}
+
+	public void setFee_type(String fee_type) {
+		this.fee_type = fee_type;
+	}
+
+	public String getDevice_info() {
+		return device_info;
+	}
+
+	public void setDevice_info(String device_info) {
+		this.device_info = device_info;
+	}
+
+	public String getSdk_version() {
 		return sdk_version;
 	}
 
@@ -108,14 +126,11 @@ public class UnifiedOrderReqData {
      */
     public UnifiedOrderReqData(String body,String outTradeNo,int totalFee,String spBillCreateIP){
 
-    	setAttach("goods");
-    	
         //微信分配的公众号ID（开通公众号之后可以获取到）
         setAppid(Configure.getAppid());
 
         //微信支付分配的商户号ID（开通公众号的微信支付功能之后可以获取到）
         setMch_id(Configure.getMchid());
-
 
         //要支付的商品的描述信息，用户会在支付成功页面里看到这个信息
         setBody(body);
@@ -136,7 +151,7 @@ public class UnifiedOrderReqData {
         setSpbill_create_ip(spBillCreateIP);
 
         //随机字符串，不长于32 位
-        setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
+        setNonce_str("ilkodor5bxdzudflvamf0jz0kcbcsklk");
 
         //根据API给的签名规则进行签名
         String sign = Signature.getSign(toMap());

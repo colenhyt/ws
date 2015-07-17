@@ -33,7 +33,7 @@ public class OrderQueryBusiness {
         //API返回ReturnCode不合法，支付请求逻辑错误，请仔细检测传过去的每一个参数是否合法，或是看API能否被正常访问
         void onFailByReturnCodeError(OrderQueryResData unifiedOrderResData);
 
-        //API返回ReturnCode为FAIL，支付API系统返回失败，请检测Post给API的数据是否规范合法
+        //API返回ReturnCode为FAIL，单据查询API系统返回失败，请检测Post给API的数据是否规范合法
         void onFailByReturnCodeFail(OrderQueryResData unifiedOrderResData);
 
         void onSuccess(OrderQueryResData unifiedOrderResData);
@@ -74,7 +74,7 @@ public class OrderQueryBusiness {
     public void run(OrderQueryReqData unifiedOrderReqData, ResultListener resultListener) throws Exception {
 
         //--------------------------------------------------------------------
-        //构造请求“被扫支付API”所需要提交的数据
+        //构造请求“被扫单据查询API”所需要提交的数据
         //--------------------------------------------------------------------
 
         //接受API返回
@@ -101,15 +101,14 @@ public class OrderQueryBusiness {
 
         if (unifiedOrderResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
-            log.e("【统一接口调用失败】支付API系统返回失败，请检测Post给API的数据是否规范合法");
+            log.e("【单据查询接口调用失败】单据查询API系统返回失败，请检测Post给API的数据是否规范合法");
             resultListener.onFailByReturnCodeFail(unifiedOrderResData);
             return;
         } else {
-            log.i("支付API系统成功返回数据");
+            log.i("单据查询API系统成功返回数据");
             
             if (!Signature.checkIsSignValidFromResponseString(payServiceResponseString)) {
                 setResult("Case3:单据查询API返回的数据签名验证失败，有可能数据被篡改了",Log.LOG_TYPE_ERROR);
-//                resultListener.onFailBySignInvalid(unifiedOrderResData);
                 return;
             }
             

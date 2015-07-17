@@ -30,10 +30,10 @@ public class UnifiedOrderBusiness {
 
     public interface ResultListener {
 
-        //API返回ReturnCode不合法，支付请求逻辑错误，请仔细检测传过去的每一个参数是否合法，或是看API能否被正常访问
+        //API返回ReturnCode不合法，统一下单请求逻辑错误，请仔细检测传过去的每一个参数是否合法，或是看API能否被正常访问
         void onFailByReturnCodeError(UnifiedOrderResData unifiedOrderResData);
 
-        //API返回ReturnCode为FAIL，支付API系统返回失败，请检测Post给API的数据是否规范合法
+        //API返回ReturnCode为FAIL，统一下单API系统返回失败，请检测Post给API的数据是否规范合法
         void onFailByReturnCodeFail(UnifiedOrderResData unifiedOrderResData);
 
         void onSuccess(UnifiedOrderResData unifiedOrderResData);
@@ -45,12 +45,15 @@ public class UnifiedOrderBusiness {
     //打log用
     private static Log log = new Log(LoggerFactory.getLogger(UnifiedOrderBusiness.class));
 
-    //每次调用订单查询API时的等待时间，因为当出现支付失败的时候，如果马上发起查询不一定就能查到结果，所以这里建议先等待一定时间再发起查询
+    //每次调用订单查询API时的等待时间，因为当出现统一下单失败的时候，如果马上发起查询不一定就能查到结果，所以这里建议先等待一定时间再发起查询
 
     private int waitingTimeBeforePayQueryServiceInvoked = 5000;
 
     //循环调用订单查询API的次数
     private int payQueryLoopInvokedCount = 3;
+
+    //执行结果
+    private static String result = "";
 
     //每次调用撤销API的等待时间
     private int waitingTimeBeforeReverseServiceInvoked = 5000;
@@ -65,13 +68,13 @@ public class UnifiedOrderBusiness {
      * 统一下单业务逻辑（包含最佳实践流程）
      *
      * @param unifiedOrderReqData 这个数据对象里面包含了API要求提交的各种数据字段
-     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws Exception
      */
     public void run(UnifiedOrderReqData unifiedOrderReqData, ResultListener resultListener) throws Exception {
 
         //--------------------------------------------------------------------
-        //构造请求“被扫支付API”所需要提交的数据
+        //构造请求“被扫统一下单API”所需要提交的数据
         //--------------------------------------------------------------------
 
         //接受API返回
@@ -98,12 +101,17 @@ public class UnifiedOrderBusiness {
 
         if (unifiedOrderResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
-            log.e("【统一接口调用失败】支付API系统返回失败，请检测Post给API的数据是否规范合法");
+            log.e("【统一接口调用失败】统一下单API系统返回失败，请检测Post给API的数据是否规范合法");
             resultListener.onFailByReturnCodeFail(unifiedOrderResData);
             return;
         } else {
-            log.i("支付API系统成功返回数据");
-
+            log.i("统一下单API系统成功返回数据");
+            
+            if (!Signature.checkIsSignValidFromResponseString(payServiceResponseString)) {
+                setResult("Case3:单据查询API返回的数据签名验证失败，有可能数据被篡改了",Log.LOG_TYPE_ERROR);
+                return;
+            }
+            
             //获取错误码
             String errorCode = unifiedOrderResData.getErr_code();
             //获取错误描述
@@ -131,11 +139,11 @@ public class UnifiedOrderBusiness {
     }
 
     /**
-     * 进行一次支付订单查询操作
+     * 进行一次统一下单订单查询操作
      *
      * @param outTradeNo    商户系统内部的订单号,32个字符内可包含字母, [确保在商户系统唯一]
-     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
-     * @return 该订单是否支付成功
+     * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @return 该订单是否统一下单成功
      * @throws Exception
      */
     private boolean doOnePayQuery(String outTradeNo,ResultListener resultListener) throws Exception {
@@ -147,30 +155,30 @@ public class UnifiedOrderBusiness {
         ScanPayQueryReqData unifiedOrderQueryReqData = new ScanPayQueryReqData("",outTradeNo);
         payQueryServiceResponseString = unifiedOrderQueryService.request(unifiedOrderQueryReqData);
 
-        log.i("支付订单查询API返回的数据如下：");
+        log.i("统一下单订单查询API返回的数据如下：");
         log.i(payQueryServiceResponseString);
 
         //将从API返回的XML数据映射到Java对象
         ScanPayQueryResData unifiedOrderQueryResData = (ScanPayQueryResData) Util.getObjectFromXML(payQueryServiceResponseString, ScanPayQueryResData.class);
         if (unifiedOrderQueryResData == null || unifiedOrderQueryResData.getReturn_code() == null) {
-            log.i("支付订单查询请求逻辑错误，请仔细检测传过去的每一个参数是否合法");
+            log.i("统一下单订单查询请求逻辑错误，请仔细检测传过去的每一个参数是否合法");
             return false;
         }
 
         if (unifiedOrderQueryResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
-            log.i("支付订单查询API系统返回失败，失败信息为：" + unifiedOrderQueryResData.getReturn_msg());
+            log.i("统一下单订单查询API系统返回失败，失败信息为：" + unifiedOrderQueryResData.getReturn_msg());
             return false;
         } else {
 
             if (unifiedOrderQueryResData.getResult_code().equals("SUCCESS")) {//业务层成功
                 if (unifiedOrderQueryResData.getTrade_state().equals("SUCCESS")) {
-                    //表示查单结果为“支付成功”
-                    log.i("查询到订单支付成功");
+                    //表示查单结果为“统一下单成功”
+                    log.i("查询到订单统一下单成功");
                     return true;
                 } else {
-                    //支付不成功
-                    log.i("查询到订单支付不成功");
+                    //统一下单不成功
+                    log.i("查询到订单统一下单不成功");
                     return false;
                 }
             } else {
@@ -186,8 +194,8 @@ public class UnifiedOrderBusiness {
      *
      * @param loopCount     循环次数，至少一次
      * @param outTradeNo    商户系统内部的订单号,32个字符内可包含字母, [确保在商户系统唯一]
-     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
-     * @return 该订单是否支付成功
+     * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @return 该订单是否统一下单成功
      * @throws InterruptedException
      */
     private boolean doPayQueryLoop(int loopCount, String outTradeNo,ResultListener resultListener) throws Exception {
@@ -211,8 +219,8 @@ public class UnifiedOrderBusiness {
      * 进行一次撤销操作
      *
      * @param outTradeNo    商户系统内部的订单号,32个字符内可包含字母, [确保在商户系统唯一]
-     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
-     * @return 该订单是否支付成功
+     * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @return 该订单是否统一下单成功
      * @throws Exception
      */
     private boolean doOneReverse(String outTradeNo,ResultListener resultListener) throws Exception {
@@ -229,12 +237,12 @@ public class UnifiedOrderBusiness {
         //将从API返回的XML数据映射到Java对象
         ReverseResData reverseResData = (ReverseResData) Util.getObjectFromXML(reverseResponseString, ReverseResData.class);
         if (reverseResData == null) {
-            log.i("支付订单撤销请求逻辑错误，请仔细检测传过去的每一个参数是否合法");
+            log.i("统一下单订单撤销请求逻辑错误，请仔细检测传过去的每一个参数是否合法");
             return false;
         }
         if (reverseResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
-            log.i("支付订单撤销API系统返回失败，失败信息为：" + reverseResData.getReturn_msg());
+            log.i("统一下单订单撤销API系统返回失败，失败信息为：" + reverseResData.getReturn_msg());
             return false;
         } else {
 
@@ -251,7 +259,7 @@ public class UnifiedOrderBusiness {
                 }
             } else {
                 //查询成功，打印交易状态
-                log.i("支付订单撤销成功");
+                log.i("统一下单订单撤销成功");
                 return true;
             }
         }
@@ -262,7 +270,7 @@ public class UnifiedOrderBusiness {
      * 由于有的时候是因为服务延时，所以需要商户每隔一段时间（建议5秒）后再进行查询操作，是否需要继续循环调用撤销API由撤销API回包里面的recall字段决定。
      *
      * @param outTradeNo    商户系统内部的订单号,32个字符内可包含字母, [确保在商户系统唯一]
-     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws InterruptedException
      */
     private void doReverseLoop(String outTradeNo,ResultListener resultListener) throws Exception {
@@ -315,4 +323,16 @@ public class UnifiedOrderBusiness {
         reverseService = service;
     }
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        UnifiedOrderBusiness.result = result;
+    }
+    
+    public void setResult(String result,String type){
+        setResult(result);
+        log.log(type,result);
+    }
 }
