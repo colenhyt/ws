@@ -80,6 +80,12 @@ if ($_REQUEST['act'] == 'list')
     {
         $action_link = '';
     }
+
+    $citylist = get_province_cities($region_id);
+    echo "fdafdaf".count($citylist);
+
+    $smarty->assign('city_list',  $citylist);
+
     $smarty->assign('action_link',  $action_link);
 
     /* 赋值模板显示 */
@@ -224,6 +230,19 @@ elseif ($_REQUEST['act'] == 'drop_area')
     }
 }
 
+
+function get_province_cities($parent_id)
+{
+    $sql = "SELECT a.region_id,a.region_name,b.region_name as parent_name,a.freight FROM " .$GLOBALS['ecs']->table('region'). " a," .$GLOBALS['ecs']->table('region')." b WHERE a.region_type=2 and a.parent_id=b.region_id and a.parent_id=".$parent_id;
+    $res = $GLOBALS['db']->getAll($sql);
+    $arr = array();
+    foreach ($res AS $key => $val)
+    {
+        $arr[] = $val;
+
+    }
+    return $arr;
+}
 
 function new_region_id($region_id)
 {

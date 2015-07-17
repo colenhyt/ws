@@ -26,6 +26,23 @@
 <div class="list-div" id="listDiv">
 {/if}
 
+{if count($city_list)>0 }
+    <table cellspacing='1' cellpadding='3' id='citylistTable' style="width:40%;">
+        <tr>
+            <td><b>城市</b></td>
+            <td><b>运费</b></td>
+        </tr>
+        {foreach from=$city_list item=region_city}
+        <tr>
+            <td>{$region_city.region_name}</td>
+            <td><input type="text" value="{$region_city.freight}"></td>
+        </tr>
+        {/foreach}
+        </tr>
+        <tr><td colspan="2" style="text-align: right"><input type="button" value="保存"></td> </tr>
+    </table>
+{/if}
+
 <table cellspacing='1' cellpadding='3' id='listTable'>
   <tr>
     {foreach from=$region_arr item=list name=area_name}
@@ -45,6 +62,7 @@
     {/foreach}
   </tr>
 </table>
+
 
 {if $full_page}
 </div>
