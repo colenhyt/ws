@@ -1,5 +1,9 @@
 package com.tencent;
 
+import net.sf.json.JSONObject;
+import cn.hd.wx.WxUserInfo;
+
+import com.alibaba.fastjson.JSON;
 import com.tencent.business.OrderQueryBusiness;
 import com.tencent.business.OrderQueryResult;
 import com.tencent.business.RefundQueryBusiness;
@@ -22,7 +26,7 @@ public class Main {
         	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","1217752501201407033233368018",1,spBillCreateIP);
         	reqdata.setTrade_type("NATIVE");
         	UnifiedOrderResult rst = new UnifiedOrderResult();
-        	bus.run(reqdata, rst);
+//        	bus.run(reqdata, rst);
         	
         	RefundQueryBusiness bus2 = new RefundQueryBusiness();
         	RefundQueryReqData req = new RefundQueryReqData("1","1","1","1","1");
@@ -33,10 +37,13 @@ public class Main {
         	OrderQueryReqData req2 = new OrderQueryReqData();
         	OrderQueryResult rr2 = new OrderQueryResult();
 //        	bus3.run(req2, rr2);        	
+        	
 //        	String result = "{'privilege':['a','b','daa']}";
 //        	JSONObject jsonobj = JSONObject.fromObject(result);
 //        	WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-//        	System.out.println(info.getPrivilege().length);
+//        	info.setAddress("fdfda");
+//        	String jsonstr = JSON.toJSONString(info);
+//        	System.out.println(jsonstr);
         } catch (Exception e){
             Util.log(e.getMessage());
         }

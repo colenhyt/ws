@@ -119,7 +119,7 @@ function queryGroup()
 	g_user = cfeval(tag2.value);
 		
 	content = ""
-	content += "<select id='region_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
+	content += "<select id='region_province' class='ws_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	for (var i=0;i<data_region.length;i++){
 	 var pro = data_region[i];
 	 content += "<option value='"+pro[0]+"'";
@@ -136,7 +136,7 @@ function queryGroup()
 	if (data_subregion[g_user.province]){
 	 cities = data_subregion[g_user.province];
 	}
-	content += "<select id='region_city'>"
+	content += "<select id='region_city' class='ws_province'>"
 	for (var i=0;i<cities.length;i++){
 	var city = cities[i];
 	 content += "<option value='"+city[0]+"'";
@@ -148,6 +148,24 @@ function queryGroup()
 	content += "</select>"	
 	var tagRegion = document.getElementById("regionDIV");
 	tagRegion.innerHTML = content;
+	
+	//contact:
+	if (g_user.nickname!=null){
+	 var tag = document.getElementById("wxhao");
+	 tag.value = g_user.nickname;
+	}
+	if (g_user.contact!=null){
+	 var tag = document.getElementById("contact");
+	 tag.value = g_user.contact;
+	}
+	if (g_user.mobile!=null){
+	 var tag = document.getElementById("phone");
+	 tag.value = g_user.mobile;
+	}		
+	if (g_user.address!=null){
+	 var tag = document.getElementById("address");
+	 tag.value = g_user.address;
+	}
 }
 
 function selectRegion(province){

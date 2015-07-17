@@ -125,6 +125,9 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
 		
+		//校验地址，如果是新地址，进行新增;
+		ecsuserService.validAddress(orderInfo);
+		
 		boolean ret = false;
 		ret = ecsorderService.add(orderInfo);
 		if (ret){
