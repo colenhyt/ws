@@ -46,8 +46,10 @@ public class LoginAction extends BaseAction {
 						jsonobj = JSONObject.fromObject(result);
 						WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
 						getHttpRequest().setAttribute("userinfo", result);
+						WsGoodsAction goods =new WsGoodsAction();
+						goods.queryWxpay(info.getOpenid());
 						Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
-						return "group";						
+						return null;						
 					}
 
 				}

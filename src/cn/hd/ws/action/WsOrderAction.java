@@ -56,7 +56,7 @@ public class WsOrderAction extends BaseAction {
 	
 	private void queryWxpay(Wxorder order){
     	UnifiedOrderBusiness bus = null;
-    	InputStream in = getHttpSession().getServletContext().getResourceAsStream("/WEB-INF/cert/apiclient_cert.p12");
+    	InputStream in = getHttpSession().getServletContext().getResourceAsStream(Configure.getCertLocalPath());
     	Configure.setIn(in);
 		try {
 			bus = new UnifiedOrderBusiness();

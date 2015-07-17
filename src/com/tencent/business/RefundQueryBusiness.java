@@ -94,29 +94,29 @@ public class RefundQueryBusiness {
         //将从API返回的XML数据映射到Java对象
         RefundQueryResData refundQueryResData = (RefundQueryResData) Util.getObjectFromXML(refundQueryServiceResponseString, RefundQueryResData.class);
 
-        ReportReqData reportReqData = new ReportReqData(
-                refundQueryReqData.getDevice_info(),
-                Configure.REFUND_QUERY_API,
-                (int) (totalTimeCost),//本次请求耗时
-                refundQueryResData.getReturn_code(),
-                refundQueryResData.getReturn_msg(),
-                refundQueryResData.getResult_code(),
-                refundQueryResData.getErr_code(),
-                refundQueryResData.getErr_code_des(),
-                refundQueryResData.getOut_trade_no(),
-                Configure.getIP()
-        );
-
-        long timeAfterReport;
-        if(Configure.isUseThreadToDoReport()){
-            ReporterFactory.getReporter(reportReqData).run();
-            timeAfterReport = System.currentTimeMillis();
-            Util.log("pay+report总耗时（异步方式上报）："+(timeAfterReport-costTimeStart) + "ms");
-        }else{
-            ReportService.request(reportReqData);
-            timeAfterReport = System.currentTimeMillis();
-            Util.log("pay+report总耗时（同步方式上报）："+(timeAfterReport-costTimeStart) + "ms");
-        }
+//        ReportReqData reportReqData = new ReportReqData(
+//                refundQueryReqData.getDevice_info(),
+//                Configure.REFUND_QUERY_API,
+//                (int) (totalTimeCost),//本次请求耗时
+//                refundQueryResData.getReturn_code(),
+//                refundQueryResData.getReturn_msg(),
+//                refundQueryResData.getResult_code(),
+//                refundQueryResData.getErr_code(),
+//                refundQueryResData.getErr_code_des(),
+//                refundQueryResData.getOut_trade_no(),
+//                Configure.getIP()
+//        );
+//
+//        long timeAfterReport;
+//        if(Configure.isUseThreadToDoReport()){
+//            ReporterFactory.getReporter(reportReqData).run();
+//            timeAfterReport = System.currentTimeMillis();
+//            Util.log("pay+report总耗时（异步方式上报）："+(timeAfterReport-costTimeStart) + "ms");
+//        }else{
+//            ReportService.request(reportReqData);
+//            timeAfterReport = System.currentTimeMillis();
+//            Util.log("pay+report总耗时（同步方式上报）："+(timeAfterReport-costTimeStart) + "ms");
+//        }
 
 
         if (refundQueryResData == null || refundQueryResData.getReturn_code() == null) {

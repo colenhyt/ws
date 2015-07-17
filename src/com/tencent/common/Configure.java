@@ -26,7 +26,7 @@ public class Configure {
 		Configure.in = in;
 	}
 
-	private static String notifyUrl = "http://egonctg.com/ws/payment/";
+	private static String notifyUrl = "http://egonctg.com/ec/";
 
 	private static String key = "1977carson24075043841976jidofdaf";
 
@@ -43,7 +43,7 @@ public class Configure {
 	private static String subMchID = "";
 
 	//HTTPS证书的本地路径
-	private static String certLocalPath = "/WEB-INF/cert/apiclient_cert.p12";
+	private static String certLocalPath = "WEB-INF/cert/apiclient_cert.p12";
 
 	//HTTPS证书密码，默认密码等于商户号MCHID
 	private static String certPassword = "1245767202";
@@ -67,6 +67,9 @@ public class Configure {
 	//1）统一下单API
 	public static String UNIFIEDORDER_API = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
+	//单据查询
+	public static String ORDERQUERY_API = "https://api.mch.weixin.qq.com/pay/orderquery";
+	
 	//1）被扫支付API
 	public static String PAY_API = "https://api.mch.weixin.qq.com/pay/micropay";
 
