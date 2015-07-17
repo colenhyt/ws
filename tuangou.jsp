@@ -52,9 +52,6 @@
        <tr onclick='choosePay(0)'><td>
        <input name="paytype" id="paytype" type="radio" checked="true" value=2 class='rr'> 微信支付
        </td></tr>
-       <tr onclick='choosePay(1)'><td>
-       <input name="paytype" id="paytype" type="radio" value=1 class='rr'> 货到付款
-       </td></tr>
        </table>
        </div>
        <div>收货人姓名*:<br><input name="contact" id="contact" type="text" value=""></div>
