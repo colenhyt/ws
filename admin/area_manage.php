@@ -82,9 +82,10 @@ if ($_REQUEST['act'] == 'list')
     }
 
     $citylist = get_province_cities($region_id);
-    echo "fdafdaf".count($citylist);
 
     $smarty->assign('city_list',  $citylist);
+
+    $smarty->assign('region_id',  $region_id);
 
     $smarty->assign('action_link',  $action_link);
 
@@ -157,7 +158,8 @@ elseif ($_REQUEST['act'] =='area_update')
         }
     }
 
-    echo "城市运费更新成功:".count($area_freight);
+    $link[] = array('href' => 'area_manage.php?act=list&pid='.$_POST['region_id'], 'text' => '区域管理');
+    sys_msg("城市运费更新成功", 0, $link);
 
 }
 /*------------------------------------------------------ */
