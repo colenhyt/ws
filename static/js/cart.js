@@ -159,7 +159,8 @@ Cart.prototype.buyCallback = function(data){
  var rets = cfeval(ret.desc);
   var info = rets[0];
   var req = rets[1];
-  content = '支付申请成功,订单号('+info.ordersn+"),向发起支付....";
+  content = '支付申请成功,订单号('+info.orderSn+"),向发起支付....";
+  g_wx.chooseWxpay(req);
  }else {
   content = "购买失败:"
   content += ERR_MSG[ret.code];

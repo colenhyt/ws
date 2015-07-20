@@ -14,6 +14,7 @@ public class JSChooseWXPayReqData {
 	private String nonceStr = null;
 	private String prepay_id = null;
 	private String signType = "SHA1";
+	private String sign = "";
 	
 	public String getTimestamp() {
 		return timestamp;
@@ -98,7 +99,6 @@ public class JSChooseWXPayReqData {
 	    }
 	    return map;
 	}
-	private String sign = "";
 	
 	
 }

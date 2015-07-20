@@ -122,9 +122,9 @@ function queryGroup()
 	}	
 	
 	var tag3 = document.getElementById("wxconfig");
-	var wxconfig = cfeval(tag3.value);
-	if (wxconfig!=null){
-	 g_wx.init(wxconfig);
+	g_wxconfig = cfeval(tag3.value);
+	if (g_wxconfig!=null){
+	  g_wx.init();
 	}
 		
 	content = ""

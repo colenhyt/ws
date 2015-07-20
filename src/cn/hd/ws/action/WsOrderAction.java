@@ -110,13 +110,13 @@ public class WsOrderAction extends BaseAction {
 			return null;			
 		}
 		
+		float totalFee = 0;
 		String strgoods = this.getHttpRequest().getParameter("goods");
 		if (strgoods==null){
 			writeMsg(RetMsg.MSG_NoAnyGoods);	
 			return null;			
 		}
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
-		float totalFee = 0;
 		String nogoods = null;
 		EcsGoodsService  goodsService = new EcsGoodsService();
 		for (int i=0;i<items.size();i++){
@@ -176,11 +176,11 @@ public class WsOrderAction extends BaseAction {
 		
 		//向微信申请prepay_id:
 		ret = queryWxpay(orderInfo);
-		if (ret==false)	{//统一下单请求失败:
+		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
 			orderInfo.setOrderStatus(false);
 			ecsorderService.add(orderInfo);
 			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
-			Util.log("统一下单申请失败");
+			Util.log("统一下单申请prepay_id失败");
 			return null;
 		}
 		

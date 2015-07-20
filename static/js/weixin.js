@@ -1,12 +1,14 @@
+var g_wxconfig = null;
 
 WxCaller = function(){
 }
 
-WxCaller.prototype.init = function(cfg){
+WxCaller.prototype.init = function(){
+ var cfg = g_wxconfig;
 //	var dataobj = $.ajax({type:"post",url:"/ec/login_wxjsinit.do",async:false});
 //	var cfg = cfeval(dataobj.responseText);
 	if (cfg.appid.length>0){
-	 alert('wx.config init 完成');
+	 //alert('wx.config init 完成');
 	}
   /*
    * 注意：
@@ -23,8 +25,8 @@ WxCaller.prototype.init = function(cfg){
       debug: true,
       appId: cfg.appid,
       timestamp: cfg.timestamp,
-      nonceStr: timestamp.nonceStr,
-      signature: timestamp.sign,
+      nonceStr: cfg.nonceStr,
+      signature: cfg.sign,
       jsApiList: [
         'checkJsApi',
         'onMenuShareTimeline',
@@ -75,8 +77,33 @@ WxCaller.prototype.init = function(cfg){
  * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
  */
  wx.ready(function () {
-   alert('回调');
+  // alert('ready回调');
   });
+  
+  wx.error(function(res){
+   alert('失败回调'+res);
+  });
+}
+
+WxCaller.prototype.chooseWxpay = function(jsonReq){
+alert('发起支付'+jsonReq.prepay_id);
+wx.chooseWXPay({
+    timestamp: jsonReq.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+    nonceStr: jsonReq.nonceStr, // 支付签名随机串，不长于 32 位
+    package: jsonReq.prepay_id, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+    signType: jsonReq.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+    paySign: jsonReq.sign, // 支付签名
+    success: function (res) {
+        // 支付成功后的回调函数
+    },
+    error: function (res) {
+       alert('错误aaa');
+    },  
+    fail: function (res) {
+       alert('fail aaa');
+    },      
+});
+  
 }
 
 var g_wx = new WxCaller();
