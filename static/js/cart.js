@@ -113,13 +113,17 @@ var currCount = parseInt(tag.value);
 
 Cart.prototype.doBuy = function(){
  
- 	var dataParam = "goods=[";
+ 	var dataParam = "";
+ 	
+ 	//goods items:
+ 	dataParam += "goods=[";
  	for (var i=0;i<this.data.length;i++){
  	 var item = this.data[i];
  	 var str = json2str(item);
  	 dataParam += str+","
  	}
  	dataParam += "]";
+ 	
  	var tag = document.getElementById('userinfo');
  	if (tag.value.length>0)
   	 dataParam += "&userinfo="+tag.value;
@@ -151,19 +155,21 @@ Cart.prototype.doBuy = function(){
 Cart.prototype.buyCallback = function(data){
  var ret = cfeval(data);
  var content;
- alert(ret.desc);
- var rets = cfeval(ret.desc);
  if (ret.code==0){
+ var rets = cfeval(ret.desc);
   var info = rets[0];
   var req = rets[1];
-  content = '获得prepay_id,发起支付,订单号:'+info.ordersn;
+  content = '支付申请成功,订单号('+info.ordersn+"),向发起支付....";
  }else {
-  content = "微信支付申请失败,errcode:"+info.errorcodemsg;
+  content = "购买失败:"
+  content += ERR_MSG[ret.code];
+  if (ret.desc.length>0){
+   content += ","+ret.desc;
+  }
  }
  var tag = document.getElementById(this.pagename);
  tag.innerHTML = content;  
  
- // $('#'+g_cart.tagname).modal('hide');  
 }
 
 

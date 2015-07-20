@@ -1,11 +1,13 @@
 
-var WXAPI_GET_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
-
-Cart = function(){
+WxCaller = function(){
 }
 
-Cart.prototype.init = function(){
-
+WxCaller.prototype.init = function(cfg){
+//	var dataobj = $.ajax({type:"post",url:"/ec/login_wxjsinit.do",async:false});
+//	var cfg = cfeval(dataobj.responseText);
+	if (cfg.appid.length>0){
+	 alert('wx.config init 完成');
+	}
   /*
    * 注意：
    * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
@@ -19,10 +21,10 @@ Cart.prototype.init = function(){
    */
   wx.config({
       debug: true,
-      appId: 'wxf8b4f85f3a794e77',
-      timestamp: 1437360914,
-      nonceStr: 'Jz24bYGgwU5G7Jz0',
-      signature: '7c8d3f4f7f5d4f811805713ccccd5901efd5748c',
+      appId: cfg.appid,
+      timestamp: cfg.timestamp,
+      nonceStr: timestamp.nonceStr,
+      signature: timestamp.sign,
       jsApiList: [
         'checkJsApi',
         'onMenuShareTimeline',
@@ -72,9 +74,12 @@ Cart.prototype.init = function(){
  * 邮件主题：【微信JS-SDK反馈】具体问题
  * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
  */
-wx.ready(function () {
+ wx.ready(function () {
+   alert('回调');
+  });
 }
-}
+
+var g_wx = new WxCaller();
 
 // 部分来自网络，不保证全部有用
 // 购买和收获地址为OK

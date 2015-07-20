@@ -120,6 +120,13 @@ function queryGroup()
 	if (g_user==null){
 	 g_user = {};
 	}	
+	
+	var tag3 = document.getElementById("wxconfig");
+	var wxconfig = cfeval(tag3.value);
+	if (wxconfig!=null){
+	 g_wx.init(wxconfig);
+	}
+		
 	content = ""
 	content += "<select id='region_province' class='ws_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	for (var i=0;i<data_region.length;i++){

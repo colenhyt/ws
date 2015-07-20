@@ -116,8 +116,11 @@ public class EcsUserService extends BaseService {
 			else
 				record.setSex(false);
 //			record.setSex(userInfo.);
-			add(record);
-			return record.getUserId();
+			boolean added = add(record);
+			if (added)
+			 return record.getUserId();
+			else
+			 return -1;
 		}
 			
 	}

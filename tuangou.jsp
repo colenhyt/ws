@@ -2,6 +2,8 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%> 
 <%
  String userinfo = (String)request.getAttribute("userinfo");
+ userinfo = "{openid:123}";
+ String wxconfig = (String)request.getAttribute("wxconfig");
 %>
 <html>
 	<head>
@@ -20,11 +22,15 @@
 <body>
 <div id='groupDiv'>
 </div>
+	   <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>        
         <script type="text/javascript" src="static/js/util.js"></script>
+       <script type="text/javascript" src="static/js/config.js"></script>
        <script type="text/javascript" src="static/js/htmlutil.js"></script>
        <script type="text/javascript" src="static/js/cart.js"></script>
+       <script type="text/javascript" src="static/js/weixin.js"></script>
         <script type="text/javascript" src="static/js/region.js"></script>
         <input type='hidden' id='userinfo' value="<%=userinfo%>"/>
+        <input type='hidden' id='wxconfig' value="<%=wxconfig%>"/>
 <nav class="menu" data-toggle="menu" style="width: 100%">
   <ul class="nav nav-primary"  id="catDiv">
     <li>

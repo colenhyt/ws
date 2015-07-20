@@ -5,6 +5,8 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 
+import net.sf.json.JSONObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -117,18 +119,32 @@ public class HttpsRequest implements IServiceRequest{
      * @throws KeyManagementException
      */
 
-    public String sendUrlPost(String url) throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
+    public JSONObject sendUrlPost(String url) {
 
         if (!hasInit) {
-            init();
+            try {
+				init();
+			} catch (UnrecoverableKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyManagementException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
 
-        String result = null;
+        JSONObject jsonobj = new JSONObject();;
 
         HttpPost httpPost = new HttpPost(url);
-
-        //解决XStream对出现双下划线的bug
-        XStream xStreamForRequestPostData = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
 
         //设置请求器的配置
         httpPost.setConfig(requestConfig);
@@ -140,7 +156,9 @@ public class HttpsRequest implements IServiceRequest{
 
             HttpEntity entity = response.getEntity();
 
-            result = EntityUtils.toString(entity, "UTF-8");
+            String result  = EntityUtils.toString(entity, "UTF-8");
+            
+            jsonobj = JSONObject.fromObject(result);
 
         } catch (ConnectionPoolTimeoutException e) {
             log.e("http get throw ConnectionPoolTimeoutException(wait time out)");
@@ -158,7 +176,7 @@ public class HttpsRequest implements IServiceRequest{
             httpPost.abort();
         }
 
-        return result;
+        return jsonobj;
     }
 
     /**

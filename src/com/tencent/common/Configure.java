@@ -64,11 +64,17 @@ public class Configure {
 	//机器IP
 	private static String ip = "112.74.108.46";
 
+	//js token api:
+	public static String JS_TOKEN_API = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appID+"&secret="+appSecret;
+	
+	//js ticket api:
+	public static String JS_TICHKET_API = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?";
+
 	//用户授权请求API:
 	public static String AUTH_API = "https://open.weixin.qq.com/connect/oauth2/authorize?";
 
 	//用户授权获取access_token:
-	public static String TOKEN_API = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appSecret+"&grant_type=authorization_code";
+	public static String AUTH_TOKEN_API = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appSecret+"&grant_type=authorization_code";
 
 	//获取用户资料:
 	public static String USERINFO_API = "https://api.weixin.qq.com/sns/userinfo?";
@@ -147,7 +153,15 @@ public class Configure {
 	}
 	
 	public static String getAuthTokonAPI(String code){
-		return TOKEN_API+"&code="+code;
+		return AUTH_TOKEN_API+"&code="+code;
+	}
+	
+	public static String getJSTokenAPI(){
+		return JS_TOKEN_API;
+	}
+	
+	public static String getJSTicketAPI(String access_token){
+		return JS_TICHKET_API+"access_token="+access_token+"&type=jsapi";
 	}
 	
 	public static String getUserInfoAPI(String access_token,String openid){

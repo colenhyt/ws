@@ -65,15 +65,19 @@ public class WsOrderAction extends BaseAction {
 			String spbill_create_ip = getIpAddress();
 			spbill_create_ip = "192.168.11.1";
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
-	    	UnifiedOrderResData rst = bus.run(reqdata);
+	    	UnifiedOrderResData rst = new UnifiedOrderResData();
+	    	rst.setResult_code("SUCCESS");
+//	    	rst = bus.run(reqdata);
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
     		order.setResultCode(rst.getResult_code());
 	    	if (rst.isSuccess()){
+		    	rst.setPrepay_id("pre1111");
 	    		order.setPrepayId(rst.getPrepay_id());
 	    		order.setCodeUrl(rst.getCode_url());
 	    		return true;
 	    	}else {
+	    		rst.setErr_code_des("签名哲理不对");
 	    		order.setErrCode(rst.getErr_code());
 	    		order.setErrCodeDes(rst.getErr_code_des());
 	    	}
@@ -96,33 +100,32 @@ public class WsOrderAction extends BaseAction {
 	public String order(){
 		String userinfo = this.getHttpRequest().getParameter("userinfo");
 		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
-			Message msg = new Message();
-			msg.setCode(RetMsg.MSG_UserInfoMissing);
-			JSONObject obj = JSONObject.fromObject(msg);
-			write(obj.toString());	
+			writeMsg(RetMsg.MSG_UserInfoMissing);	
 			return null;
 		}		
-
-		String paytype = this.getHttpRequest().getParameter("paytype");
-		String contact = this.getHttpRequest().getParameter("contact");
-		String phone = this.getHttpRequest().getParameter("phone");
-		String remark = this.getHttpRequest().getParameter("remark");
-		String province = this.getHttpRequest().getParameter("province");
-		String city = this.getHttpRequest().getParameter("city");
-		String address = this.getHttpRequest().getParameter("address");
-		
 		JSONObject jsonobj = JSONObject.fromObject(userinfo);
 		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-		int userId = ecsuserService.findUserIdOrAdd(info);
-
+		if (info.getOpenid()==null||info.getOpenid().length()<=0){
+			writeMsg(RetMsg.MSG_UserInfoMissing);	
+			return null;			
+		}
 		
 		String strgoods = this.getHttpRequest().getParameter("goods");
+		if (strgoods==null){
+			writeMsg(RetMsg.MSG_NoAnyGoods);	
+			return null;			
+		}
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
 		float totalFee = 0;
+		String nogoods = null;
 		EcsGoodsService  goodsService = new EcsGoodsService();
 		for (int i=0;i<items.size();i++){
 			EcsGoods item = items.get(i);
 			EcsGoods item2 = goodsService.find(item.getGoodsId());
+			if (item2==null){
+				nogoods = item.getGoodsName();
+				break;
+			}
 			item.setGoodsSn(item2.getGoodsSn());
 			item.setIsReal(item2.getIsReal());
 			item.setShopPrice(item2.getShopPrice());
@@ -131,6 +134,28 @@ public class WsOrderAction extends BaseAction {
 			
 			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
 		}
+		if (nogoods!=null){
+			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
+			return null;
+		}else if (totalFee<=0){
+			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
+			return null;			
+		}
+		
+		//获取userid:
+		int userId = ecsuserService.findUserIdOrAdd(info);
+		if (userId==-1){
+			writeMsg(RetMsg.MSG_UserNotFound);	
+			return null;
+		}
+
+		String paytype = this.getHttpRequest().getParameter("paytype");
+		String contact = this.getHttpRequest().getParameter("contact");
+		String phone = this.getHttpRequest().getParameter("phone");
+		String remark = this.getHttpRequest().getParameter("remark");
+		String province = this.getHttpRequest().getParameter("province");
+		String city = this.getHttpRequest().getParameter("city");
+		String address = this.getHttpRequest().getParameter("address");
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
@@ -146,44 +171,42 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayId(Integer.valueOf(paytype).byteValue());
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
+
+		boolean ret = false;
 		
 		//向微信申请prepay_id:
-		boolean wxret = queryWxpay(orderInfo);
-		if (wxret==false)	{//统一下单请求失败:
+		ret = queryWxpay(orderInfo);
+		if (ret==false)	{//统一下单请求失败:
 			orderInfo.setOrderStatus(false);
 			ecsorderService.add(orderInfo);
-			JSONObject infoobj = JSONObject.fromObject(orderInfo);
-			Message msg = new Message();
-			msg.setCode(RetMsg.MSG_PrepayReqFail);
-			msg.setDesc(infoobj.toString());
-			JSONObject obj = JSONObject.fromObject(msg);
-			write(obj.toString());
+			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
 			Util.log("统一下单申请失败");
 			return null;
 		}
 		
 		//校验地址，如果是新地址，进行新增;
-		ecsuserService.validAddress(orderInfo);
+		ret = ecsuserService.validAddress(orderInfo);
+		if (ret==false){
+			writeMsg(RetMsg.MSG_AddressInvalid);	
+			return null;			
+		}
 		
-		boolean ret = false;
 		ret = ecsorderService.add(orderInfo);
-		if (ret){
-			ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
+		if (ret==false){
+			writeMsg(RetMsg.MSG_OrderSaveFail);	
+			return null;			
+		}
+		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
+		if (ret==false){
+			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
+			return null;			
 		}
 		
-		Message msg = new Message();
-		if (ret){
-			msg.setCode(RetMsg.MSG_OK);
-			JSONObject infoobj = JSONObject.fromObject(orderInfo);
-			JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
-			JSONObject reqobj = JSONObject.fromObject(req);
-			String obj = "["+infoobj.toString()+","+reqobj.toString()+"]";
-			msg.setDesc(obj);
-		}else {
-		  msg.setCode(RetMsg.MSG_SQLExecuteError);
-		}
-		JSONObject obj = JSONObject.fromObject(msg);
-		write(obj.toString());			
+		JSONObject infoobj = JSONObject.fromObject(orderInfo);
+		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
+		JSONObject reqobj = JSONObject.fromObject(req);
+		String desc = "["+infoobj.toString()+","+reqobj.toString()+"]";
+		writeMsg2(RetMsg.MSG_OK,desc);			
 		System.out.println("goods:"+strgoods+";userinfo:"+userinfo+"pay:"+paytype+",address:"+address);
 		return null;
 	}
