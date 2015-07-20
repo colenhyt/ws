@@ -17,9 +17,9 @@ import cn.hd.ws.dao.Wxorder;
 import cn.hd.wx.WxUserInfo;
 
 import com.tencent.business.UnifiedOrderBusiness;
-import com.tencent.business.UnifiedOrderResult;
 import com.tencent.common.Configure;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
+import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class WsOrderAction extends BaseAction {
 	private Wxorder wxorder;
@@ -62,8 +62,7 @@ public class WsOrderAction extends BaseAction {
 			bus = new UnifiedOrderBusiness();
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(order.getGoods(),order.getOrderid(),order.getTotalfee(),order.getIpaddr());
 	    	reqdata.setTrade_type("NATIVE");
-	    	UnifiedOrderResult rst = new UnifiedOrderResult();
-	    	bus.run(reqdata, rst);
+	    	UnifiedOrderResData rst = bus.run(reqdata);
 	    } catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

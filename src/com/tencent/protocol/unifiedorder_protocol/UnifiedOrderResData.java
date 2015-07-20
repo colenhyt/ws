@@ -31,6 +31,12 @@ public class UnifiedOrderResData {
     private String trade_type = "";
     private String prepay_id = "";
     private String code_url = "";
+    
+    public boolean isSuccess(){
+    	return getResult_code().equals("SUCCESS");
+    }
+    
+    
     public String getPrepay_id() {
 		return prepay_id;
 	}

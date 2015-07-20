@@ -71,10 +71,10 @@ public class UnifiedOrderBusiness {
      * @param resultListener 商户需要自己监听被扫统一下单业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws Exception
      */
-    public void run(UnifiedOrderReqData unifiedOrderReqData, ResultListener resultListener) throws Exception {
+    public UnifiedOrderResData run(UnifiedOrderReqData unifiedOrderReqData) throws Exception {
 
         //--------------------------------------------------------------------
-        //构造请求“被扫统一下单API”所需要提交的数据
+        //构造请求“统一下单API”所需要提交的数据
         //--------------------------------------------------------------------
 
         //接受API返回
@@ -94,7 +94,7 @@ public class UnifiedOrderBusiness {
         log.i(payServiceResponseString);
 
         //将从API返回的XML数据映射到Java对象
-        UnifiedOrderResData unifiedOrderResData = (UnifiedOrderResData) Util.getObjectFromXML(payServiceResponseString, UnifiedOrderResData.class);
+        UnifiedOrderResData unifiedOrderResData  = (UnifiedOrderResData) Util.getObjectFromXML(payServiceResponseString, UnifiedOrderResData.class);
 
         //异步发送统计请求
         //*
@@ -102,40 +102,33 @@ public class UnifiedOrderBusiness {
         if (unifiedOrderResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
             log.e("【统一接口调用失败】统一下单API系统返回失败，请检测Post给API的数据是否规范合法");
-            resultListener.onFailByReturnCodeFail(unifiedOrderResData);
-            return;
+            return unifiedOrderResData;
         } else {
-            log.i("统一下单API系统成功返回数据");
-            
             if (!Signature.checkIsSignValidFromResponseString(payServiceResponseString)) {
-                setResult("Case3:单据查询API返回的数据签名验证失败，有可能数据被篡改了",Log.LOG_TYPE_ERROR);
-                return;
+                setResult("Case3:统一下单API返回的数据签名验证失败，有可能数据被篡改了",Log.LOG_TYPE_ERROR);
+                return unifiedOrderResData;
             }
-            
-            //获取错误码
-            String errorCode = unifiedOrderResData.getErr_code();
-            //获取错误描述
-            String errorCodeDes = unifiedOrderResData.getErr_code_des();
 
             if (unifiedOrderResData.getResult_code().equals("SUCCESS")) {
-
                 //--------------------------------------------------------------------
-                //1)直接扣款成功
+                //1)统一下单成功
                 //--------------------------------------------------------------------
 
-                log.i("调用成功");
-
-                resultListener.onSuccess(unifiedOrderResData);
+                log.i("统一下单调用成功");
             }else{
+                //获取错误码
+                String errorCode = unifiedOrderResData.getErr_code();
+                //获取错误描述
+                String errorCodeDes = unifiedOrderResData.getErr_code_des();
 
                 //出现业务错误
                 log.i("业务返回失败");
                 log.i("err_code:" + errorCode);
                 log.i("err_code_des:" + errorCodeDes);
-
-                //业务错误时错误码有好几种，商户重点提示以下几种
+                
             }
         }
+        return unifiedOrderResData;
     }
 
     /**

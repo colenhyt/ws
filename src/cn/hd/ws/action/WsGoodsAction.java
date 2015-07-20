@@ -3,11 +3,6 @@ package cn.hd.ws.action;
 import java.io.InputStream;
 import java.util.List;
 
-import com.tencent.business.UnifiedOrderBusiness;
-import com.tencent.business.UnifiedOrderResult;
-import com.tencent.common.Configure;
-import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
@@ -15,7 +10,11 @@ import cn.hd.ws.dao.EcsCategory;
 import cn.hd.ws.dao.EcsGoods;
 import cn.hd.ws.dao.EcsGoodsActivityWithBLOBs;
 import cn.hd.ws.dao.EcsGoodsService;
-import cn.hd.ws.dao.Wxorder;
+
+import com.tencent.business.UnifiedOrderBusiness;
+import com.tencent.common.Configure;
+import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
+import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class WsGoodsAction extends BaseAction {
 	private EcsGoods ecsgoods;
@@ -63,8 +62,7 @@ public class WsGoodsAction extends BaseAction {
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("good1","NCTG123",1,getIpAddress());
 	    	reqdata.setOpenid(openid);
 	    	reqdata.setTrade_type("JSAPI");
-	    	UnifiedOrderResult rst = new UnifiedOrderResult();
-	    	bus.run(reqdata, rst);
+	    	UnifiedOrderResData rst = bus.run(reqdata);
 	    } catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
