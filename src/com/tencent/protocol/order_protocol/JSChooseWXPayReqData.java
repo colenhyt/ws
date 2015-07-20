@@ -13,7 +13,7 @@ public class JSChooseWXPayReqData {
 	private String timestamp = null;
 	private String nonceStr = null;
 	private String prepay_id = null;
-	private String signType = "SHA1";
+	private String signType = "MD5";
 	private String sign = "";
 	
 	public String getTimestamp() {
@@ -52,7 +52,7 @@ public class JSChooseWXPayReqData {
         setNonceStr(RandomStringGenerator.getRandomStringByLength(32));  
 
         //prepay_id:
-        setPrepay_id(prepay_id);
+        setPrepay_id("prepay_id="+prepay_id);
         
         //根据API给的签名规则进行签名
         String sign = Signature.getSign(toMap());
@@ -86,7 +86,7 @@ public class JSChooseWXPayReqData {
 	        try {
 	            obj = field.get(this);
 	            if(obj!=null){
-	            	if (field.getName().endsWith(""))
+	            	if (field.getName().endsWith("prepay_id"))
 	            		map.put("package", obj);
 	            	else
 	            		map.put(field.getName(), obj);
