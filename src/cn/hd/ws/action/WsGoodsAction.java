@@ -43,7 +43,7 @@ public class WsGoodsAction extends BaseAction {
 	public String cat(){
 		List<EcsCategory> cats = ecsGoodsService.cats();
 		JSONArray jsonObject = JSONArray.fromObject(cats);
-		write(jsonObject.toString(),"utf-8");
+		write(jsonObject.toString());
 		System.out.println("cat:"+cats.size());
 		
 
@@ -82,7 +82,7 @@ public class WsGoodsAction extends BaseAction {
 //		queryWxpay(null);
 		EcsGoodsActivityWithBLOBs group = ecsGoodsService.activeGroup();
 		JSONObject jsonObject = JSONObject.fromObject(group);
-		write(jsonObject.toString(),"utf-8");
+		write(jsonObject.toString());
 		System.out.println("group:"+jsonObject);
 		return null;
 	}
@@ -93,7 +93,7 @@ public class WsGoodsAction extends BaseAction {
 		List<EcsGoods> goods = ecsGoodsService.goods(ecsgoods.getCatId());
 		
 		JSONArray jsonObject = JSONArray.fromObject(goods);
-		write(jsonObject.toString(),"utf-8");
+		write(jsonObject.toString());
 		System.out.println("goods:"+jsonObject.toString());
 		return null;
 	}	

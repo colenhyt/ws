@@ -17,6 +17,8 @@ import cn.hd.wx.WxUserInfo;
 
 import com.tencent.business.UnifiedOrderBusiness;
 import com.tencent.common.Configure;
+import com.tencent.common.Util;
+import com.tencent.protocol.order_protocol.JSChooseWXPayReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
@@ -60,7 +62,9 @@ public class WsOrderAction extends BaseAction {
 		try {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
-	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("NCTG goods",order.getOrderSn(),intTotalFee,getIpAddress());
+			String spbill_create_ip = getIpAddress();
+			spbill_create_ip = "192.168.11.1";
+	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
 	    	UnifiedOrderResData rst = bus.run(reqdata);
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
@@ -116,9 +120,12 @@ public class WsOrderAction extends BaseAction {
 		String city = this.getHttpRequest().getParameter("city");
 		String address = this.getHttpRequest().getParameter("address");
 		
-		JSONObject jsonobj = JSONObject.fromObject(userinfo);
-		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-		int userId = ecsuserService.findUserIdOrAdd(info);
+		int userId = 0;
+		if (userinfo!=null&&!userinfo.equalsIgnoreCase("null")){
+			JSONObject jsonobj = JSONObject.fromObject(userinfo);
+			WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+			userId = ecsuserService.findUserIdOrAdd(info);
+		}
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
@@ -135,12 +142,18 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
 		
-		//向微信申请pre_payid:
+		//向微信申请prepay_id:
 		boolean wxret = queryWxpay(orderInfo);
 		if (wxret==false)	{//统一下单请求失败:
 			orderInfo.setOrderStatus(false);
 			ecsorderService.add(orderInfo);
-			write("{code:-100}");
+			JSONObject infoobj = JSONObject.fromObject(orderInfo);
+			Message msg = new Message();
+			msg.setCode(RetMsg.MSG_PrepayReqFail);
+			msg.setDesc(infoobj.toString());
+			JSONObject obj = JSONObject.fromObject(msg);
+			write(obj.toString());
+			Util.log("统一下单申请失败");
 			return null;
 		}
 		
@@ -156,7 +169,11 @@ public class WsOrderAction extends BaseAction {
 		Message msg = new Message();
 		if (ret){
 			msg.setCode(RetMsg.MSG_OK);
-			msg.setDesc(orderInfo.getOrderSn());
+			JSONObject infoobj = JSONObject.fromObject(orderInfo);
+			JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
+			JSONObject reqobj = JSONObject.fromObject(req);
+			String obj = "["+infoobj.toString()+","+reqobj.toString()+"]";
+			msg.setDesc(obj);
 		}else {
 		  msg.setCode(RetMsg.MSG_SQLExecuteError);
 		}

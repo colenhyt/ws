@@ -117,7 +117,9 @@ function queryGroup()
 	
 	var tag2 = document.getElementById("userinfo");
 	g_user = cfeval(tag2.value);
-		
+	if (g_user==null){
+	 g_user = {};
+	}	
 	content = ""
 	content += "<select id='region_province' class='ws_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	for (var i=0;i<data_region.length;i++){

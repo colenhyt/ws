@@ -2,7 +2,7 @@ Cart = function(){
     this.name = "cart";
     this.tagname = "my"+this.name;
     this.pagename = this.tagname+"page";
-    this.data = {}
+    this.data = [];
 }
 
 Cart.prototype.init = function(){
@@ -41,7 +41,7 @@ Cart.prototype.show = function(){
 //  return;
 // }
 
-var itemlength  = Object.keys(this.data).length ;
+var itemlength  = this.data.length ;
 
  if (itemlength<=0){
   alert('未挑选任何商品');
@@ -59,6 +59,7 @@ var itemlength  = Object.keys(this.data).length ;
      content += "</tr>"
  for (var key in this.data){
   var item = this.data[key];
+  if (item==null||item.count<=0) continue;
   content += "<tr>"
  content += "<td>"+item.goodsName+"</td>";
  content += "<td style='text-align:center'>"+item.count+"</td>";
@@ -88,23 +89,40 @@ var currCount = parseInt(tag.value);
 	 alert('购买数量不能大于剩余数');
 	 return;
 	}
-	if (currCount>=0){
-    tag.value = currCount;
-    this.data[goodsId] = {goodsId:goodsId,count:currCount,goodsName:goodsName,shopPrice:shopPrice};
-    }
+	if (currCount<0) return;
+	
+     tag.value = currCount;
+     var isNew = true;
+     
+     for (var i=0;i<this.data.length;i++){
+      var item = this.data[i];
+      if (item.goodsId==goodsId){
+       if (currCount==0){
+        this.data.splice(i,1);
+       }else {
+        this.data[i].count = currCount;
+       }
+       isNew = false;
+        break;
+      }
+     }
+     if (isNew&&currCount>0){
+      this.data.push({goodsId:goodsId,count:currCount,goodsName:goodsName,shopPrice:shopPrice});
+     }
 }
 
 Cart.prototype.doBuy = function(){
  
  	var dataParam = "goods=[";
- 	for (var key in this.data){
- 	 var item = {goodsId:parseInt(key),goodsNumber:parseInt(this.data[key].count)};
+ 	for (var i=0;i<this.data.length;i++){
+ 	 var item = this.data[i];
  	 var str = json2str(item);
  	 dataParam += str+","
  	}
  	dataParam += "]";
  	var tag = document.getElementById('userinfo');
-  	dataParam += "&userinfo="+tag.value;
+ 	if (tag.value.length>0)
+  	 dataParam += "&userinfo="+tag.value;
   	tag = document.getElementById('contact');
   	dataParam += "&contact="+tag.value;
   	tag = document.getElementById('phone');
@@ -133,10 +151,13 @@ Cart.prototype.doBuy = function(){
 Cart.prototype.buyCallback = function(data){
  var ret = cfeval(data);
  var content;
+ alert(ret.desc);
+ var info = cfeval(ret.desc);
  if (ret.code==0){
-  content = '购买成功，订单号:'+ret.desc;
- }else
-  content = "购买失败，错误码:"+ret.code;
+  content = '获得prepay_id,发起支付,订单号:'+info.ordersn;
+ }else {
+  content = "微信支付申请失败,errcode:"+info.errorcodemsg;
+ }
  var tag = document.getElementById(this.pagename);
  tag.innerHTML = content;  
  
