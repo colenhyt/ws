@@ -94,6 +94,28 @@ public class WsOrderAction extends BaseAction {
 	}
 	
 	public String order(){
+		String userinfo = this.getHttpRequest().getParameter("userinfo");
+		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
+			Message msg = new Message();
+			msg.setCode(RetMsg.MSG_UserInfoMissing);
+			JSONObject obj = JSONObject.fromObject(msg);
+			write(obj.toString());	
+			return null;
+		}		
+
+		String paytype = this.getHttpRequest().getParameter("paytype");
+		String contact = this.getHttpRequest().getParameter("contact");
+		String phone = this.getHttpRequest().getParameter("phone");
+		String remark = this.getHttpRequest().getParameter("remark");
+		String province = this.getHttpRequest().getParameter("province");
+		String city = this.getHttpRequest().getParameter("city");
+		String address = this.getHttpRequest().getParameter("address");
+		
+		JSONObject jsonobj = JSONObject.fromObject(userinfo);
+		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+		int userId = ecsuserService.findUserIdOrAdd(info);
+
+		
 		String strgoods = this.getHttpRequest().getParameter("goods");
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
 		float totalFee = 0;
@@ -108,23 +130,6 @@ public class WsOrderAction extends BaseAction {
 			item.setGoodsName(item2.getGoodsName());
 			
 			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
-		}
-		
-		//EcsGoods[] goods = (EcsGoods[])items.toArray();
-		String userinfo = this.getHttpRequest().getParameter("userinfo");
-		String paytype = this.getHttpRequest().getParameter("paytype");
-		String contact = this.getHttpRequest().getParameter("contact");
-		String phone = this.getHttpRequest().getParameter("phone");
-		String remark = this.getHttpRequest().getParameter("remark");
-		String province = this.getHttpRequest().getParameter("province");
-		String city = this.getHttpRequest().getParameter("city");
-		String address = this.getHttpRequest().getParameter("address");
-		
-		int userId = 0;
-		if (userinfo!=null&&!userinfo.equalsIgnoreCase("null")){
-			JSONObject jsonobj = JSONObject.fromObject(userinfo);
-			WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-			userId = ecsuserService.findUserIdOrAdd(info);
 		}
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();

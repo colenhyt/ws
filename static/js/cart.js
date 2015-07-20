@@ -62,9 +62,9 @@ var itemlength  = this.data.length ;
   if (item==null||item.count<=0) continue;
   content += "<tr>"
  content += "<td>"+item.goodsName+"</td>";
- content += "<td style='text-align:center'>"+item.count+"</td>";
+ content += "<td style='text-align:center'>"+item.goodsNumber+"</td>";
  content += "<td style='text-align:center'>￥&nbsp"+item.shopPrice+"</td>";
- totalps += item.count*item.shopPrice
+ totalps += item.goodsNumber*item.shopPrice
      content += "</tr>"
  }
   content += "<tr><td colspan=2 style='text-align:right'>"
@@ -100,14 +100,14 @@ var currCount = parseInt(tag.value);
        if (currCount==0){
         this.data.splice(i,1);
        }else {
-        this.data[i].count = currCount;
+        this.data[i].goodsNumber = currCount;
        }
        isNew = false;
         break;
       }
      }
      if (isNew&&currCount>0){
-      this.data.push({goodsId:goodsId,count:currCount,goodsName:goodsName,shopPrice:shopPrice});
+      this.data.push({goodsId:goodsId,goodsNumber:currCount,goodsName:goodsName,shopPrice:shopPrice});
      }
 }
 
@@ -138,7 +138,7 @@ Cart.prototype.doBuy = function(){
    	tag = document.getElementById('paytype');
   	dataParam += "&paytype="+tag.value; 	
   	
-	alert(dataParam);
+	//alert(dataParam);
 	try    {
 		$.ajax({type:"post",url:"/ec/order_order.do",data:dataParam,success:function(data){
 		 g_cart.buyCallback(data);
@@ -152,8 +152,10 @@ Cart.prototype.buyCallback = function(data){
  var ret = cfeval(data);
  var content;
  alert(ret.desc);
- var info = cfeval(ret.desc);
+ var rets = cfeval(ret.desc);
  if (ret.code==0){
+  var info = rets[0];
+  var req = rets[1];
   content = '获得prepay_id,发起支付,订单号:'+info.ordersn;
  }else {
   content = "微信支付申请失败,errcode:"+info.errorcodemsg;
