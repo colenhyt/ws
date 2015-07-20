@@ -23,7 +23,7 @@ public class Main {
 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String spBillCreateIP = "120.196.99.5";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","111",200,spBillCreateIP);
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","111",1,spBillCreateIP);
         	UnifiedOrderResult rst = new UnifiedOrderResult();
         	bus.run(reqdata, rst);
         	
@@ -33,7 +33,7 @@ public class Main {
 //        	bus2.run(req, rr);
         	
         	OrderQueryBusiness bus3 = new OrderQueryBusiness();
-        	OrderQueryReqData req2 = new OrderQueryReqData();
+        	OrderQueryReqData req2 = new OrderQueryReqData("111");
         	OrderQueryResult rr2 = new OrderQueryResult();
 //        	bus3.run(req2, rr2);        	
         	

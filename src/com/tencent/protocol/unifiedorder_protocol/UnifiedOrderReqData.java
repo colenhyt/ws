@@ -154,7 +154,7 @@ public class UnifiedOrderReqData {
         setSpbill_create_ip(spBillCreateIP);
 
         //随机字符串，不长于32 位
-        setNonce_str("ilkodor5bxdzudflvamf0jz0kcbcsklk");
+        setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
 
         //根据API给的签名规则进行签名
         String sign = Signature.getSign(toMap());
