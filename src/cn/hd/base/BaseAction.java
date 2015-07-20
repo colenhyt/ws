@@ -77,9 +77,9 @@ public class BaseAction extends BaseService{
 		String basePath = getHttpRequest().getScheme()+"://"+getHttpRequest().getServerName()+":"+getHttpRequest().getServerPort()+path+"/";
 		return basePath;
 	}
-	public void write(String content,String charset){
-		getHttpResponse().setCharacterEncoding(charset);
-		getHttpResponse().setContentType("text/html;charset="+charset);
+	public void write(String content){
+		getHttpResponse().setCharacterEncoding("utf-8");
+		getHttpResponse().setContentType("text/html;charset=utf-8");
 		try {
 			getHttpResponse().getWriter().print(content);
 		} catch (IOException e) {
@@ -111,7 +111,7 @@ public class BaseAction extends BaseService{
 		Message msg = new Message();
 		msg.setCode(code);
 		JSONObject obj = JSONObject.fromObject(msg);
-		write(obj.toString(),"utf-8");			
+		write(obj.toString());			
 	}
 	
 	public void writeMsg2(int code,String desc){
@@ -119,7 +119,7 @@ public class BaseAction extends BaseService{
 		msg.setCode(code);
 		msg.setDesc(desc);
 		JSONObject obj = JSONObject.fromObject(msg);
-		write(obj.toString(),"utf-8");			
+		write(obj.toString());			
 	}
 	/**
 	 * 判断是否为站点总管理员

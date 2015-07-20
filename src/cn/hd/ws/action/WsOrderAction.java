@@ -13,7 +13,6 @@ import cn.hd.ws.dao.EcsGoodsService;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsUserService;
-import cn.hd.ws.dao.Wxorder;
 import cn.hd.wx.WxUserInfo;
 
 import com.tencent.business.UnifiedOrderBusiness;
@@ -22,7 +21,7 @@ import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class WsOrderAction extends BaseAction {
-	private Wxorder wxorder;
+	private EcsOrderInfo wxorder;
 	private EcsOrderService ecsorderService;
 	private EcsUserService ecsuserService;
 	
@@ -46,23 +45,34 @@ public class WsOrderAction extends BaseAction {
 		init("ecsorderService","ecsuserService");
 	}
 	
-	public Wxorder getWxorder() {
+	public EcsOrderInfo getEcsOrderInfo() {
 		return wxorder;
 	}
 
-	public void setWxorder(Wxorder wxorder) {
+	public void setEcsOrderInfo(EcsOrderInfo wxorder) {
 		this.wxorder = wxorder;
 	}
 	
-	private void queryWxpay(Wxorder order){
+	private boolean queryWxpay(EcsOrderInfo order){
     	UnifiedOrderBusiness bus = null;
     	InputStream in = getHttpSession().getServletContext().getResourceAsStream(Configure.getCertLocalPath());
     	Configure.setIn(in);
 		try {
 			bus = new UnifiedOrderBusiness();
-	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(order.getGoods(),order.getOrderid(),order.getTotalfee(),order.getIpaddr());
-	    	reqdata.setTrade_type("NATIVE");
+			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
+	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("NCTG goods",order.getOrderSn(),intTotalFee,getIpAddress());
 	    	UnifiedOrderResData rst = bus.run(reqdata);
+    		order.setReturnCode(rst.getReturn_code());
+    		order.setReturnMsg(rst.getReturn_msg());
+    		order.setResultCode(rst.getResult_code());
+	    	if (rst.isSuccess()){
+	    		order.setPrepayId(rst.getPrepay_id());
+	    		order.setCodeUrl(rst.getCode_url());
+	    		return true;
+	    	}else {
+	    		order.setErrCode(rst.getErr_code());
+	    		order.setErrCodeDes(rst.getErr_code_des());
+	    	}
 	    } catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,7 +85,8 @@ public class WsOrderAction extends BaseAction {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}	
+		return false;
 	}
 	
 	public String order(){
@@ -124,6 +135,15 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
 		
+		//向微信申请pre_payid:
+		boolean wxret = queryWxpay(orderInfo);
+		if (wxret==false)	{//统一下单请求失败:
+			orderInfo.setOrderStatus(false);
+			ecsorderService.add(orderInfo);
+			write("{code:-100}");
+			return null;
+		}
+		
 		//校验地址，如果是新地址，进行新增;
 		ecsuserService.validAddress(orderInfo);
 		
@@ -141,7 +161,7 @@ public class WsOrderAction extends BaseAction {
 		  msg.setCode(RetMsg.MSG_SQLExecuteError);
 		}
 		JSONObject obj = JSONObject.fromObject(msg);
-		write(obj.toString(),"utf-8");			
+		write(obj.toString());			
 		System.out.println("goods:"+strgoods+";userinfo:"+userinfo+"pay:"+paytype+",address:"+address);
 		return null;
 	}

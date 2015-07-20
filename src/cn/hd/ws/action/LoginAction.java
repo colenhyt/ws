@@ -76,7 +76,7 @@ public class LoginAction extends BaseAction {
 						WsGoodsAction goods =new WsGoodsAction();
 						goods.queryWxpay(info.getOpenid());
 						Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
-						return null;						
+						return "group";						
 					}
 
 				}

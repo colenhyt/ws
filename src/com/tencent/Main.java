@@ -21,7 +21,7 @@ public class Main {
 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String spBillCreateIP = "120.196.99.5";
-        	String tradeNo = DataManager.getInstance().assignOrderSn();
+        	String tradeNo = "111";
         	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad",tradeNo,1,spBillCreateIP);
         	UnifiedOrderResData rst = bus.run(reqdata);
         	if (rst.isSuccess()){
