@@ -92,11 +92,11 @@ public class HttpsRequest implements IServiceRequest{
                 null,
                 SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
 
-        httpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
+//        httpClient = HttpClients.custom()
+//                .setSSLSocketFactory(sslsf)
+//                .build();
         
-       // httpClient = HttpClients.createDefault();
+        httpClient = HttpClients.createDefault();
         
         //根据默认超时限制初始化requestConfig
         requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(connectTimeout).build();

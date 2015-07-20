@@ -23,10 +23,9 @@ public class Main {
 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String spBillCreateIP = "120.196.99.5";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","1217752501201407033233368018",1,spBillCreateIP);
-        	reqdata.setTrade_type("NATIVE");
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad","111",200,spBillCreateIP);
         	UnifiedOrderResult rst = new UnifiedOrderResult();
-//        	bus.run(reqdata, rst);
+        	bus.run(reqdata, rst);
         	
         	RefundQueryBusiness bus2 = new RefundQueryBusiness();
         	RefundQueryReqData req = new RefundQueryReqData("1","1","1","1","1");

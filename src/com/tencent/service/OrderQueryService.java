@@ -11,7 +11,7 @@ import com.tencent.protocol.order_protocol.OrderQueryReqData;
 public class OrderQueryService extends BaseService{
 
     public OrderQueryService() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        super(Configure.ORDERQUERY_API);
+        super(Configure.UNIFIEDORDER_API);
     }
 
     /**

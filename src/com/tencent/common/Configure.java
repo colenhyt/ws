@@ -26,7 +26,17 @@ public class Configure {
 		Configure.in = in;
 	}
 
-	private static String notifyUrl = "http://egonctg.com/ec/";
+	private static String tradeType = "NATIVE";
+	
+	public static String getTradeType() {
+		return tradeType;
+	}
+
+	public static void setTradeType(String tradeType) {
+		Configure.tradeType = tradeType;
+	}
+
+	private static String notifyUrl = "http://www.egonctg.com/ec/payment/";
 
 	private static String key = "1977carson24075043841976jidofdaf";
 

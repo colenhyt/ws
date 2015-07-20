@@ -20,18 +20,18 @@ import java.util.Map;
 public class UnifiedOrderReqData {
 
     //每个字段具体的意思请查看API文档
-    private String appid = "";
+    private String appid = null;
     private String attach = null;
     private String sdk_version = null;
 	private String body = null;
     private String mch_id = null;
     private String nonce_str = null;
-    private String notify_url = "";
+    private String notify_url = null;
     private String openid = null;
-    private String out_trade_no = "";
-	private String spbill_create_ip = "";
+    private String out_trade_no = null;
+	private String spbill_create_ip = null;
     private int total_fee = 0;
-    private String trade_type = "";
+    private String trade_type = null;
     private String sign = "";
     private String product_id = null;
 	private String time_start = null;
@@ -135,6 +135,9 @@ public class UnifiedOrderReqData {
         //要支付的商品的描述信息，用户会在支付成功页面里看到这个信息
         setBody(body);
 
+        //trade_type:
+        setTrade_type(Configure.getTradeType());
+        
         //支付订单里面可以填的附加数据，API会将提交的这个附加数据原样返回，有助于商户自己可以注明该笔消费的具体内容，方便后续的运营和记录
         setAttach(attach);
 
