@@ -4,6 +4,7 @@ WxCaller = function(){
 }
 
 WxCaller.prototype.init = function(){
+return;
  var cfg = g_wxconfig;
  //alert(cfg.noncestr);
 //	var dataobj = $.ajax({type:"post",url:"/ec/login_wxjsinit.do",async:false});
@@ -87,42 +88,39 @@ WxCaller.prototype.init = function(){
 }
 
 WxCaller.prototype.reqWxpay = function(jsonReq){
-alert('bbbb');
-wx.chooseWXPay({
-    timestamp: jsonReq.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-    nonceStr: jsonReq.nonceStr, // 支付签名随机串，不长于 32 位
-    package: jsonReq.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-    signType: jsonReq.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-    paySign: jsonReq.sign, // 支付签名
-    success: function (res) {
-        // 支付成功后的回调函数
-          alert('成功aaa');
-    },
-    complete: function () {
-       alert('完成回调');
-    }, 
-    cancel: function (res) {
-       alert('取消回调');
-    },  
-    fail: function (res) {
-       alert('微信支付失败:'+JSON.stringify(res));
-    },      
-});
+alert(jsonReq.prepay_id);
+//wx.chooseWXPay({
+//    timestamp: jsonReq.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+//    nonceStr: jsonReq.nonceStr, // 支付签名随机串，不长于 32 位
+//    package: jsonReq.prepay_id, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+//    signType: jsonReq.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+//    paySign: jsonReq.sign, // 支付签名
+//    success: function (res) {
+//        // 支付成功后的回调函数
+//          alert('成功aaa');
+//    },
+//    cancel: function (res) {
+//       alert('支付被取消');
+//    },  
+//    fail: function (res) {
+//       alert('微信支付失败:'+JSON.stringify(res));
+//    },      
+//});
   
- //  WeixinJSBridge.invoke(
-//       'getBrandWCPayRequest', {
-//           "appId" : jsonReq.appId,     //公众号名称，由商户传入     
-//           "nonceStr" : jsonReq.nonceStr, //随机串     
-//           timeStamp: jsonReq.timeStamp,
-//           "package" : jsonReq.prepay_id,     
-//           "signType" : jsonReq.signType,         //微信签名方式:     
-//           "paySign" : jsonReq.sign //微信签名 
-//       },
-//       function(res){     
-//       alert('huidia0'+JSON.stringify(res));
-//           if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
-//       }
-//   );  
+   WeixinJSBridge.invoke(
+       'getBrandWCPayRequest', {
+           "appId" : jsonReq.appId,     //公众号名称，由商户传入     
+           "nonceStr" : jsonReq.nonceStr, //随机串     
+           timeStamp: jsonReq.timeStamp,
+           "package" : jsonReq.prepay_id,     
+           "signType" : jsonReq.signType,         //微信签名方式:     
+           "paySign" : jsonReq.sign //微信签名 
+       },
+       function(res){     
+       alert('huidia0'+JSON.stringify(res));
+           if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+       }
+   );  
 }
 
 var g_wx = new WxCaller();
