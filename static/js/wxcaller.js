@@ -87,7 +87,7 @@ WxCaller.prototype.init = function(){
 }
 
 WxCaller.prototype.reqWxpay = function(jsonReq){
-alert('aaa');
+alert('aaaaaa');
 //wx.chooseWXPay({
 //    timestamp: jsonReq.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
 //    nonceStr: jsonReq.nonceStr, // 支付签名随机串，不长于 32 位

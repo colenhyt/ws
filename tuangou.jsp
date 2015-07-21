@@ -20,6 +20,8 @@
   </script>
 </head>
 <body>
+       <button onclick="g_cart.show()" class='button2'>确定</button><br><br>
+
 <div id='groupDiv'>
 </div>
 	   <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>        
@@ -27,7 +29,7 @@
        <script type="text/javascript" src="static/js/config.js"></script>
        <script type="text/javascript" src="static/js/htmlutil.js"></script>
        <script type="text/javascript" src="static/js/cart.js"></script>
-       <script type="text/javascript" src="static/js/weixin.js"></script>
+       <script type="text/javascript" src="static/js/wxcaller.js"></script>
         <script type="text/javascript" src="static/js/region.js"></script>
         <input type='hidden' id='userinfo' value="<%=userinfo%>"/>
         <input type='hidden' id='wxconfig' value="<%=wxconfig%>"/>
@@ -66,7 +68,6 @@
        <div id='regionDIV'></div>
        <input name="address" id="address" type="text" value=""></div>
        <div>备注: <br><input name="remark" id="remark" type="text" value=""></div>
-       <button onclick="g_cart.show()" class='button2'>确定</button><br><br>
         <script type="text/javascript" src="static/js/main.js"></script>
        
     	</body>	
