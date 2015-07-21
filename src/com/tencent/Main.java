@@ -5,11 +5,13 @@ import com.tencent.business.OrderQueryResult;
 import com.tencent.business.RefundQueryBusiness;
 import com.tencent.business.RefundQueryResult;
 import com.tencent.business.UnifiedOrderBusiness;
+import com.tencent.common.Configure;
 import com.tencent.common.Util;
 import com.tencent.protocol.order_protocol.JSChooseWXPayReqData;
 import com.tencent.protocol.order_protocol.OrderQueryReqData;
 import com.tencent.protocol.refund_query_protocol.RefundQueryReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
+import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class Main {
 
@@ -20,8 +22,9 @@ public class Main {
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String spBillCreateIP = "120.196.99.5";
         	String tradeNo = "111";
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("Ipad",tradeNo,1,spBillCreateIP);
-//        	UnifiedOrderResData rst = bus.run(reqdata);
+        	Configure.setTradeType("NATIVE");
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(null,"Ipad",tradeNo,1,spBillCreateIP);
+        	UnifiedOrderResData rst = bus.run(reqdata);
 //        	if (rst.isSuccess()){
 //        		int a = 100;
 //        	}
@@ -36,8 +39,8 @@ public class Main {
         	OrderQueryResult rr2 = new OrderQueryResult();
 //        	bus3.run(req2, rr2);        	
         	
-        	JSChooseWXPayReqData rerr = new JSChooseWXPayReqData("eee");
-        	
+        	JSChooseWXPayReqData rerr = new JSChooseWXPayReqData("123");
+        	System.out.println(rerr.getSign());
 //        	String result = "{'privilege':['a','b','daa']}";
 //        	JSONObject jsonobj = JSONObject.fromObject(result);
 //        	WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);

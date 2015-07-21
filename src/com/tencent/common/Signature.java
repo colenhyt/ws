@@ -48,7 +48,7 @@ public class Signature {
         return result;
     }
 
-    public static String getSign_SHA1(Map<String,Object> map){
+    public static String getStringOrder(Map<String,Object> map){
         ArrayList<String> list = new ArrayList<String>();
         for(Map.Entry<String,Object> entry:map.entrySet()){
             if(entry.getValue()!=""){
@@ -64,19 +64,6 @@ public class Signature {
         }
         String result = sb.toString();
         result = result.substring(0,result.length()-1);
-        Util.log("Sign Before SHA1:" + result);
-        
-//        MD5 md5 = MD5.Create();
-//        byte[] bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(result));
-//
-//        StringBuilder result2 = new StringBuilder();
-//        for (int i = 0; i < bytes.length; i++)
-//        {
-//            result2.Append(bytes[i].ToString("X2"));
-//        }
-        
-        result = new SHA1().getDigestOfString(result.getBytes()); 
-        Util.log("Sign SHA1 Result:" + result);
         return result;
     }
 
@@ -158,6 +145,38 @@ public class Signature {
 	        
 	        result = MD5.MD5Encode(result).toUpperCase();
 	        Util.log("Sign Result:" + result);
+	        return result;
+	    }
+
+	public static String getSign_SHA1(Map<String,Object> map){
+	        ArrayList<String> list = new ArrayList<String>();
+	        for(Map.Entry<String,Object> entry:map.entrySet()){
+	            if(entry.getValue()!=""){
+	                list.add(entry.getKey() + "=" + entry.getValue() + "&");
+	            }
+	        }
+	        int size = list.size();
+	        String [] arrayToSort = list.toArray(new String[size]);
+	        Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+	        StringBuilder sb = new StringBuilder();
+	        for(int i = 0; i < size; i ++) {
+	            sb.append(arrayToSort[i]);
+	        }
+	        String result = sb.toString();
+	        result = result.substring(0,result.length()-1);
+	        Util.log("Sign Before SHA1:" + result);
+	        
+	//        MD5 md5 = MD5.Create();
+	//        byte[] bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(result));
+	//
+	//        StringBuilder result2 = new StringBuilder();
+	//        for (int i = 0; i < bytes.length; i++)
+	//        {
+	//            result2.Append(bytes[i].ToString("X2"));
+	//        }
+	        
+	        result = new SHA1().getDigestOfString(result.getBytes()); 
+	        Util.log("Sign SHA1 Result:" + result);
 	        return result;
 	    }
 

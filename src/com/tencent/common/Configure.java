@@ -26,7 +26,7 @@ public class Configure {
 		Configure.in = in;
 	}
 
-	private static String tradeType = "NATIVE";
+	private static String tradeType = "JSAPI";
 	
 	public static String getTradeType() {
 		return tradeType;
@@ -34,6 +34,16 @@ public class Configure {
 
 	public static void setTradeType(String tradeType) {
 		Configure.tradeType = tradeType;
+	}
+
+	private static String configUrl = "http://www.egonctg.com/ec/login_wxlogincallback.do";
+
+	public static String getConfigUrl() {
+		return configUrl;
+	}
+
+	public static void setConfigUrl(String configUrl) {
+		Configure.configUrl = configUrl;
 	}
 
 	private static String notifyUrl = "http://www.egonctg.com/ec/payment/";

@@ -11,11 +11,20 @@ import com.tencent.common.Signature;
 public class JSWxConfigReqData {
 	private String appid = null;
 	private String timestamp = null;
-	private String nonceStr = null;
+	private String noncestr = null;
 	private String url = null;
 	private String jsapi_ticket = null;
 	private String sign = null;
+	private String configStr = null;
 	
+	public String getConfigStr() {
+		return configStr;
+	}
+
+	public void setConfigStr(String configStr) {
+		this.configStr = configStr;
+	}
+
 	public String getJsapi_ticket() {
 		return jsapi_ticket;
 	}
@@ -44,20 +53,23 @@ public class JSWxConfigReqData {
 		
 		setJsapi_ticket(jsapi_ticket);
 		
-		setUrl("http://www.egonctg.com/ec/");
+		setUrl(Configure.getConfigUrl());
 		
 		//timestamp
 		setTimestamp(String.valueOf(System.currentTimeMillis()/1000));
-		
-        //微信分配的公众号ID（开通公众号之后可以获取到）
-        //setAppid(Configure.getAppid());
 
         //随机字符串，不长于32 位
-        setNonceStr(RandomStringGenerator.getRandomStringByLength(32));  
+        setNoncestr(RandomStringGenerator.getRandomStringByLength(32));  
 
+//        setConfigStr(Signature.getStringOrder(toMap()));
+        
         //根据API给的签名规则进行签名
         String sign = Signature.getSign_SHA1(toMap());
         setSign(sign);//把签名数据设置到Sign这个属性中        
+		
+        //微信分配的公众号ID（开通公众号之后可以获取到）
+        setAppid(Configure.getAppid());
+        
 	}
 	
 	public String getAppid() {
@@ -67,11 +79,11 @@ public class JSWxConfigReqData {
 		this.appid = appid;
 	}
 	
-	public String getNonceStr() {
-		return nonceStr;
+	public String getNoncestr() {
+		return noncestr;
 	}
-	public void setNonceStr(String nonceStr) {
-		this.nonceStr = nonceStr;
+	public void setNoncestr(String nonceStr) {
+		this.noncestr = nonceStr;
 	}
 	public String getSign() {
 		return sign;

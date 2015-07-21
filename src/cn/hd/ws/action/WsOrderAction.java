@@ -55,7 +55,7 @@ public class WsOrderAction extends BaseAction {
 		this.wxorder = wxorder;
 	}
 	
-	private boolean queryWxpay(EcsOrderInfo order){
+	private boolean queryWxpay(EcsOrderInfo order,String openid){
     	UnifiedOrderBusiness bus = null;
     	InputStream in = getHttpSession().getServletContext().getResourceAsStream(Configure.getCertLocalPath());
     	Configure.setIn(in);
@@ -63,21 +63,19 @@ public class WsOrderAction extends BaseAction {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
 			String spbill_create_ip = getIpAddress();
-			spbill_create_ip = "192.168.11.1";
-	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData("NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
+			//spbill_create_ip = "192.168.11.1";
+	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,"NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
 	    	UnifiedOrderResData rst = new UnifiedOrderResData();
-	    	rst.setResult_code("SUCCESS");
-//	    	rst = bus.run(reqdata);
+//	    	rst.setResult_code("SUCCESS");
+	    	rst = bus.run(reqdata);
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
     		order.setResultCode(rst.getResult_code());
 	    	if (rst.isSuccess()){
-		    	rst.setPrepay_id("pre1111");
 	    		order.setPrepayId(rst.getPrepay_id());
 	    		order.setCodeUrl(rst.getCode_url());
 	    		return true;
 	    	}else {
-	    		rst.setErr_code_des("签名哲理不对");
 	    		order.setErrCode(rst.getErr_code());
 	    		order.setErrCodeDes(rst.getErr_code_des());
 	    	}
@@ -174,8 +172,8 @@ public class WsOrderAction extends BaseAction {
 
 		boolean ret = false;
 		
-		//向微信申请prepay_id:
-		ret = queryWxpay(orderInfo);
+		//统一下单,向微信申请prepay_id:
+		ret = queryWxpay(orderInfo,info.getOpenid());
 		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
 			orderInfo.setOrderStatus(false);
 			ecsorderService.add(orderInfo);

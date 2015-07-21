@@ -9,19 +9,19 @@ import com.tencent.common.RandomStringGenerator;
 import com.tencent.common.Signature;
 
 public class JSChooseWXPayReqData {
-	private String appid;
-	private String timestamp = null;
+	private String appId;
+	private String timeStamp = null;
 	private String nonceStr = null;
 	private String prepay_id = null;
 	private String signType = "MD5";
 	private String sign = "";
 	
-	public String getTimestamp() {
-		return timestamp;
+	public String getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTimeStamp(String timestamp) {
+		this.timeStamp = timestamp;
 	}
 
 	public String getSignType() {
@@ -43,10 +43,10 @@ public class JSChooseWXPayReqData {
 	public JSChooseWXPayReqData(String prepay_id){
 		
 		//timestamp
-		setTimestamp(String.valueOf(System.currentTimeMillis()));
+		setTimeStamp(String.valueOf(System.currentTimeMillis()/1000));
 		
         //微信分配的公众号ID（开通公众号之后可以获取到）
-        setAppid(Configure.getAppid());
+        setAppId(Configure.getAppid());
 
         //随机字符串，不长于32 位
         setNonceStr(RandomStringGenerator.getRandomStringByLength(32));  
@@ -59,11 +59,11 @@ public class JSChooseWXPayReqData {
         setSign(sign);//把签名数据设置到Sign这个属性中        
 	}
 	
-	public String getAppid() {
-		return appid;
+	public String getAppId() {
+		return appId;
 	}
-	public void setAppid(String appid) {
-		this.appid = appid;
+	public void setAppId(String appid) {
+		this.appId = appid;
 	}
 	
 	public String getNonceStr() {

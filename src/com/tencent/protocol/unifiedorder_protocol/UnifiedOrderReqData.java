@@ -124,8 +124,10 @@ public class UnifiedOrderReqData {
      * @param timeExpire 订单失效时间，格式同上
      * @param goodsTag 商品标记，微信平台配置的商品标记，用于优惠券或者满减使用
      */
-    public UnifiedOrderReqData(String body,String outTradeNo,int totalFee,String spBillCreateIP){
+    public UnifiedOrderReqData(String openid,String body,String outTradeNo,int totalFee,String spBillCreateIP){
 
+    	setOpenid(openid);
+    	
         //微信分配的公众号ID（开通公众号之后可以获取到）
         setAppid(Configure.getAppid());
 

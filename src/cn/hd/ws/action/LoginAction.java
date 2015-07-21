@@ -90,8 +90,6 @@ public class LoginAction extends BaseAction {
 					}
 					getHttpRequest().setAttribute("userinfo", jsonstr);
 					getHttpRequest().setAttribute("wxconfig", cfgStr);
-					WsGoodsAction goods =new WsGoodsAction();
-					goods.queryWxpay(info.getOpenid());
 					Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
 					return "group";						
 				}

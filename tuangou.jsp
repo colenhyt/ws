@@ -2,7 +2,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%> 
 <%
  String userinfo = (String)request.getAttribute("userinfo");
- userinfo = "{openid:123}";
  String wxconfig = (String)request.getAttribute("wxconfig");
 %>
 <html>
