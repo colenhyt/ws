@@ -17,11 +17,11 @@ import cn.hd.wx.WxUserInfo;
 import com.alibaba.fastjson.JSON;
 import com.tencent.common.Configure;
 import com.tencent.common.HttpsRequest;
+import com.tencent.common.JSReqData;
 import com.tencent.common.Util;
 import com.tencent.protocol.order_protocol.JSWxConfigReqData;
 
 public class LoginAction extends BaseAction {
-    private String loginUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx14be2d51e8ad9693&redirect_uri=http://www.egonctg.com/ec/login_wxlogincallback.do&response_type=code&scope=snsapi_userinfo&state=aaa#wechat_redirect";
 	private EcsUserService ecsuserService;
 	HttpsRequest request;
 	
@@ -107,20 +107,28 @@ public class LoginAction extends BaseAction {
     
 	public String wxjsinit()
 	{	
-		String url = "";
-		JSONObject jsonobj = request.sendUrlPost(Configure.getJSTokenAPI());
-		String access_token = jsonobj.getString("access_token");
-		if (access_token!=null){
-			String expires_in = jsonobj.getString("expires_in");
-			JSONObject jsonticket = request.sendUrlPost(Configure.getJSTicketAPI(access_token));
-			String jstoken = jsonticket.getString("ticket");
-			JSWxConfigReqData req = new JSWxConfigReqData(jstoken,url);
-			JSONObject jsonObject = JSONObject.fromObject(req);
-			String jsonstr = jsonObject.toString();
-			jsonstr = jsonstr.replace("\"", "'");
-			return jsonstr;
+		String jsonstr = null;
+		String jstoken = null;
+		JSReqData reqData = DataManager.getInstance().jsReq;
+		if (!reqData.isTimeout()){
+			jstoken = reqData.getJsTicket();
+		}else {
+			JSONObject jsonobj = request.sendUrlPost(Configure.getJSTokenAPI());
+			String access_token = jsonobj.getString("access_token");
+			if (access_token!=null){
+				String expires_in = jsonobj.getString("expires_in");
+				JSONObject jsonticket = request.sendUrlPost(Configure.getJSTicketAPI(access_token));
+				jstoken = jsonticket.getString("ticket");
+				reqData.reqWeixin(access_token, jstoken,Integer.valueOf(expires_in).longValue());
+			}
 		}
-		
-		return null;
+		if (jstoken!=null){
+			JSWxConfigReqData req = new JSWxConfigReqData(jstoken);
+			JSONObject jsonObject = JSONObject.fromObject(req);
+			jsonstr = jsonObject.toString();
+			jsonstr = jsonstr.replace("\"", "'");			
+		}
+
+		return jsonstr;
 	}
 }

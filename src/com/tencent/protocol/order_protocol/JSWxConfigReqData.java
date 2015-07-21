@@ -9,7 +9,7 @@ import com.tencent.common.RandomStringGenerator;
 import com.tencent.common.Signature;
 
 public class JSWxConfigReqData {
-	private String appid;
+	private String appid = null;
 	private String timestamp = null;
 	private String nonceStr = null;
 	private String url = null;
@@ -40,22 +40,23 @@ public class JSWxConfigReqData {
 		this.timestamp = timestamp;
 	}
 
-	public JSWxConfigReqData(String jsapi_ticket,String url){
+	public JSWxConfigReqData(String jsapi_ticket){
+		
 		setJsapi_ticket(jsapi_ticket);
 		
-		setUrl(url);
+		setUrl("http://www.egonctg.com/ec/");
 		
 		//timestamp
-		setTimestamp(String.valueOf(System.currentTimeMillis()));
+		setTimestamp(String.valueOf(System.currentTimeMillis()/1000));
 		
         //微信分配的公众号ID（开通公众号之后可以获取到）
-        setAppid(Configure.getAppid());
+        //setAppid(Configure.getAppid());
 
         //随机字符串，不长于32 位
         setNonceStr(RandomStringGenerator.getRandomStringByLength(32));  
 
         //根据API给的签名规则进行签名
-        String sign = Signature.getSign(toMap());
+        String sign = Signature.getSign_SHA1(toMap());
         setSign(sign);//把签名数据设置到Sign这个属性中        
 	}
 	
@@ -86,10 +87,7 @@ public class JSWxConfigReqData {
 	        try {
 	            obj = field.get(this);
 	            if(obj!=null){
-	            	if (field.getName().endsWith(""))
-	            		map.put("package", obj);
-	            	else
-	            		map.put(field.getName(), obj);
+            		map.put(field.getName(), obj);
 	            }
 	        } catch (IllegalArgumentException e) {
 	            e.printStackTrace();

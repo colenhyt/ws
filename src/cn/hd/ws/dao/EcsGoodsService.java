@@ -42,18 +42,24 @@ public class EcsGoodsService extends BaseService {
 	}
 	
 	public List<EcsCategory> cats(){
-		EcsCategoryExample example = new EcsCategoryExample();
-		EcsCategoryExample.Criteria criteria = example.createCriteria();
 		EcsGoodsActivity group = activeGroup();
 		String act_cats = group.getActCats();
 		String[] cats = act_cats.split(",");
 		List<Short> values = new ArrayList<Short>();
 		for (int i=0;i<cats.length;i++){
-			Short catid = Short.valueOf(cats[i]);
-			values.add(catid);
+			if (cats[i].length()>0){
+			 Short catid = Short.valueOf(cats[i]);
+			 values.add(catid);
+			}
 		}
+		if (values.size()>0){
+		EcsCategoryExample example = new EcsCategoryExample();
+		EcsCategoryExample.Criteria criteria = example.createCriteria();
 		criteria.andCatIdIn(values);
 		return ecscategoryMapper.selectByExample(example);
+		}
+		
+		return new ArrayList<EcsCategory>();
 	}
 	
 	public EcsGoodsActivityWithBLOBs activeGroup(){

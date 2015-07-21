@@ -110,11 +110,14 @@ public class EcsUserService extends BaseService {
 			EcsUsers record = new EcsUsers();
 			record.setUserName(userInfo.getNickname());
 			record.setOpenid(userInfo.getOpenid());
-			Integer sex = Integer.valueOf(userInfo.getSex());
-			if (sex==1)
-				record.setSex(true);
-			else
-				record.setSex(false);
+			if (userInfo.getSex()!=null&&userInfo.getSex().length()>0){
+				Integer sex = Integer.valueOf(userInfo.getSex());
+				if (sex==1)
+					record.setSex(true);
+				else
+					record.setSex(false);				
+			}
+
 //			record.setSex(userInfo.);
 			boolean added = add(record);
 			if (added)

@@ -45,10 +45,6 @@ public class WsGoodsAction extends BaseAction {
 		JSONArray jsonObject = JSONArray.fromObject(cats);
 		write(jsonObject.toString());
 		System.out.println("cat:"+cats.size());
-		
-
-
-    	
 		return null;
 	}
 	

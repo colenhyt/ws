@@ -112,35 +112,35 @@ public class WsOrderAction extends BaseAction {
 		
 		float totalFee = 0;
 		String strgoods = this.getHttpRequest().getParameter("goods");
-		if (strgoods==null){
-			writeMsg(RetMsg.MSG_NoAnyGoods);	
-			return null;			
-		}
-		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
-		String nogoods = null;
-		EcsGoodsService  goodsService = new EcsGoodsService();
-		for (int i=0;i<items.size();i++){
-			EcsGoods item = items.get(i);
-			EcsGoods item2 = goodsService.find(item.getGoodsId());
-			if (item2==null){
-				nogoods = item.getGoodsName();
-				break;
-			}
-			item.setGoodsSn(item2.getGoodsSn());
-			item.setIsReal(item2.getIsReal());
-			item.setShopPrice(item2.getShopPrice());
-			item.setGoodsId(item2.getGoodsId());
-			item.setGoodsName(item2.getGoodsName());
-			
-			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
-		}
-		if (nogoods!=null){
-			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
-			return null;
-		}else if (totalFee<=0){
-			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
-			return null;			
-		}
+//		if (strgoods==null){
+//			writeMsg(RetMsg.MSG_NoAnyGoods);	
+//			return null;			
+//		}
+//		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
+//		String nogoods = null;
+//		EcsGoodsService  goodsService = new EcsGoodsService();
+//		for (int i=0;i<items.size();i++){
+//			EcsGoods item = items.get(i);
+//			EcsGoods item2 = goodsService.find(item.getGoodsId());
+//			if (item2==null){
+//				nogoods = item.getGoodsName();
+//				break;
+//			}
+//			item.setGoodsSn(item2.getGoodsSn());
+//			item.setIsReal(item2.getIsReal());
+//			item.setShopPrice(item2.getShopPrice());
+//			item.setGoodsId(item2.getGoodsId());
+//			item.setGoodsName(item2.getGoodsName());
+//			
+//			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
+//		}
+//		if (nogoods!=null){
+//			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
+//			return null;
+//		}else if (totalFee<=0){
+//			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
+//			return null;			
+//		}
 		
 		//获取userid:
 		int userId = ecsuserService.findUserIdOrAdd(info);
@@ -183,24 +183,24 @@ public class WsOrderAction extends BaseAction {
 			Util.log("统一下单申请prepay_id失败");
 			return null;
 		}
-		
-		//校验地址，如果是新地址，进行新增;
-		ret = ecsuserService.validAddress(orderInfo);
-		if (ret==false){
-			writeMsg(RetMsg.MSG_AddressInvalid);	
-			return null;			
-		}
-		
-		ret = ecsorderService.add(orderInfo);
-		if (ret==false){
-			writeMsg(RetMsg.MSG_OrderSaveFail);	
-			return null;			
-		}
-		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
-		if (ret==false){
-			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
-			return null;			
-		}
+//		
+//		//校验地址，如果是新地址，进行新增;
+//		ret = ecsuserService.validAddress(orderInfo);
+//		if (ret==false){
+//			writeMsg(RetMsg.MSG_AddressInvalid);	
+//			return null;			
+//		}
+//		
+//		ret = ecsorderService.add(orderInfo);
+//		if (ret==false){
+//			writeMsg(RetMsg.MSG_OrderSaveFail);	
+//			return null;			
+//		}
+//		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
+//		if (ret==false){
+//			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
+//			return null;			
+//		}
 		
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());

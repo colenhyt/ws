@@ -1,11 +1,16 @@
 package cn.hd.ws.action;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import com.tencent.common.JSReqData;
 
 
 public class DataManager {
 	private BlockingQueue<String> queue;
+	public JSReqData jsReq;
     private static DataManager uniqueInstance = null;  
 	
     public static DataManager getInstance() {  
@@ -17,8 +22,12 @@ public class DataManager {
     
     public DataManager(){
     	queue  = new LinkedBlockingQueue<String>();
-
+    	jsReq = new JSReqData();
      }
+    
+    public JSReqData findReq(){
+    	return jsReq;
+    }
     
     private void genOrderIds(){
     	for (int i=0;i<1000;i++){
