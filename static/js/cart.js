@@ -43,10 +43,10 @@ Cart.prototype.show = function(){
 
 var itemlength  = this.data.length ;
 
- if (itemlength<=0){
-  alert('未挑选任何商品');
-  return;
- }
+// if (itemlength<=0){
+//  alert('未挑选任何商品');
+//  return;
+// }
  
  var tag = document.getElementById(this.pagename);
  var content = "";
@@ -160,7 +160,7 @@ Cart.prototype.buyCallback = function(data){
   var info = rets[0];
   var req = rets[1];
   content = '支付申请成功,订单号('+info.orderSn+"),向发起支付....";
-  g_wx.chooseWxpay(req);
+  g_wx.reqWxpay(req);
  }else {
   content = "购买失败:"
   content += ERR_MSG[ret.code];
