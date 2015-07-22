@@ -124,7 +124,6 @@ Cart.prototype.doBuy = function(){
  	}
  	dataParam += "]";
  	var tag = document.getElementById('userinfo');
- 	 alert(tag.value);
  	if (tag.value.length>0)
   	 dataParam += "&userinfo="+tag.value;
   	tag = document.getElementById('contact');

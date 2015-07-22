@@ -182,19 +182,19 @@ public class WsOrderAction extends BaseAction {
 			Util.log("统一下单申请prepay_id失败");
 			return null;
 		}
-//		
-//		//校验地址，如果是新地址，进行新增;
-//		ret = ecsuserService.validAddress(orderInfo);
-//		if (ret==false){
-//			writeMsg(RetMsg.MSG_AddressInvalid);	
-//			return null;			
-//		}
-//		
-//		ret = ecsorderService.add(orderInfo);
-//		if (ret==false){
-//			writeMsg(RetMsg.MSG_OrderSaveFail);	
-//			return null;			
-//		}
+		
+		//校验地址，如果是新地址，进行新增;
+		ret = ecsuserService.validAddress(orderInfo);
+		if (ret==false){
+			writeMsg(RetMsg.MSG_AddressInvalid);	
+			return null;			
+		}
+		
+		ret = ecsorderService.add(orderInfo);
+		if (ret==false){
+			writeMsg(RetMsg.MSG_OrderSaveFail);	
+			return null;			
+		}
 //		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
 //		if (ret==false){
 //			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
