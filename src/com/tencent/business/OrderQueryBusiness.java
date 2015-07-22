@@ -71,7 +71,7 @@ public class OrderQueryBusiness {
      * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws Exception
      */
-    public void run(OrderQueryReqData unifiedOrderReqData, ResultListener resultListener) throws Exception {
+    public OrderQueryResData run(OrderQueryReqData unifiedOrderReqData) throws Exception {
 
         //--------------------------------------------------------------------
         //构造请求“被扫单据查询API”所需要提交的数据
@@ -102,14 +102,13 @@ public class OrderQueryBusiness {
         if (unifiedOrderResData.getReturn_code().equals("FAIL")) {
             //注意：一般这里返回FAIL是出现系统级参数错误，请检测Post给API的数据是否规范合法
             log.e("【单据查询接口调用失败】单据查询API系统返回失败，请检测Post给API的数据是否规范合法");
-            resultListener.onFailByReturnCodeFail(unifiedOrderResData);
-            return;
+            return unifiedOrderResData;
         } else {
             log.i("单据查询API系统成功返回数据");
             
             if (!Signature.checkIsSignValidFromResponseString(payServiceResponseString)) {
                 setResult("Case3:单据查询API返回的数据签名验证失败，有可能数据被篡改了",Log.LOG_TYPE_ERROR);
-                return;
+                return unifiedOrderResData;
             }
             
             //获取错误码
@@ -125,7 +124,6 @@ public class OrderQueryBusiness {
 
                 log.i("调用成功");
 
-                resultListener.onSuccess(unifiedOrderResData);
             }else{
 
                 //出现业务错误
@@ -136,6 +134,7 @@ public class OrderQueryBusiness {
                 //业务错误时错误码有好几种，商户重点提示以下几种
             }
         }
+        return unifiedOrderResData;
     }
 
     /**

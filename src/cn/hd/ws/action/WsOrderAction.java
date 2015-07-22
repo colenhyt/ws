@@ -12,10 +12,13 @@ import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsUserService;
 import cn.hd.wx.WxUserInfo;
 
+import com.tencent.business.OrderQueryBusiness;
 import com.tencent.business.UnifiedOrderBusiness;
 import com.tencent.common.Configure;
 import com.tencent.common.Util;
 import com.tencent.protocol.order_protocol.JSChooseWXPayReqData;
+import com.tencent.protocol.order_protocol.OrderQueryReqData;
+import com.tencent.protocol.order_protocol.OrderQueryResData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
@@ -127,13 +130,33 @@ public class WsOrderAction extends BaseAction {
 			return null;				
 		}
 		if (payOk.endsWith("true")){
-			orderInfo.setPayStatus(true);
-			ecsorderService.updateStatus(orderInfo);
-			DataManager.getInstance().addOrder(orderInfo);
+			if (checkWxOrder(orderInfo)){
+				orderInfo.setPayStatus(true);
+				ecsorderService.updateStatus(orderInfo);
+				DataManager.getInstance().addOrder(orderInfo);
+			}else {
+				Util.log("支付单价查询对账错误"+orderInfo.getOrderSn());
+			}
 		}
 		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
 		writeMsg2(RetMsg.MSG_OK,retstr);
 		return null;
+	}
+	
+	private boolean checkWxOrder(EcsOrderInfo orderInfo){
+        try {
+	    	OrderQueryBusiness bus3 = new OrderQueryBusiness();
+	    	OrderQueryReqData req2 = new OrderQueryReqData(orderInfo.getOrderSn());
+	    	OrderQueryResData res = bus3.run(req2);  
+	    	if (res.isSuccess()){
+	    		int totalFee = Integer.valueOf(res.getTotal_fee()).intValue();
+	    		Util.log("查询单价金额:"+orderInfo.getOrderSn()+"："+res.getTotal_fee());
+	    		return totalFee==orderInfo.getGoodsAmount().intValue()*100;
+	    	}		
+        } catch (Exception e){
+            Util.log(e.getMessage());
+        }    	
+    	return false;
 	}
 	
 	public String order(){

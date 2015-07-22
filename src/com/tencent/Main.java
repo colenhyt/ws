@@ -4,17 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.tencent.business.OrderQueryBusiness;
-import com.tencent.business.OrderQueryResult;
 import com.tencent.business.RefundQueryBusiness;
 import com.tencent.business.RefundQueryResult;
 import com.tencent.business.UnifiedOrderBusiness;
 import com.tencent.common.Configure;
 import com.tencent.common.Util;
-import com.tencent.protocol.order_protocol.JSChooseWXPayReqData;
 import com.tencent.protocol.order_protocol.OrderQueryReqData;
+import com.tencent.protocol.order_protocol.OrderQueryResData;
 import com.tencent.protocol.refund_query_protocol.RefundQueryReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
-import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class Main {
 
@@ -43,8 +41,10 @@ public class Main {
         	
         	OrderQueryBusiness bus3 = new OrderQueryBusiness();
         	OrderQueryReqData req2 = new OrderQueryReqData("NCTG14375317906050");
-        	OrderQueryResult rr2 = new OrderQueryResult();
-        	bus3.run(req2, rr2);        	
+        	OrderQueryResData res = bus3.run(req2);  
+        	if (res.isSuccess()){
+        		Util.log(res.getTotal_fee());
+        	}
         	
 //        	JSChooseWXPayReqData rerr = new JSChooseWXPayReqData("123");
 //        	System.out.println(rerr.getSign());

@@ -29,7 +29,20 @@ public class OrderQueryResData {
     private String refund_id = "";
     private String refund_fee = "";
     private String coupon_refund_fee = "";
+    private String total_fee = "";
 
+    public String getTotal_fee() {
+		return total_fee;
+	}
+
+	public void setTotal_fee(String total_fee) {
+		this.total_fee = total_fee;
+	}
+
+	public boolean isSuccess(){
+    	return getResult_code().equals("SUCCESS");
+    }
+    
     public String getReturn_code() {
         return return_code;
     }
