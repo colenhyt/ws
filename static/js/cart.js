@@ -161,7 +161,8 @@ Cart.prototype.buyCallback = function(data){
   var req = rets[1];
   content = '您的订单号已生成,订单号('+info.orderSn+"),向微信发起支付....";
   this.currOrder = info;
-  g_wx.reqWxpay(req);
+  this.wxpayCallback(true);
+  //g_wx.reqWxpay(req);
  }else {
   content = "购买失败:"
   content += ERR_MSG[ret.code];
@@ -182,9 +183,8 @@ Cart.prototype.wxpayCallback = function(payOk){
   dataParam += "orderSn="+this.currOrder.orderSn;
   dataParam += "&payOk="+payOk;
    
- 	var tag = document.getElementById('userinfo');
- 	if (tag.value.length>0)
-  	 dataParam += "&userinfo="+tag.value;
+ 	if (g_user.userId>0)
+  	 dataParam += "&userId="+g_user.userId;
   	   
 	try    {
 		$.ajax({type:"post",url:"/ec/order_commit.do",data:dataParam,success:function(data){
@@ -199,13 +199,13 @@ Cart.prototype.wxpayCallback = function(payOk){
   this.currOrder = null; 
 }
 
-Cart.prototype.commitCallback = function(data){
+Cart.prototype.commitCallback = function(ret){
  var content;
- if (data.code==0){
-	 var ret = cfeval(data.desc);
-	  content = "订单"+ret.orderSn+"提交失败或被取消!!"
-	  if (ret.payOk==true){
-	    content = "订单"+ret.orderSn+"提交成功!!"
+ if (ret.code==0){
+	 var desc = cfeval(ret.desc);
+	  content = "订单"+desc.orderSn+"提交失败或被取消!!"
+	  if (desc.payOk==true){
+	    content = "订单"+desc.orderSn+"提交成功!!"
 	  }
   }else {
    content = "订单提交失败或被取消!!:"+ERR_MSG[ret.code];

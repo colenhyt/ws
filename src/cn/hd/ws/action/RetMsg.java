@@ -4,7 +4,7 @@ public interface RetMsg {
 	public static int MSG_OK = 0;
 	public static int MSG_SQLExecuteError = 1;
 	public static int MSG_PrepayReqFail = 2;
-	public static int MSG_UserInfoMissing = 3;
+	public static int MSG_UserIdMissing = 3;
 	public static int MSG_OrderAmountInvalid = 4;
 	public static int MSG_GoodsNotFound = 5;
 	public static int MSG_NoAnyGoods = 6;
@@ -16,4 +16,7 @@ public interface RetMsg {
 	public static int MSG_NoPayOk = 12;	
 	public static int MSG_OrderNotExist = 13;	
 	public static int MSG_OrderHadPaid = 14;	
+	public static int MSG_UserInfoMissing = 15;
+	public static int MSG_InvalidOrderScene = 17;
+	public static int MSG_OrderSequenceWrong = 18;
 }

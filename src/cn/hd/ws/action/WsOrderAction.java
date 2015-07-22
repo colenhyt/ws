@@ -2,14 +2,11 @@ package cn.hd.ws.action;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
-import cn.hd.base.BaseService;
-import cn.hd.base.Message;
-import cn.hd.ws.dao.EcsGoods;
-import cn.hd.ws.dao.EcsGoodsService;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsUserService;
@@ -55,7 +52,7 @@ public class WsOrderAction extends BaseAction {
 		this.wxorder = wxorder;
 	}
 	
-	private boolean queryWxpay(EcsOrderInfo order,String openid){
+	private boolean queryWxpay(EcsOrderInfo order,String openid,String ipAddress){
     	UnifiedOrderBusiness bus = null;
     	InputStream in = getHttpSession().getServletContext().getResourceAsStream(Configure.getCertLocalPath());
     	Configure.setIn(in);
@@ -63,12 +60,11 @@ public class WsOrderAction extends BaseAction {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
 			intTotalFee = 1;
-			String spbill_create_ip = getIpAddress();
-			//spbill_create_ip = "192.168.11.1";
-	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,"NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
+	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,"NCTG goods",order.getOrderSn(),intTotalFee,ipAddress);
 	    	UnifiedOrderResData rst = new UnifiedOrderResData();
-//	    	rst.setResult_code("SUCCESS");
-	    	rst = bus.run(reqdata);
+	    	rst.setResult_code("SUCCESS");
+	    	rst.setPrepay_id("aaa");
+//	    	rst = bus.run(reqdata);
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
     		order.setResultCode(rst.getResult_code());
@@ -113,16 +109,16 @@ public class WsOrderAction extends BaseAction {
 			writeMsg(RetMsg.MSG_NoPayOk);	
 			return null;
 		}	
-		String userinfo = this.getHttpRequest().getParameter("userinfo");
-		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
-			writeMsg(RetMsg.MSG_UserInfoMissing);	
+		String userId = this.getHttpRequest().getParameter("userId");
+		Pattern pattern = Pattern.compile("[0-9]*");
+		 Matcher matcher = pattern.matcher(userId);
+		if (userId==null||userId.equalsIgnoreCase("null")||!matcher.matches()){
+			writeMsg(RetMsg.MSG_UserIdMissing);	
 			return null;
 		}	
 		JSONObject orderobj = JSONObject.fromObject(orderStr);
 		EcsOrderInfo orderInfo = (EcsOrderInfo)JSONObject.toBean(orderobj, EcsOrderInfo.class);
-		JSONObject jsonobj = JSONObject.fromObject(userinfo);
-		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-		if (orderInfo.getUserId().intValue()!=info.getUserId()){
+		if (orderInfo.getUserId().intValue()!=Integer.valueOf(userId).intValue()){
 			writeMsg(RetMsg.MSG_OrderNotExist);	
 			return null;				
 		}
@@ -135,12 +131,14 @@ public class WsOrderAction extends BaseAction {
 			ecsorderService.updateStatus(orderInfo);
 			DataManager.getInstance().addOrder(orderInfo);
 		}
-		String retstr = "{payOk:"+payOk+",orderSn:"+orderInfo.getOrderSn()+"}";
+		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
 		writeMsg2(RetMsg.MSG_OK,retstr);
 		return null;
 	}
 	
 	public String order(){
+		String ipAddress = getIpAddress();
+		
 		String userinfo = this.getHttpRequest().getParameter("userinfo");
 		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
 			writeMsg(RetMsg.MSG_UserInfoMissing);	
@@ -152,7 +150,23 @@ public class WsOrderAction extends BaseAction {
 			writeMsg(RetMsg.MSG_UserInfoMissing);	
 			return null;			
 		}
-		
+		//未经过登陆的用户下单
+		WxUserInfo info2 = DataManager.getInstance().findUser(info.getUserId());
+		if (info2==null){
+			writeMsg(RetMsg.MSG_UserInfoMissing);	
+			return null;				
+		}
+		//下单ip跟登陆ip不一致:
+		if (!info2.getIpAddress().equalsIgnoreCase(ipAddress)){
+			writeMsg(RetMsg.MSG_InvalidOrderScene);	
+			return null;
+		}
+		//频繁下单:
+		long now = System.currentTimeMillis();
+//		if (now-info2.getLastOrderTime()<30*1000){
+//			writeMsg(RetMsg.MSG_OrderSequenceWrong);	
+//			return null;			
+//		}
 		float totalFee = 0;
 		String strgoods = this.getHttpRequest().getParameter("goods");
 //		if (strgoods==null){
@@ -211,16 +225,6 @@ public class WsOrderAction extends BaseAction {
 
 		boolean ret = false;
 		
-		//统一下单,向微信申请prepay_id:
-		ret = queryWxpay(orderInfo,info.getOpenid());
-		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
-			orderInfo.setOrderStatus(false);
-			ecsorderService.add(orderInfo);
-			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
-			Util.log("统一下单申请prepay_id失败");
-			return null;
-		}
-		
 		//校验地址，如果是新地址，进行新增;
 		ret = ecsuserService.validAddress(orderInfo);
 		if (ret==false){
@@ -239,7 +243,21 @@ public class WsOrderAction extends BaseAction {
 //			return null;			
 //		}
 		
+		//add to cache:
 		DataManager.getInstance().addOrder(orderInfo);
+		info2.setLastOrderTime(System.currentTimeMillis());
+		DataManager.getInstance().addUser(info2);
+		
+		//统一下单,向微信申请prepay_id:
+		ret = queryWxpay(orderInfo,info.getOpenid(),ipAddress);
+		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
+			orderInfo.setOrderStatus(false);
+			ecsorderService.update(orderInfo);
+			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
+			Util.log("统一下单申请prepay_id失败");
+			return null;
+		}
+		
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
 		JSONObject reqobj = JSONObject.fromObject(req);

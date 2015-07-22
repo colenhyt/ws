@@ -2,12 +2,6 @@ package cn.hd.wx;
 
 public class WxUserInfo {
 	private int userId;
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 	private String openid;
 	private String nickname;
 	private String sex;
@@ -20,6 +14,26 @@ public class WxUserInfo {
 	private String address;
 	private String mobile;
 	private String contact;
+	private String ipAddress;
+	private long lastOrderTime;
+	public long getLastOrderTime() {
+		return lastOrderTime;
+	}
+	public void setLastOrderTime(long lastOrderTime) {
+		this.lastOrderTime = lastOrderTime;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	public String getContact() {
 		return contact;
 	}

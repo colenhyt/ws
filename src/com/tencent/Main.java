@@ -1,5 +1,8 @@
 package com.tencent;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.tencent.business.OrderQueryBusiness;
 import com.tencent.business.OrderQueryResult;
 import com.tencent.business.RefundQueryBusiness;
@@ -18,7 +21,11 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-
+        	String userId = "11a";
+    		Pattern pattern = Pattern.compile("[0-9]*");
+    		 Matcher matcher = pattern.matcher(userId);
+    		 boolean is = matcher.matches();
+    		 
         	UnifiedOrderBusiness bus = new UnifiedOrderBusiness();
         	String spBillCreateIP = "120.196.99.5";
         	String tradeNo = "111";

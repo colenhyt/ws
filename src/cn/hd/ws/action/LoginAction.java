@@ -83,33 +83,46 @@ public class LoginAction extends BaseAction {
 			if (jsonobj.toString().indexOf("nickname")>0){
 				Util.log("微信用户信息获取成功:"+jsonobj.toString());
 				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
-				String jsonstr = jsonobj.toString();
 				EcsUsers user = ecsuserService.findUserOrAdd(info);
-				if (user!=null){
-					info.setUserId(user.getUserId());
-					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
-					if (add!=null){
-						EcsRegion region = ecsuserService.findRegion(add.getProvince());
-						if (region!=null)
-							info.setProvince(region.getRegionName());
-						region = ecsuserService.findRegion(add.getCity());
-						if (region!=null)
-							info.setCity(region.getRegionName());
-						
-						info.setAddress(add.getAddress());
-						info.setMobile(add.getMobile());
-						info.setContact(add.getConsignee());
-						jsonstr = JSON.toJSONString(info);
-					}
+				if (user==null)
+				{
+					Util.log("user 获取数据失败:"+jsonobj.toString());
+					return "error";
 				}
+				String jsonstr = jsonobj.toString();
+				info.setUserId(user.getUserId());
+				EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
+				if (add!=null){
+					EcsRegion region = ecsuserService.findRegion(add.getProvince());
+					if (region!=null)
+						info.setProvince(region.getRegionName());
+					region = ecsuserService.findRegion(add.getCity());
+					if (region!=null)
+						info.setCity(region.getRegionName());
+					
+					info.setAddress(add.getAddress());
+					info.setMobile(add.getMobile());
+					info.setContact(add.getConsignee());
+					jsonstr = JSON.toJSONString(info);
+				}
+				String loginIp = getIpAddress();
+				info.setIpAddress(loginIp);
+				DataManager.getInstance().addUser(info);
 				jsonstr = jsonstr.replace("\"", "'");
 				getHttpRequest().setAttribute("userinfo", jsonstr);
 				Util.log("用户信息获取成功，跳转到团购页 :"+jsonstr);
 				return "group";						
 			}
 		}
-		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东','city':'深圳','address':'abcd南山','contact':'colenhh','mobile':'134'}");
-		return "error";
+		String loginIp = getIpAddress();
+		WxUserInfo info = new WxUserInfo();
+		info.setOpenid("333");
+		info.setIpAddress(loginIp);
+		EcsUsers user = ecsuserService.findUserOrAdd(info);		
+		info.setUserId(user.getUserId());
+		DataManager.getInstance().addUser(info);
+		getHttpRequest().setAttribute("userinfo", "{'userId':"+info.getUserId()+",'openid':'333','nickname':'aaeee','province':'广东','city':'深圳','address':'abcd南山','contact':'colenhh','mobile':'134'}");
+		return "group";
 	}
 	
     

@@ -118,7 +118,7 @@ function queryGroup()
 	var tag2 = document.getElementById("userinfo");
 	g_user = cfeval(tag2.value);
 	if (g_user==null){
-	 g_user = {};
+	 g_user = {userId:0};
 	}else {
 	 if (g_user.province.length>0)
 	  g_user.province += "省"
