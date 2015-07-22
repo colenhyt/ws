@@ -58,68 +58,22 @@ public class LoginAction extends BaseAction {
 		}
     }
     
-	public String wxlogin()
-	{
-		TokenReqData tokenReq = DataManager.getInstance().tokenReq;
-//		if (tokenReq.isTimeout())
-		String code = this.getHttpRequest().getParameter("code");
-		String state = this.getHttpRequest().getParameter("state");
-		if (code==null){
-			Util.log("wx request failt,state:"+state);
-		}else 
-		{
-			String url = Configure.getAuthTokonAPI(code);
-			JSONObject jsonobj = request.sendUrlPost(url);
-			if (jsonobj.toString().indexOf("errmsg")>0){
-				Util.log("reuqest token error:"+jsonobj.getString("errmsg"));
-				return "error";
-			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
-				Util.log("no token/openid found:"+jsonobj.toString());
-				return "error";				
-			}
-			String access_token = jsonobj.getString("access_token");
-			String openid = jsonobj.getString("openid");
-			url = Configure.getUserInfoAPI(access_token, openid);
-			jsonobj = request.sendUrlPost(url);
-			if (jsonobj.toString().indexOf("nickname")>0){
-				Util.log("微信用户信息获取成功:"+jsonobj.toString());
-				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-				EcsUsers user = ecsuserService.find(info.getOpenid());
-				String jsonstr = jsonobj.toString();
-				if (user!=null){
-					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
-					info.setAddress(add.getAddress());
-					info.setMobile(add.getMobile());
-					info.setContact(add.getConsignee());
-					jsonstr = JSON.toJSONString(info);
-				}
-				jsonstr = jsonstr.replace("\"", "'");
-				getHttpRequest().setAttribute("userinfo", jsonstr);
-				Util.log("request userinfo return :"+jsonstr);
-				return "group";						
-			}
-
-
-		}
-		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东省','city':'深圳市','address':'abcd南山','contact':'colenhh','mobile':'134'}");
-		return "error";		
-	}
-	
 	public String wxlogincallback()
 	{
+		String ip = super.getIpAddress();
 		String code = this.getHttpRequest().getParameter("code");
 		String state = this.getHttpRequest().getParameter("state");
 		if (code==null){
-			Util.log("wx request failt,state:"+state);
+			Util.log("微信用户授权回调取不到code:"+state+",ip:"+ip);
 		}else 
 		{
 			String url = Configure.getAuthTokonAPI(code);
 			JSONObject jsonobj = request.sendUrlPost(url);
 			if (jsonobj.toString().indexOf("errmsg")>0){
-				Util.log("reuqest token error:"+jsonobj.getString("errmsg"));
+				Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
 				return "error";
 			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
-				Util.log("no token/openid found:"+jsonobj.toString());
+				Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
 				return "error";				
 			}
 			String access_token = jsonobj.getString("access_token");
@@ -149,13 +103,11 @@ public class LoginAction extends BaseAction {
 				}
 				jsonstr = jsonstr.replace("\"", "'");
 				getHttpRequest().setAttribute("userinfo", jsonstr);
-				Util.log("request userinfo return :"+jsonstr);
+				Util.log("用户信息获取成功，跳转到团购页 :"+jsonstr);
 				return "group";						
 			}
-
-
 		}
-		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东省','city':'深圳市','address':'abcd南山','contact':'colenhh','mobile':'134'}");
+		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东','city':'深圳','address':'abcd南山','contact':'colenhh','mobile':'134'}");
 		return "error";
 	}
 	

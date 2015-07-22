@@ -119,6 +119,11 @@ function queryGroup()
 	g_user = cfeval(tag2.value);
 	if (g_user==null){
 	 g_user = {};
+	}else {
+	 if (g_user.province.length>0)
+	  g_user.province += "省"
+	 if (g_user.city.length>0)
+	  g_user.city += "市"
 	}	
 	
 	//var tag3 = document.getElementById("wxconfig");
