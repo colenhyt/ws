@@ -132,6 +132,16 @@ public class EcsUserService extends BaseService {
 		initMapper("ecsUsersMapper","ecsUserAddressMapper","ecsRegionMapper");
 	}
 	
+	public EcsRegion findRegion(short region_id){
+		EcsRegionExample example = new EcsRegionExample();
+		EcsRegionExample.Criteria criteria = example.createCriteria();
+		criteria.andRegionIdEqualTo(region_id);
+		List<EcsRegion> list = ecsRegionMapper.selectByExample(example);
+		if (list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}	
 	public EcsRegion findRegion(String regionName){
 		EcsRegionExample example = new EcsRegionExample();
 		EcsRegionExample.Criteria criteria = example.createCriteria();

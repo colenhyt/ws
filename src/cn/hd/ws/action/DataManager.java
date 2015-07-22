@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.tencent.common.JSReqData;
+import com.tencent.common.TokenReqData;
 
 
 public class DataManager {
 	private BlockingQueue<String> queue;
-	public JSReqData jsReq;
+	public TokenReqData tokenReq;
     private static DataManager uniqueInstance = null;  
 	
     public static DataManager getInstance() {  
@@ -22,11 +22,11 @@ public class DataManager {
     
     public DataManager(){
     	queue  = new LinkedBlockingQueue<String>();
-    	jsReq = new JSReqData();
+    	tokenReq = new TokenReqData();
      }
     
-    public JSReqData findReq(){
-    	return jsReq;
+    public TokenReqData findReq(){
+    	return tokenReq;
     }
     
     private void genOrderIds(){

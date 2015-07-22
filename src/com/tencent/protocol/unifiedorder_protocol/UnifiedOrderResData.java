@@ -33,7 +33,7 @@ public class UnifiedOrderResData {
     private String code_url = "";
     
     public boolean isSuccess(){
-    	return getResult_code().equals("SUCCESS");
+    	return getResult_code()!=null&&getResult_code().equals("SUCCESS");
     }
     
     

@@ -9,6 +9,7 @@ import java.security.UnrecoverableKeyException;
 
 import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
+import cn.hd.ws.dao.EcsRegion;
 import cn.hd.ws.dao.EcsUserAddress;
 import cn.hd.ws.dao.EcsUserService;
 import cn.hd.ws.dao.EcsUsers;
@@ -17,7 +18,7 @@ import cn.hd.wx.WxUserInfo;
 import com.alibaba.fastjson.JSON;
 import com.tencent.common.Configure;
 import com.tencent.common.HttpsRequest;
-import com.tencent.common.JSReqData;
+import com.tencent.common.TokenReqData;
 import com.tencent.common.Util;
 import com.tencent.protocol.order_protocol.JSWxConfigReqData;
 
@@ -57,6 +58,53 @@ public class LoginAction extends BaseAction {
 		}
     }
     
+	public String wxlogin()
+	{
+		TokenReqData tokenReq = DataManager.getInstance().tokenReq;
+//		if (tokenReq.isTimeout())
+		String code = this.getHttpRequest().getParameter("code");
+		String state = this.getHttpRequest().getParameter("state");
+		if (code==null){
+			Util.log("wx request failt,state:"+state);
+		}else 
+		{
+			String url = Configure.getAuthTokonAPI(code);
+			JSONObject jsonobj = request.sendUrlPost(url);
+			if (jsonobj.toString().indexOf("errmsg")>0){
+				Util.log("reuqest token error:"+jsonobj.getString("errmsg"));
+				return "error";
+			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
+				Util.log("no token/openid found:"+jsonobj.toString());
+				return "error";				
+			}
+			String access_token = jsonobj.getString("access_token");
+			String openid = jsonobj.getString("openid");
+			url = Configure.getUserInfoAPI(access_token, openid);
+			jsonobj = request.sendUrlPost(url);
+			if (jsonobj.toString().indexOf("nickname")>0){
+				Util.log("微信用户信息获取成功:"+jsonobj.toString());
+				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+				EcsUsers user = ecsuserService.find(info.getOpenid());
+				String jsonstr = jsonobj.toString();
+				if (user!=null){
+					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
+					info.setAddress(add.getAddress());
+					info.setMobile(add.getMobile());
+					info.setContact(add.getConsignee());
+					jsonstr = JSON.toJSONString(info);
+				}
+				jsonstr = jsonstr.replace("\"", "'");
+				getHttpRequest().setAttribute("userinfo", jsonstr);
+				Util.log("request userinfo return :"+jsonstr);
+				return "group";						
+			}
+
+
+		}
+		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东省','city':'深圳市','address':'abcd南山','contact':'colenhh','mobile':'134'}");
+		return "error";		
+	}
+	
 	public String wxlogincallback()
 	{
 		String code = this.getHttpRequest().getParameter("code");
@@ -66,9 +114,7 @@ public class LoginAction extends BaseAction {
 		}else 
 		{
 			String url = Configure.getAuthTokonAPI(code);
-			Util.log("request wx token:url="+url);
 			JSONObject jsonobj = request.sendUrlPost(url);
-			Util.log("rev token return :"+jsonobj.toString());
 			if (jsonobj.toString().indexOf("errmsg")>0){
 				Util.log("reuqest token error:"+jsonobj.getString("errmsg"));
 				return "error";
@@ -88,10 +134,17 @@ public class LoginAction extends BaseAction {
 				if (user!=null){
 					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
 					if (add!=null){
-					info.setAddress(add.getAddress());
-					info.setMobile(add.getMobile());
-					info.setContact(add.getConsignee());
-					jsonstr = JSON.toJSONString(info);
+						EcsRegion region = ecsuserService.findRegion(add.getProvince());
+						if (region!=null)
+							info.setProvince(region.getRegionName());
+						region = ecsuserService.findRegion(add.getCity());
+						if (region!=null)
+							info.setCity(region.getRegionName());
+						
+						info.setAddress(add.getAddress());
+						info.setMobile(add.getMobile());
+						info.setContact(add.getConsignee());
+						jsonstr = JSON.toJSONString(info);
 					}
 				}
 				jsonstr = jsonstr.replace("\"", "'");
@@ -111,7 +164,7 @@ public class LoginAction extends BaseAction {
 	{	
 		String jsonstr = null;
 		String jstoken = null;
-		JSReqData reqData = DataManager.getInstance().jsReq;
+		TokenReqData reqData = DataManager.getInstance().tokenReq;
 		if (!reqData.isTimeout()){
 			jstoken = reqData.getJsTicket();
 		}else {

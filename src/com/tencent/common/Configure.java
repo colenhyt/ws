@@ -82,6 +82,9 @@ public class Configure {
 
 	//用户授权请求API:
 	public static String AUTH_API = "https://open.weixin.qq.com/connect/oauth2/authorize?";
+	
+	//ws 用户授权
+	public static String WS_AUTH_API = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx14be2d51e8ad9693&redirect_uri=http://www.egonctg.com/ec/login_wxlogincallback.do&response_type=code&scope=snsapi_userinfo&state=aaa#wechat_redirect";
 
 	//用户授权获取access_token:
 	public static String AUTH_TOKEN_API = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appSecret+"&grant_type=authorization_code";
