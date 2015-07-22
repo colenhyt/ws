@@ -61,7 +61,6 @@ public class LoginAction extends BaseAction {
 	{
 		String code = this.getHttpRequest().getParameter("code");
 		String state = this.getHttpRequest().getParameter("state");
-		String cfgStr = wxjsinit();
 		if (code==null){
 			Util.log("wx request failt,state:"+state);
 		}else 
@@ -69,37 +68,40 @@ public class LoginAction extends BaseAction {
 			String url = Configure.getAuthTokonAPI(code);
 			Util.log("request wx token:url="+url);
 			JSONObject jsonobj = request.sendUrlPost(url);
-			String access_token = jsonobj.getString("access_token");
-			if (access_token==null){
-				Util.log("wx token request fail:"+jsonobj.toString());
-			}else {
-				String openid = jsonobj.getString("openid");
-				url = Configure.getUserInfoAPI(access_token, openid);
-				jsonobj = request.sendUrlPost(url);
-				if (jsonobj.toString().indexOf("nickname")>0){
-					Util.log("wxauth userinfo:"+jsonobj.toString());
-					WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-					EcsUsers user = ecsuserService.find(info.getOpenid());
-					String jsonstr = jsonobj.toString();
-					if (user!=null){
-						EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
-						info.setAddress(add.getAddress());
-						info.setMobile(add.getMobile());
-						info.setContact(add.getConsignee());
-						jsonstr = JSON.toJSONString(info);
-					}
-					getHttpRequest().setAttribute("userinfo", jsonstr);
-					getHttpRequest().setAttribute("wxconfig", cfgStr);
-					Util.log("request userinfo return :"+info.getNickname()+";"+info.getOpenid());
-					return "group";						
-				}
-
+			Util.log("rev token return :"+jsonobj.toString());
+			if (jsonobj.toString().indexOf("errmsg")>0){
+				Util.log("reuqest token error:"+jsonobj.getString("errmsg"));
+				return "error";
+			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
+				Util.log("no token/openid found:"+jsonobj.toString());
+				return "error";				
 			}
+			String access_token = jsonobj.getString("access_token");
+			String openid = jsonobj.getString("openid");
+			url = Configure.getUserInfoAPI(access_token, openid);
+			jsonobj = request.sendUrlPost(url);
+			if (jsonobj.toString().indexOf("nickname")>0){
+				Util.log("微信用户信息获取成功:"+jsonobj.toString());
+				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+				EcsUsers user = ecsuserService.find(info.getOpenid());
+				String jsonstr = jsonobj.toString();
+				if (user!=null){
+					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
+					info.setAddress(add.getAddress());
+					info.setMobile(add.getMobile());
+					info.setContact(add.getConsignee());
+					jsonstr = JSON.toJSONString(info);
+				}
+				jsonstr = jsonstr.replace("\"", "'");
+				getHttpRequest().setAttribute("userinfo", jsonstr);
+				Util.log("request userinfo return :"+jsonstr);
+				return "group";						
+			}
+
 
 		}
 		getHttpRequest().setAttribute("userinfo", "{'openid':'333','nickname':'aaeee','province':'广东省','city':'深圳市','address':'abcd南山','contact':'colenhh','mobile':'134'}");
-		getHttpRequest().setAttribute("wxconfig", cfgStr);
-		return "group";
+		return "error";
 	}
 	
     

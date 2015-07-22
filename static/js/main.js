@@ -121,11 +121,11 @@ function queryGroup()
 	 g_user = {};
 	}	
 	
-	var tag3 = document.getElementById("wxconfig");
-	g_wxconfig = cfeval(tag3.value);
-	if (g_wxconfig!=null){
-	  g_wx.init();
-	}
+	//var tag3 = document.getElementById("wxconfig");
+	//g_wxconfig = cfeval(tag3.value);
+	//if (g_wxconfig!=null){
+	//  g_wx.init();
+	//}
 		
 	content = ""
 	content += "<select id='region_province' class='ws_province' onchange=\"selectRegion(this[selectedIndex].text)\">"

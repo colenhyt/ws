@@ -112,7 +112,7 @@ var currCount = parseInt(tag.value);
 }
 
 Cart.prototype.doBuy = function(){
- 
+
  	var dataParam = "";
  	
  	//goods items:
@@ -123,8 +123,8 @@ Cart.prototype.doBuy = function(){
  	 dataParam += str+","
  	}
  	dataParam += "]";
- 	
  	var tag = document.getElementById('userinfo');
+ 	 alert(tag.value);
  	if (tag.value.length>0)
   	 dataParam += "&userinfo="+tag.value;
   	tag = document.getElementById('contact');

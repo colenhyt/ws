@@ -62,6 +62,7 @@ public class WsOrderAction extends BaseAction {
 		try {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
+			intTotalFee = 1;
 			String spbill_create_ip = getIpAddress();
 			//spbill_create_ip = "192.168.11.1";
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,"NCTG goods",order.getOrderSn(),intTotalFee,spbill_create_ip);
@@ -96,6 +97,7 @@ public class WsOrderAction extends BaseAction {
 	}
 	
 	public String order(){
+		Util.log("1");
 		String userinfo = this.getHttpRequest().getParameter("userinfo");
 		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
 			writeMsg(RetMsg.MSG_UserInfoMissing);	
@@ -139,7 +141,6 @@ public class WsOrderAction extends BaseAction {
 //			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
 //			return null;			
 //		}
-		
 		//获取userid:
 		int userId = ecsuserService.findUserIdOrAdd(info);
 		if (userId==-1){
