@@ -82,15 +82,17 @@ public class LoginAction extends BaseAction {
 			jsonobj = request.sendUrlPost(url);
 			if (jsonobj.toString().indexOf("nickname")>0){
 				Util.log("微信用户信息获取成功:"+jsonobj.toString());
-				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-				EcsUsers user = ecsuserService.find(info.getOpenid());
+				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 				String jsonstr = jsonobj.toString();
+				EcsUsers user = ecsuserService.find(openid);
 				if (user!=null){
 					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
+					if (add!=null){
 					info.setAddress(add.getAddress());
 					info.setMobile(add.getMobile());
 					info.setContact(add.getConsignee());
 					jsonstr = JSON.toJSONString(info);
+					}
 				}
 				jsonstr = jsonstr.replace("\"", "'");
 				getHttpRequest().setAttribute("userinfo", jsonstr);

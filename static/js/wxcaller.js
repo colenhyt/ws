@@ -4,7 +4,7 @@ WxCaller = function(){
 }
 
 WxCaller.prototype.init = function(){
-//return;
+return;
  var cfg = g_wxconfig;
  //alert(cfg.noncestr);
 //	var dataobj = $.ajax({type:"post",url:"/ec/login_wxjsinit.do",async:false});
