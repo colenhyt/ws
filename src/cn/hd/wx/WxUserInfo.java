@@ -1,6 +1,13 @@
 package cn.hd.wx;
 
 public class WxUserInfo {
+	private int userId;
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	private String openid;
 	private String nickname;
 	private String sex;

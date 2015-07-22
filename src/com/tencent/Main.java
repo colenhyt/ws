@@ -24,7 +24,7 @@ public class Main {
         	String tradeNo = "111";
         	Configure.setTradeType("NATIVE");
         	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(null,"Ipad",tradeNo,1,spBillCreateIP);
-        	UnifiedOrderResData rst = bus.run(reqdata);
+//        	UnifiedOrderResData rst = bus.run(reqdata);
 //        	if (rst.isSuccess()){
 //        		int a = 100;
 //        	}
@@ -35,12 +35,12 @@ public class Main {
 //        	bus2.run(req, rr);
         	
         	OrderQueryBusiness bus3 = new OrderQueryBusiness();
-        	OrderQueryReqData req2 = new OrderQueryReqData("111");
+        	OrderQueryReqData req2 = new OrderQueryReqData("NCTG14375317906050");
         	OrderQueryResult rr2 = new OrderQueryResult();
-//        	bus3.run(req2, rr2);        	
+        	bus3.run(req2, rr2);        	
         	
-        	JSChooseWXPayReqData rerr = new JSChooseWXPayReqData("123");
-        	System.out.println(rerr.getSign());
+//        	JSChooseWXPayReqData rerr = new JSChooseWXPayReqData("123");
+//        	System.out.println(rerr.getSign());
 //        	String result = "{'privilege':['a','b','daa']}";
 //        	JSONObject jsonobj = JSONObject.fromObject(result);
 //        	WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);

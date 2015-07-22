@@ -102,10 +102,10 @@ public class EcsUserService extends BaseService {
 		}
 	}
 	
-	public int findUserIdOrAdd(WxUserInfo userInfo){
+	public EcsUsers findUserOrAdd(WxUserInfo userInfo){
 		EcsUsers user = find(userInfo.getOpenid());
 		if (user!=null){
-			return user.getUserId();
+			return user;
 		}else {
 			EcsUsers record = new EcsUsers();
 			record.setUserName(userInfo.getNickname());
@@ -121,9 +121,9 @@ public class EcsUserService extends BaseService {
 //			record.setSex(userInfo.);
 			boolean added = add(record);
 			if (added)
-			 return record.getUserId();
+			 return record;
 			else
-			 return -1;
+			 return null;
 		}
 			
 	}

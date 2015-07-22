@@ -84,8 +84,9 @@ public class LoginAction extends BaseAction {
 				Util.log("微信用户信息获取成功:"+jsonobj.toString());
 				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 				String jsonstr = jsonobj.toString();
-				EcsUsers user = ecsuserService.find(openid);
+				EcsUsers user = ecsuserService.findUserOrAdd(info);
 				if (user!=null){
+					info.setUserId(user.getUserId());
 					EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
 					if (add!=null){
 						EcsRegion region = ecsuserService.findRegion(add.getProvince());

@@ -96,8 +96,51 @@ public class WsOrderAction extends BaseAction {
 		return false;
 	}
 	
+	//支付完毕/失败，订单状态修改
+	public String commit(){
+		String orderSn = this.getHttpRequest().getParameter("orderSn");
+		if (orderSn==null||orderSn.equalsIgnoreCase("null")){
+			writeMsg(RetMsg.MSG_NoOrderSn);	
+			return null;
+		}			
+		String orderStr = DataManager.getInstance().findOrder(orderSn);
+		if (orderStr==null){
+			writeMsg(RetMsg.MSG_OrderNotExist);	
+			return null;			
+		}
+		String payOk = this.getHttpRequest().getParameter("payOk");
+		if (payOk==null||payOk.equalsIgnoreCase("null")){
+			writeMsg(RetMsg.MSG_NoPayOk);	
+			return null;
+		}	
+		String userinfo = this.getHttpRequest().getParameter("userinfo");
+		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
+			writeMsg(RetMsg.MSG_UserInfoMissing);	
+			return null;
+		}	
+		JSONObject orderobj = JSONObject.fromObject(orderStr);
+		EcsOrderInfo orderInfo = (EcsOrderInfo)JSONObject.toBean(orderobj, EcsOrderInfo.class);
+		JSONObject jsonobj = JSONObject.fromObject(userinfo);
+		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+		if (orderInfo.getUserId().intValue()!=info.getUserId()){
+			writeMsg(RetMsg.MSG_OrderNotExist);	
+			return null;				
+		}
+		if (orderInfo.getPayStatus().booleanValue()==true){
+			writeMsg(RetMsg.MSG_OrderHadPaid);
+			return null;				
+		}
+		if (payOk.endsWith("true")){
+			orderInfo.setPayStatus(true);
+			ecsorderService.updateStatus(orderInfo);
+			DataManager.getInstance().addOrder(orderInfo);
+		}
+		String retstr = "{payOk:"+payOk+",orderSn:"+orderInfo.getOrderSn()+"}";
+		writeMsg2(RetMsg.MSG_OK,retstr);
+		return null;
+	}
+	
 	public String order(){
-		Util.log("1");
 		String userinfo = this.getHttpRequest().getParameter("userinfo");
 		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
 			writeMsg(RetMsg.MSG_UserInfoMissing);	
@@ -141,12 +184,6 @@ public class WsOrderAction extends BaseAction {
 //			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
 //			return null;			
 //		}
-		//获取userid:
-		int userId = ecsuserService.findUserIdOrAdd(info);
-		if (userId==-1){
-			writeMsg(RetMsg.MSG_UserNotFound);	
-			return null;
-		}
 
 		String paytype = this.getHttpRequest().getParameter("paytype");
 		String contact = this.getHttpRequest().getParameter("contact");
@@ -158,7 +195,7 @@ public class WsOrderAction extends BaseAction {
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
-		orderInfo.setUserId(userId);
+		orderInfo.setUserId(info.getUserId());
 		orderInfo.setProvince(Short.valueOf(province));
 		orderInfo.setCity(Short.valueOf(city));
 		orderInfo.setAddress(address);
@@ -166,6 +203,7 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setConsignee(contact);
 		orderInfo.setMobile(phone);
 		orderInfo.setOrderStatus(false);
+		orderInfo.setPayStatus(false);
 		orderInfo.setShippingStatus(false);
 		orderInfo.setPayId(Integer.valueOf(paytype).byteValue());
 		orderInfo.setPayStatus(false);
@@ -201,6 +239,7 @@ public class WsOrderAction extends BaseAction {
 //			return null;			
 //		}
 		
+		DataManager.getInstance().addOrder(orderInfo);
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
 		JSONObject reqobj = JSONObject.fromObject(req);

@@ -2,6 +2,7 @@ Cart = function(){
     this.name = "cart";
     this.tagname = "my"+this.name;
     this.pagename = this.tagname+"page";
+    this.currOrder = null;
     this.data = [];
 }
 
@@ -158,7 +159,8 @@ Cart.prototype.buyCallback = function(data){
  var rets = cfeval(ret.desc);
   var info = rets[0];
   var req = rets[1];
-  content = '支付申请成功,订单号('+info.orderSn+"),向发起支付....";
+  content = '您的订单号已生成,订单号('+info.orderSn+"),向微信发起支付....";
+  this.currOrder = info;
   g_wx.reqWxpay(req);
  }else {
   content = "购买失败:"
@@ -172,6 +174,46 @@ Cart.prototype.buyCallback = function(data){
  
 }
 
+Cart.prototype.wxpayCallback = function(payOk){
+ if (this.currOrder==null)
+  return;
+  
+  var dataParam = "";  
+  dataParam += "orderSn="+this.currOrder.orderSn;
+  dataParam += "&payOk="+payOk;
+   
+ 	var tag = document.getElementById('userinfo');
+ 	if (tag.value.length>0)
+  	 dataParam += "&userinfo="+tag.value;
+  	   
+	try    {
+		$.ajax({type:"post",url:"/ec/order_commit.do",data:dataParam,success:function(data){
+		 var msg = cfeval(data);
+		 g_cart.commitCallback(msg);
+		}});
+	}   catch  (e)   {
+	    alert(e.name);
+	}
+	  
+ 
+  this.currOrder = null; 
+}
+
+Cart.prototype.commitCallback = function(data){
+ var content;
+ if (data.code==0){
+	 var ret = cfeval(data.desc);
+	  content = "订单"+ret.orderSn+"提交失败或被取消!!"
+	  if (ret.payOk==true){
+	    content = "订单"+ret.orderSn+"提交成功!!"
+	  }
+  }else {
+   content = "订单提交失败或被取消!!:"+ERR_MSG[ret.code];
+  }
+  
+  var tag = document.getElementById(this.pagename);
+  tag.innerHTML = content;  
+}
 
 var g_cart = new Cart();
  g_cart.init();

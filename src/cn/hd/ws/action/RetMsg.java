@@ -12,4 +12,8 @@ public interface RetMsg {
 	public static int MSG_AddressInvalid = 8;
 	public static int MSG_OrderSaveFail = 9;
 	public static int MSG_OrderGoodsSaveFail = 10;
+	public static int MSG_NoOrderSn = 11;
+	public static int MSG_NoPayOk = 12;	
+	public static int MSG_OrderNotExist = 13;	
+	public static int MSG_OrderHadPaid = 14;	
 }

@@ -64,6 +64,17 @@ public class EcsOrderService extends BaseService {
 		}		
 	}
 	
+	public boolean updateStatus(EcsOrderInfo record){
+		try {
+			ecsOrderInfoMapper.updateByPrimaryKeySelective(record);
+			DBCommit();
+			return true;
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}		
+	}
+	
 	public boolean update(EcsOrderInfo record){
 		try {
 			ecsOrderInfoMapper.updateByPrimaryKeySelective(record);
@@ -80,11 +91,11 @@ public class EcsOrderService extends BaseService {
 		WxUserInfo userinfo = new WxUserInfo();
 		userinfo.setNickname("aaa");
 		userinfo.setOpenid("1334");
-		int userid = userService.findUserIdOrAdd(userinfo);
+		EcsUsers user = userService.findUserOrAdd(userinfo);
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
-		orderInfo.setUserId(userid);
+		orderInfo.setUserId(user.getUserId());
 		orderInfo.setAddress("add");
 		orderInfo.setConsignee("contact");
 		orderInfo.setMobile("123");
