@@ -594,6 +594,11 @@ function loadAni(){
   
 }
 
+function isNumber(value){
+    var reg = new RegExp("^[0-9]*$");
+    return reg.test(value);
+}
+
 function loadAni2(){
   var div=$("#msg_load2");
   div.animate({top:"-10px"},30);  

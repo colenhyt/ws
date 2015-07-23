@@ -16,31 +16,46 @@ Cart.prototype.init = function(){
     document.write(page.toString()); 
 }
 
+Cart.prototype.check = function(){
+ var ret = true;
+var tag = document.getElementById('contact');
+  var tag22 = document.getElementById('contacttip');
+ if (tag.value.length<=0){
+  tag22.innerHTML = '(请填上收货人姓名)'; 
+  ret = false;
+ }else {
+  tag22.innerHTML = ''; 
+ }
+  
+ var tag = document.getElementById('phone');
+  tag22 = document.getElementById('phonetip');
+ if (tag.value.length!=11||!isNumber(tag.value)){
+  tag22.innerHTML = '(请填上有效联系电话)';
+  ret = false;
+ }else {
+  tag22.innerHTML = ''; 
+ }
+ 
+tag = document.getElementById('address');
+  tag22 = document.getElementById('addresstip');
+  
+  var tagp = document.getElementById('region_province')
+  var tagcity = document.getElementById('region_city')
+ if (tag.value.length<=0||tagp.value<0||tagcity.value<0){
+  tag22.innerHTML = '(请填上完整送货地址)'; 
+  ret = false;
+ }else {
+  tag22.innerHTML = ''; 
+ }
+ 
+ 
+  return ret;
+}
+
 Cart.prototype.show = function(){
 
-// var tag = document.getElementById('wxhao');
-// if (tag.value.length<=0){
-//  alert('请填上你的微信号');
-//  return;
-// }
-//   
-//tag = document.getElementById('contact');
-// if (tag.value.length<=0){
-//  alert('请填上收货人姓名');
-//  return;
-// }
-//  
-//tag = document.getElementById('phone');
-// if (tag.value.length<=0){
-//  alert('请填上收货人电话');
-//  return;
-// }
-// 
-//tag = document.getElementById('address');
-// if (tag.value.length<=0){
-//  alert('请填上你的送货地址');
-//  return;
-// }
+var check = this.check();
+if (!check) return;
 
 var itemlength  = this.data.length ;
 

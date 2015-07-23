@@ -41,10 +41,6 @@ public class DataOutputer {
 				String pname = r.getRegionName();
 				if (pname.equals("澳门")||pname.equals("台湾")||pname.equals("香港"))
 					continue;
-				else if (pname.equals("北京")||pname.equals("上海")||pname.equals("天津")||pname.equals("重庆"))
-					pname += "市";
-				else
-					pname += "省";
 				out.write(("["+r.getRegionId()+",'"+pname+"'],").getBytes());
 				System.out.println(pname);
 				
