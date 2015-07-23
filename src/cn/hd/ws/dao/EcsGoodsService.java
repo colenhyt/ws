@@ -84,11 +84,16 @@ public class EcsGoodsService extends BaseService {
 	
 	public List<EcsGoods> goods(short catID){
 		EcsGoodsExample example = new EcsGoodsExample();
+		try {		
 		if (catID>0){
 			Criteria criteria = example.createCriteria();
 			criteria.andCatIdEqualTo(catID);
 		}
 		return ecsgoodsMapper.selectByExampleWithBLOBs(example);
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}			
 	}
 	
 	public boolean add(EcsGoods record){
@@ -110,12 +115,12 @@ public class EcsGoodsService extends BaseService {
 				if (record==null){
 					continue;
 				}
-				short nowno = (short)(record.getGoodsNumber().shortValue()-orderGoods.getGoodsNumber().shortValue());
+				int nowno = record.getGoodsNumber().intValue()-orderGoods.getGoodsNumber().intValue();
 				if (nowno<0){
 					System.out.println("错误库存操作，已<0:当前库存:"+record.getGoodsNumber()+",准备减少库存:"+orderGoods.getGoodsNumber());
 					nowno = 0;
 				}
-				record.setGoodsNumber(Short.valueOf(nowno));
+				record.setGoodsNumber(Integer.valueOf(nowno));
 				ecsgoodsMapper.updateByPrimaryKeySelective(record);
 			}
 			DBCommit();

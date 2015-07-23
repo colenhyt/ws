@@ -47,9 +47,9 @@ public class EcsOrderService extends BaseService {
 				record.setOrderId(orderId);
 				record.setGoodsId(item.getGoodsId());
 				if (item.getIsReal()==1)
-				record.setIsReal(true);
+				 record.setIsReal(true);
 				record.setGoodsSn(item.getGoodsSn());
-				record.setGoodsNumber(item.getGoodsNumber());
+				record.setGoodsNumber(item.getGoodsNumber().shortValue());
 				record.setGoodsName(item.getGoodsName());
 				record.setGoodsPrice(item.getShopPrice());
 				record.setMarketPrice(item.getShopPrice());
