@@ -63,7 +63,8 @@ Cart.prototype.freight = function(){
 	 var obj = cfeval(dataobj.responseText);
 	 var freight = 0;
 	if (obj.code==0){
-	 freight = parseInt(obj.desc);
+	 if (isNumber(obj.desc))
+	  freight = parseInt(obj.desc);
 	}
 	return freight;
 }

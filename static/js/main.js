@@ -85,7 +85,7 @@ function queryGroupGoods(catId){
     content += "    <tr><td class='goods' colspan=2>"
     if (goodsno>0){
      var func = "g_cart.count("+item.goodsId+",'"+item.goodsName+"',"+item.shopPrice;   
-     content += "<li><img class='wsgoods_count' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' onclick=\""+func+",1)\">"
+     content += "<li><img class='wsgoods_count' src='static/img/bt_minus.png' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' src='static/img/bt_add.png' onclick=\""+func+",1)\">"
     }
     else
      content += "已售空"

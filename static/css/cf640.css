@@ -132,13 +132,11 @@ width:80px;
 height:58px;
 margin-top:0px;
 border:none;
-background:url('../../static/img/bt_minus.png') no-repeat;
 -moz-background-size:100% 100%;  
     background-size:100% 100%;  
 }
 
 .wsgoods_count.add {
-background:url('../../static/img/bt_add.png') no-repeat;
 -moz-background-size:100% 100%;  
     background-size:100% 100%;  
 }
