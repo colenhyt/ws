@@ -13,13 +13,13 @@
 		<title>ws</title>
 	</head>
   <script src="dist/js/jquery-2.0.3.min.js"></script>
+  <script src="dist/js/sea.js"></script>
   <script src="dist/js/zui.min.js"></script>
   <script src="dist/js/json2.js"></script>
   <script>
   </script>
 </head>
 <body>
-       <button onclick="g_cart.show()" class='button2'>确定</button><br><br>
 
 <div id='groupDiv'>
 </div>
@@ -50,8 +50,7 @@
   </ul>
 </nav>	      
        <div>
-       微信号*<br>
-       <input name="wxhao" id="wxhao" type="text" class='wxhao'>
+       微信号: <span id="wxhao" class='wxhao'></span>
        </div>
        <div>
        付款方式*:<br>
@@ -61,12 +60,13 @@
        </td></tr>
        </table>
        </div>
-       <div>收货人姓名*:<br><input name="contact" id="contact" type="text" value=""></div>
-       <div>收货人电话*:<br><input name="phone" id="phone" type="text" value=""></div>
-       <div>送货地址*:<br>
+       <div>收货人姓名*:<span id='contacttip' style='color:red'></span><br><input name="contact" id="contact" type="text" value=""></div>
+       <div>收货人电话*:<span id='phonetip' style='color:red'></span><br><input name="phone" id="phone" type="text" value=""></div>
+       <div>送货地址*:<span id='addresstip' style='color:red'></span><br>
        <div id='regionDIV'></div>
        <input name="address" id="address" type="text" value=""></div>
        <div>备注: <br><input name="remark" id="remark" type="text" value=""></div>
+       <button onclick="g_cart.show()" class='button2'>确定</button><br><br>
         <script type="text/javascript" src="static/js/main.js"></script>
        
     	</body>	
