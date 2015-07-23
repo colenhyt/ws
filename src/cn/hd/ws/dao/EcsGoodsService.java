@@ -3,6 +3,8 @@ package cn.hd.ws.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.rmi.CORBA.Util;
+
 import cn.hd.base.BaseService;
 import cn.hd.ws.action.WsGoodsAction;
 import cn.hd.ws.dao.EcsGoodsExample.Criteria;
@@ -99,6 +101,41 @@ public class EcsGoodsService extends BaseService {
 		}		
 		return false;
 	}
+	
+	public boolean updateByOrderGoods(List<EcsOrderGoods> list){
+		try {
+			for (int i=0;i<list.size();i++){
+				EcsOrderGoods orderGoods = list.get(i);
+				EcsGoods record = find(orderGoods.getGoodsId());
+				if (record==null){
+					continue;
+				}
+				short nowno = (short)(record.getGoodsNumber().shortValue()-orderGoods.getGoodsNumber().shortValue());
+				if (nowno<0){
+					System.out.println("错误库存操作，已<0:当前库存:"+record.getGoodsNumber()+",准备减少库存:"+orderGoods.getGoodsNumber());
+					nowno = 0;
+				}
+				record.setGoodsNumber(Short.valueOf(nowno));
+				ecsgoodsMapper.updateByPrimaryKeySelective(record);
+			}
+			DBCommit();
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}		
+		return true;
+	}
+	
+	public boolean update(EcsGoods record){
+		try {
+			ecsgoodsMapper.updateByPrimaryKeySelective(record);
+			DBCommit();
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}		
+		return true;
+	}	
 	
 	public static void main(String[] args){
 		EcsGoodsService ss = new EcsGoodsService();

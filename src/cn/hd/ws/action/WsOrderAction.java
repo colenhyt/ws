@@ -2,11 +2,16 @@ package cn.hd.ws.action;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
+import cn.hd.base.BaseService;
+import cn.hd.ws.dao.EcsGoods;
+import cn.hd.ws.dao.EcsGoodsService;
+import cn.hd.ws.dao.EcsOrderGoods;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsRegion;
@@ -27,7 +32,16 @@ public class WsOrderAction extends BaseAction {
 	private EcsOrderInfo wxorder;
 	private EcsOrderService ecsorderService;
 	private EcsUserService ecsuserService;
+	private EcsGoodsService ecsGoodsService;
 	
+	public EcsGoodsService getEcsGoodsService() {
+		return ecsGoodsService;
+	}
+
+	public void setEcsGoodsService(EcsGoodsService ecsGoodsService) {
+		this.ecsGoodsService = ecsGoodsService;
+	}
+
 	public EcsUserService getEcsuserService() {
 		return ecsuserService;
 	}
@@ -64,7 +78,7 @@ public class WsOrderAction extends BaseAction {
 	}
 
 	public WsOrderAction(){
-		init("ecsorderService","ecsuserService");
+		init("ecsorderService","ecsuserService","ecsGoodsService");
 	}
 	
 	public EcsOrderInfo getEcsOrderInfo() {
@@ -75,19 +89,20 @@ public class WsOrderAction extends BaseAction {
 		this.wxorder = wxorder;
 	}
 	
-	private boolean queryWxpay(EcsOrderInfo order,String openid,String ipAddress){
+	private boolean queryWxpay(EcsOrderInfo order,String openid,String orderTitle,String ipAddress){
     	UnifiedOrderBusiness bus = null;
     	InputStream in = getHttpSession().getServletContext().getResourceAsStream(Configure.getCertLocalPath());
     	Configure.setIn(in);
 		try {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
-			intTotalFee = 1;
-	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,"NCTG goods",order.getOrderSn(),intTotalFee,ipAddress);
+			intTotalFee = 2;
+			String body = "e美农场购买("+orderTitle+")";
+	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,body,order.getOrderSn(),intTotalFee,ipAddress);
 	    	UnifiedOrderResData rst = new UnifiedOrderResData();
-	    	rst.setResult_code("SUCCESS");
-	    	rst.setPrepay_id("aaa");
-//	    	rst = bus.run(reqdata);
+//	    	rst.setResult_code("SUCCESS");
+//	    	rst.setPrepay_id("aaa");
+	    	rst = bus.run(reqdata);
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
     		order.setResultCode(rst.getResult_code());
@@ -150,12 +165,16 @@ public class WsOrderAction extends BaseAction {
 			return null;				
 		}
 		if (payOk.endsWith("true")){
+			//更新商品库存:
+			List<EcsOrderGoods> goods = ecsorderService.findGoods(orderInfo.getOrderId());
+			ecsGoodsService.updateByOrderGoods(goods);
+			
 			if (checkWxOrder(orderInfo)){
 				orderInfo.setPayStatus(true);
 				ecsorderService.updateStatus(orderInfo);
 				DataManager.getInstance().addOrder(orderInfo);
 			}else {
-				Util.log("支付单价查询对账错误"+orderInfo.getOrderSn());
+				Util.log("支付单据查询对账错误"+orderInfo.getOrderSn());
 			}
 		}
 		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
@@ -211,36 +230,48 @@ public class WsOrderAction extends BaseAction {
 //			return null;			
 //		}
 		float totalFee = 0;
+		String orderTitle = "";
 		String strgoods = this.getHttpRequest().getParameter("goods");
-//		if (strgoods==null){
-//			writeMsg(RetMsg.MSG_NoAnyGoods);	
-//			return null;			
-//		}
-//		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
-//		String nogoods = null;
-//		EcsGoodsService  goodsService = new EcsGoodsService();
-//		for (int i=0;i<items.size();i++){
-//			EcsGoods item = items.get(i);
-//			EcsGoods item2 = goodsService.find(item.getGoodsId());
-//			if (item2==null){
-//				nogoods = item.getGoodsName();
-//				break;
-//			}
-//			item.setGoodsSn(item2.getGoodsSn());
-//			item.setIsReal(item2.getIsReal());
-//			item.setShopPrice(item2.getShopPrice());
-//			item.setGoodsId(item2.getGoodsId());
-//			item.setGoodsName(item2.getGoodsName());
-//			
-//			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
-//		}
-//		if (nogoods!=null){
-//			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
-//			return null;
-//		}else if (totalFee<=0){
-//			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
-//			return null;			
-//		}
+		if (strgoods==null){
+			writeMsg(RetMsg.MSG_NoAnyGoods);	
+			return null;			
+		}
+		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
+		String nogoods = null;
+		boolean wrongStock = false;
+		EcsGoodsService  goodsService = new EcsGoodsService();
+		for (int i=0;i<items.size();i++){
+			EcsGoods item = items.get(i);
+			EcsGoods item2 = goodsService.find(item.getGoodsId());
+			if (item2==null){
+				nogoods = item.getGoodsName();
+				break;
+			}else if (item2.getGoodsNumber()<item.getGoodsNumber()){
+				wrongStock = true;
+				break;
+			}
+			item.setGoodsSn(item2.getGoodsSn());
+			item.setIsReal(item2.getIsReal());
+			item.setShopPrice(item2.getShopPrice());
+			item.setGoodsId(item2.getGoodsId());
+			item.setGoodsName(item2.getGoodsName());
+			
+			orderTitle += item2.getGoodsName()+"("+item.getGoodsNumber()+")";
+			if (i!=items.size()-1)
+				orderTitle += ",";
+				
+			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
+		}
+		if (wrongStock){
+			writeMsg(RetMsg.StockNotEnough);
+			return null;
+		}else if (nogoods!=null){
+			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
+			return null;
+		}else if (totalFee<=0){
+			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
+			return null;			
+		}
 
 		String paytype = this.getHttpRequest().getParameter("paytype");
 		String contact = this.getHttpRequest().getParameter("contact");
@@ -280,11 +311,11 @@ public class WsOrderAction extends BaseAction {
 			writeMsg(RetMsg.MSG_OrderSaveFail);	
 			return null;			
 		}
-//		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
-//		if (ret==false){
-//			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
-//			return null;			
-//		}
+		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
+		if (ret==false){
+			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
+			return null;			
+		}
 		
 		//add to cache:
 		DataManager.getInstance().addOrder(orderInfo);
@@ -292,7 +323,7 @@ public class WsOrderAction extends BaseAction {
 		DataManager.getInstance().addUser(info2);
 		
 		//统一下单,向微信申请prepay_id:
-		ret = queryWxpay(orderInfo,info.getOpenid(),ipAddress);
+		ret = queryWxpay(orderInfo,info.getOpenid(),orderTitle,ipAddress);
 		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
 			orderInfo.setOrderStatus(false);
 			ecsorderService.update(orderInfo);

@@ -17,6 +17,7 @@ public interface RetMsg {
 	public static int MSG_OrderNotExist = 13;	
 	public static int MSG_OrderHadPaid = 14;	
 	public static int MSG_UserInfoMissing = 15;
-	public static int MSG_InvalidOrderScene = 17;
-	public static int MSG_OrderSequenceWrong = 18;
+	public static int MSG_InvalidOrderScene = 16;
+	public static int MSG_OrderSequenceWrong = 17;
+	public static int StockNotEnough = 18;
 }

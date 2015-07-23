@@ -6,13 +6,15 @@ package com.tencent.protocol.unifiedorder_protocol;
  * Time: 21:29
  */
 
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.tencent.common.Configure;
 import com.tencent.common.RandomStringGenerator;
 import com.tencent.common.Signature;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 请求统一支付API需要提交的数据
@@ -126,6 +128,7 @@ public class UnifiedOrderReqData {
      */
     public UnifiedOrderReqData(String openid,String body,String outTradeNo,int totalFee,String spBillCreateIP){
 
+    	//用户openid:
     	setOpenid(openid);
     	
         //微信分配的公众号ID（开通公众号之后可以获取到）
@@ -158,6 +161,12 @@ public class UnifiedOrderReqData {
         //随机字符串，不长于32 位
         setNonce_str(RandomStringGenerator.getRandomStringByLength(32));
 
+        //新增字段:
+        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间  
+        sdf.applyPattern("yyyyMMddHHmmss");// a为am/pm的标记  
+        Date date = new Date();// 获取当前时间  
+        setTimeStart(sdf.format(date));
+        
         //根据API给的签名规则进行签名
         String sign = Signature.getSign(toMap());
         setSign(sign);//把签名数据设置到Sign这个属性中

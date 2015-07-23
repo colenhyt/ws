@@ -111,6 +111,7 @@ var check = this.check();
   content += "<td>商品</td>"
   content += "<td>数量</td>"
   content += "<td>单价</td>"
+  content += "<td>小计(元)</td>"
      content += "</tr>"
  for (var key in this.data){
   var item = this.data[key];
@@ -118,22 +119,23 @@ var check = this.check();
   content += "<tr>"
  content += "<td>"+item.goodsName+"</td>";
  content += "<td style='text-align:center'>"+item.goodsNumber+"</td>";
- content += "<td style='text-align:center'>￥&nbsp"+item.shopPrice+"</td>";
+ content += "<td style='text-align:center'>￥&nbsp"+ForDight(item.shopPrice)+".00</td>";
+ content += "<td style='text-align:right'>￥&nbsp"+ForDight((item.shopPrice*item.goodsNumber))+".00</td>";
  totalps += item.goodsNumber*item.shopPrice
      content += "</tr>"
  }
  totalps += freight;
  
   if (freight>0){
-  content += "<tr><td colspan=2 style='text-align:right'>"
- content += "运费:</td>"
-  content += "<td style='text-align:center'>￥&nbsp"+freight;
-     content += "</td></tr>"
+  content += "<tr><td colspan=3 style='text-align:right'>"
+ content += "该地区运费:</td>"
+  content += "<td style='text-align:right'>￥&nbsp"+ForDight(freight);
+     content += ".00</td></tr>"
   
   }
-  content += "<tr><td colspan=2 style='text-align:right'>"
- content += "总金额:</td>"
- content += "<td style='text-align:center'>￥&nbsp<span style='color:red'>"+totalps+"</span>";
+  content += "<tr><td colspan=3 style='text-align:right'>"
+ content += "订单金额总计:</td>"
+ content += "<td style='text-align:right'>￥&nbsp<span style='color:red;font-size:130%'>"+ForDight(totalps)+".00</span>";
      content += "</td></tr>"
  	content += "</table>";
  	

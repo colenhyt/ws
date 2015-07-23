@@ -7,7 +7,18 @@ var MSG_OrderAmountInvalid = 4;
 var MSG_GoodsNotFound = 5;
 var MSG_NoAnyGoods = 6;
 var MSG_UserNotFound = 7;
-
+var MSG_AddressInvalid = 8;
+var MSG_OrderSaveFail = 9;
+var MSG_OrderGoodsSaveFail = 10;
+var MSG_NoOrderSn = 11;
+var MSG_NoPayOk = 12;	
+var MSG_OrderNotExist = 13;	
+var MSG_OrderHadPaid = 14;	
+var MSG_UserInfoMissing = 15;
+var MSG_InvalidOrderScene = 16;
+var MSG_OrderSequenceWrong = 17;
+var StockNotEnough = 18;
+	
 var ERR_MSG ={};
 ERR_MSG[MSG_SQLExecuteError] = "sql出错";
 ERR_MSG[MSG_PrepayReqFail] = "微信支付申请失败";
@@ -16,6 +27,17 @@ ERR_MSG[MSG_OrderAmountInvalid] = "订单金额为零";
 ERR_MSG[MSG_GoodsNotFound] = "商品找不到";
 ERR_MSG[MSG_NoAnyGoods] = "没有购买任何商品";
 ERR_MSG[MSG_UserNotFound] = "没找到对应用户";
+ERR_MSG[MSG_AddressInvalid] = "无效订单地址";
+ERR_MSG[MSG_OrderSaveFail] = "订单保存失败";
+ERR_MSG[MSG_OrderGoodsSaveFail] = "订单商品保存失败";
+ERR_MSG[MSG_NoOrderSn] = "没找到该订单";
+ERR_MSG[MSG_NoPayOk] = "支付失败";
+ERR_MSG[MSG_OrderNotExist] = "订单不存在";
+ERR_MSG[MSG_OrderHadPaid] = "订单已被付款";
+ERR_MSG[MSG_UserInfoMissing] = "用户信息缺失";
+ERR_MSG[MSG_InvalidOrderScene] = "无效订购场景";
+ERR_MSG[MSG_OrderSequenceWrong] = "下单频率过高";
+ERR_MSG[StockNotEnough] = "库存不足";
 
 //sc();
 //aa();

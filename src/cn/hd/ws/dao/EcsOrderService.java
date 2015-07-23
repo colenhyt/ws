@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.hd.base.BaseService;
 import cn.hd.ws.action.DataManager;
+import cn.hd.ws.dao.EcsUsersExample.Criteria;
 import cn.hd.wx.WxUserInfo;
 
 public class EcsOrderService extends BaseService {
@@ -29,6 +30,14 @@ public class EcsOrderService extends BaseService {
 	public EcsOrderService(){
 		initMapper("ecsOrderInfoMapper","ecsOrderGoodsMapper");
 	}
+	
+	public List<EcsOrderGoods> findGoods(int orderId){
+		EcsOrderGoodsExample example = new EcsOrderGoodsExample();
+		EcsOrderGoodsExample.Criteria criteria = example.createCriteria();
+		criteria.andOrderIdEqualTo(orderId);
+		List<EcsOrderGoods> list = ecsOrderGoodsMapper.selectByExample(example);
+		return list;
+	}			
 	
 	public boolean addGoods(List<EcsGoods> goods,int orderId){
 		try {

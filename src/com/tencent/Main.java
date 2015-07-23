@@ -13,6 +13,7 @@ import com.tencent.protocol.order_protocol.OrderQueryReqData;
 import com.tencent.protocol.order_protocol.OrderQueryResData;
 import com.tencent.protocol.refund_query_protocol.RefundQueryReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
+import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class Main {
 
@@ -28,11 +29,11 @@ public class Main {
         	String spBillCreateIP = "120.196.99.5";
         	String tradeNo = "111";
         	Configure.setTradeType("NATIVE");
-        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(null,"Ipad",tradeNo,1,spBillCreateIP);
-//        	UnifiedOrderResData rst = bus.run(reqdata);
-//        	if (rst.isSuccess()){
-//        		int a = 100;
-//        	}
+        	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(null,"e美农场",tradeNo,1,spBillCreateIP);
+        	UnifiedOrderResData rst = bus.run(reqdata);
+        	if (rst.isSuccess()){
+        		int a = 100;
+        	}
         	
         	RefundQueryBusiness bus2 = new RefundQueryBusiness();
         	RefundQueryReqData req = new RefundQueryReqData("1","1","1","1","1");
