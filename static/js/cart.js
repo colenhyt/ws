@@ -243,8 +243,8 @@ Cart.prototype.buyCallback = function(data){
   var req = rets[1];
   content = '您的订单号已生成,订单号('+info.orderSn+"),向微信发起支付....";
   this.currOrder = info;
-  this.wxpayCallback(true);
-  //g_wx.reqWxpay(req);
+  //this.wxpayCallback(true);
+  g_wx.reqWxpay(req);
  }else {
   content = "购买失败:"
   content += ERR_MSG[ret.code];
