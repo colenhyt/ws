@@ -250,6 +250,6 @@ function testajax(){
 //testajax();
 
 queryGroup();
-//queryGroupCats();
+queryGroupCats();
 //queryGroupGoods(3);
 //addOrder();
