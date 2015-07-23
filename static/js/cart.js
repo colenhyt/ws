@@ -47,7 +47,6 @@ tag = document.getElementById('address');
  }else {
   tag22.innerHTML = ''; 
  }
-	
 var itemlength  = this.data.length ;
  if (itemlength<=0){
   alert('未挑选任何商品');
@@ -99,7 +98,7 @@ Cart.prototype.address = function(){
 Cart.prototype.show = function(){
 
 var check = this.check();
-//if (!check) return;
+if (!check) return;
 
  var freight = this.freight();
 
@@ -194,7 +193,6 @@ Cart.prototype.doBuy = function(){
 	 var freight = 0;
 	if (obj.code==0){
 	 freight = obj.desc;
-	 alert(freight);
 	}
  	var dataParam = "";
  	

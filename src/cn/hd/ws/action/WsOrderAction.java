@@ -49,16 +49,19 @@ public class WsOrderAction extends BaseAction {
 	public String freight(){
 		String city = this.getHttpRequest().getParameter("city");
 		if (city==null){
+			writeMsg2(RetMsg.MSG_OK,String.valueOf(0));
 			return null;
 		}
 		Pattern pattern = Pattern.compile("[0-9]*");
 		 Matcher matcher = pattern.matcher(city);		
 		 if (!matcher.matches()){
+			 writeMsg2(RetMsg.MSG_OK,String.valueOf(0));
 			 return null;
 		 }
 		 short cityid = Short.valueOf(city).shortValue();
 		 EcsRegion region = ecsuserService.findRegion(cityid);
 		 if (region==null){
+			 writeMsg2(RetMsg.MSG_OK,String.valueOf(0));
 			 return null;
 		 }
 		 writeMsg2(RetMsg.MSG_OK,String.valueOf(region.getFreight()));
