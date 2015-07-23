@@ -12,6 +12,15 @@ margin-left:30px;
 width:100%;
 }
 
+.goods.items {
+margin:20px;
+font-size:70%;
+width:90%;
+}
+.goods.contact {
+margin:20px;
+font-size:70%;
+}
 .goods {
 border:none;
 }
@@ -70,6 +79,12 @@ width:100%;
 .button2 {
 background-color:#EECFA1;
 width:100%;
+}
+
+.button2.buy {
+margin:20px;
+text-align:center;
+width:90%;
 }
 
 table {

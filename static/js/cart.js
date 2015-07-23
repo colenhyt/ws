@@ -47,27 +47,66 @@ tag = document.getElementById('address');
  }else {
   tag22.innerHTML = ''; 
  }
- 
+	
+var itemlength  = this.data.length ;
+ if (itemlength<=0){
+  alert('未挑选任何商品');
+  ret = false;
+ } 
  
   return ret;
+}
+
+Cart.prototype.freight = function(){
+  	var citytag = document.getElementById('region_city');
+  	var cityvalue = citytag.value;
+	var dataobj = $.ajax({type:"post",url:"/ec/order_freight.do",data:"city="+cityvalue,async:false});
+	 var obj = cfeval(dataobj.responseText);
+	 var freight = 0;
+	if (obj.code==0){
+	 freight = parseInt(obj.desc);
+	}
+	return freight;
+}
+
+Cart.prototype.address = function(){
+  	var contact = document.getElementById('region_province');
+  	var reg_id = contact.value;
+  	var pro = ""
+	 for (var i=0;i<data_region.length;i++){
+	  if (data_region[i][0]==reg_id){
+	   pro = data_region[i][1];
+	   break;
+	  }
+	 }
+ 
+  	contact = document.getElementById('region_city');
+  	var city = "";
+ 	for (var key in data_subregion){
+ 	 var cities = data_subregion[key];
+ 	 for (var i=0;i<cities.length;i++){
+ 	  if (cities[i][0]==contact.value){
+ 	   city = cities[i][1];
+ 	   break;
+ 	  }
+ 	 }
+ 	}
+ 	
+  	contact = document.getElementById('address');
+	 return pro+" "+city+" "+contact.value;
 }
 
 Cart.prototype.show = function(){
 
 var check = this.check();
-if (!check) return;
+//if (!check) return;
 
-var itemlength  = this.data.length ;
+ var freight = this.freight();
 
-// if (itemlength<=0){
-//  alert('未挑选任何商品');
-//  return;
-// }
- 
  var tag = document.getElementById(this.pagename);
  var content = "";
  var totalps = 0;
- content += "<table class='goods'>";
+ content += "<table class='goods items'>";
   content += "<tr>"
   content += "<td>商品</td>"
   content += "<td>数量</td>"
@@ -83,13 +122,30 @@ var itemlength  = this.data.length ;
  totalps += item.goodsNumber*item.shopPrice
      content += "</tr>"
  }
+ totalps += freight;
+ 
+  if (freight>0){
+  content += "<tr><td colspan=2 style='text-align:right'>"
+ content += "运费:</td>"
+  content += "<td style='text-align:center'>￥&nbsp"+freight;
+     content += "</td></tr>"
+  
+  }
   content += "<tr><td colspan=2 style='text-align:right'>"
  content += "总金额:</td>"
- content += "<td style='text-align:center'>￥&nbsp"+totalps;
+ content += "<td style='text-align:center'>￥&nbsp<span style='color:red'>"+totalps+"</span>";
      content += "</td></tr>"
  	content += "</table>";
- 	content += "<br>"
-    content += " <button onclick=\"g_cart.doBuy()\" class='button2'>确认订单</button>"
+ 	
+  	var contact = document.getElementById('region_provice');
+  	var address = this.address();
+ 	content += "<div class='goods contact'>送货地址: "+address+"<br>"
+  	contact = document.getElementById('contact');
+ 	content += "<p>收货人: "+contact.value+"<br>"
+  	contact = document.getElementById('phone');
+ 	content += "联系电话: "+contact.value+"</div>"
+ 	
+    content += " <button onclick=\"g_cart.doBuy()\" class='button2 buy'>确认订单</button>"
 	
  tag.innerHTML = content;
  
@@ -129,6 +185,15 @@ var currCount = parseInt(tag.value);
 
 Cart.prototype.doBuy = function(){
 
+  	var citytag = document.getElementById('region_city');
+  	var cityvalue = citytag.value;
+	var dataobj = $.ajax({type:"post",url:"/ec/order_freight.do",data:"city="+cityvalue,async:false});
+	 var obj = cfeval(dataobj.responseText);
+	 var freight = 0;
+	if (obj.code==0){
+	 freight = obj.desc;
+	 alert(freight);
+	}
  	var dataParam = "";
  	
  	//goods items:

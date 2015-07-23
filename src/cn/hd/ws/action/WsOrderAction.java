@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import cn.hd.base.BaseAction;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
+import cn.hd.ws.dao.EcsRegion;
 import cn.hd.ws.dao.EcsUserService;
 import cn.hd.wx.WxUserInfo;
 
@@ -31,6 +32,25 @@ public class WsOrderAction extends BaseAction {
 		return ecsuserService;
 	}
 
+	public String freight(){
+		String city = this.getHttpRequest().getParameter("city");
+		if (city==null){
+			return null;
+		}
+		Pattern pattern = Pattern.compile("[0-9]*");
+		 Matcher matcher = pattern.matcher(city);		
+		 if (!matcher.matches()){
+			 return null;
+		 }
+		 short cityid = Short.valueOf(city).shortValue();
+		 EcsRegion region = ecsuserService.findRegion(cityid);
+		 if (region==null){
+			 return null;
+		 }
+		 writeMsg2(RetMsg.MSG_OK,String.valueOf(region.getFreight()));
+		return null;
+	}
+	
 	public void setEcsuserService(EcsUserService ecsuserService) {
 		this.ecsuserService = ecsuserService;
 	}
