@@ -103,11 +103,11 @@ public class LoginAction extends BaseAction {
 					info.setAddress(add.getAddress());
 					info.setMobile(add.getMobile());
 					info.setContact(add.getConsignee());
-					jsonstr = JSON.toJSONString(info);
 				}
 				String loginIp = getIpAddress();
 				info.setIpAddress(loginIp);
 				DataManager.getInstance().addUser(info);
+				jsonstr = JSON.toJSONString(info);
 				jsonstr = jsonstr.replace("\"", "'");
 				getHttpRequest().setAttribute("userinfo", jsonstr);
 				Util.log("用户信息获取成功，跳转到团购页 :"+jsonstr);
