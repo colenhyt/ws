@@ -126,4 +126,4 @@ WxCaller.prototype.reqWxpay = function(jsonReq){
        }
    );  
 }
-
+var g_wx = new WxCaller();

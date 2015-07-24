@@ -8,7 +8,6 @@
 	<head>
 		<meta charset='utf-8'>
     <link href="dist/css/zui.css" rel="stylesheet">	
-  <link href="static/css/cf640.css" rel="stylesheet">
     <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
 		<title>e美农场</title>
 	</head>
@@ -18,6 +17,162 @@
   <script src="dist/js/json2.js"></script>
   <script>
   </script>
+  <style type="text/css">
+/* CSS Document */
+img{ max-width:100%;} 
+
+body {
+margin-left:30px;
+  font-size:33px;
+  width:580px;
+  background-color:#FAFAD2;
+}
+
+table {
+background-color:#ffffff;
+width:100%;
+}
+
+td {
+border:none;
+padding:5px;
+padding-left:20px;
+height:200%;
+}
+
+
+input {
+width: 100%;
+}
+
+.line {
+width:100%;
+height:1px;
+margin:0px auto;
+padding-top:5px;
+padding-bottom:5px;
+padding:0px;
+background-color:#D5D5D5;
+overflow:hidden;
+}
+
+
+div {
+margin-top:20px;
+margin-bottom:20px;
+}
+
+.button_confirm {
+background-color:#EECFA1;
+width:100%;
+}
+
+.button_confirm.order {
+margin:10px;
+width:95%;
+}
+
+.main_header{
+font-size:120%;
+width:100%;
+}
+
+.main_radio {
+width:5%;
+}
+
+.main_region {
+width:260px;
+}
+
+.goods_menu
+{
+  background-color:#EECFA1;
+
+}
+
+.goods_table {
+width:100%;
+border:none;
+}
+
+.goods_item_name{
+font-size:85%;
+}
+
+.goods_item_desc {
+font-size:75%;
+width:100%;
+}
+
+.goods_countbutton {
+width:80px;
+height:58px;
+margin-top:0px;
+border:none;
+-moz-background-size:100% 100%;  
+    background-size:100% 100%;  
+}
+
+.goods_countvalue {
+width:70%;
+text-align:center;
+}
+
+.goods_item_img_td {
+width:40%;
+}
+
+.goods_item_img{
+width:250px;
+height:250px;
+}
+
+.goods_item_ps {
+color:red;
+width:30%;
+}
+
+.goods_item_number {
+text-align:right;
+font-size:85%;
+}
+
+
+tr.orderlist_title{
+background-color:#F2F2F2;
+}
+
+td.orderlist_td{
+border:1px solid #D9D9D9;
+text-align:center;
+}
+
+td.orderlist_td{
+border:1px solid #D9D9D9;
+text-align:center;
+}
+
+.modal-dialog.orderlist_page{
+width:600px;
+}
+
+.orderlist_items {
+margin:10px;
+font-size:70%;
+width:95%;
+}
+
+table.orderlist_address{
+width:95%;
+margin:10px;
+font-size:60%;
+text-align:left;
+}
+
+
+  </style>
+
 </head>
 <body>
 
