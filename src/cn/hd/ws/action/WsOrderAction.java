@@ -183,6 +183,7 @@ public class WsOrderAction extends BaseAction {
 //				Util.log("支付单据查询对账错误"+orderInfo.getOrderSn());
 //			}
 		}
+		Util.log("订单完成：支付("+payOk+"),订单号:"+orderInfo.getOrderSn()+",联系人:"+orderInfo.getConsignee());
 		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
 		writeMsg2(RetMsg.MSG_OK,retstr);
 		return null;

@@ -155,6 +155,10 @@ if (!check) return;
  $('#'+this.tagname).modal({position:100,show: true}); 
 }
 
+Cart.prototype.close = function(){
+ $('#'+this.tagname).modal('hide');  
+}
+
 Cart.prototype.count = function(goodsId,goodsName,shopPrice,count){
 var tag = document.getElementById("goodsCount"+goodsId);
 var currCount = parseInt(tag.value);
@@ -252,6 +256,7 @@ Cart.prototype.buyCallback = function(data){
   if (ret.desc.length>0){
    content += ","+ret.desc;
   }
+    content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
  }
  var tag = document.getElementById(this.pagename);
  tag.innerHTML = content;  
@@ -293,9 +298,11 @@ Cart.prototype.commitCallback = function(ret){
   }else {
    content = "订单提交失败或被取消!!:"+ERR_MSG[ret.code];
   }
+    content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
   
   var tag = document.getElementById(this.pagename);
   tag.innerHTML = content;  
+  
 }
 
 var g_cart = new Cart();
