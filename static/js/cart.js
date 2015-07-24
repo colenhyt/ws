@@ -99,7 +99,7 @@ Cart.prototype.address = function(){
 Cart.prototype.show = function(){
 
 var check = this.check();
-//if (!check) return;
+if (!check) return;
 
  var freight = this.freight();
 
