@@ -73,19 +73,22 @@ function queryGroupGoods(catId){
     else
      imgSrc = "/ec/images/upload/Image/"+item.goodsSn+".jpg";
     var goodsno = item.goodsNumber;
-	content += "<table class='goods'>";
-    content += "    <tr><td class='goods img'><img src='"+imgSrc+"' class='goodsImg'></td><td class='goods title'>"+item.goodsName+"</td></tr>"
-    content += "    <tr><td class='goods desc' colspan=2>"+item.goodsDesc+"</td></tr>"
-    content += "    <tr><td class='goods ps'> ￥"+item.shopPrice+"</td>"
-    content += "<td class='goods no'>"
+	content += "<table class='goods_table'>";
+    content += "<tr><td class='goods_item_img'><img src='"+imgSrc+"' class='goodsImg'></td>"
+    content += "<td class='goods_item_name'>"+item.goodsName+"</td></tr>"
+    content += "<tr><td class='goods_item_desc' colspan=2>"+item.goodsDesc+"</td></tr>"
+    content += "    <tr><td class='goods_item_ps'> ￥"+item.shopPrice+"</td>"
+    content += "<td class='goods_item_number'>"
     if (goodsno>0){
      content += "剩余: "+goodsno
     }
     content += "</td></tr>"
-    content += "    <tr><td class='goods' colspan=2>"
+    content += "    <tr><td colspan=2>"
     if (goodsno>0){
      var func = "g_cart.count("+item.goodsId+",'"+item.goodsName+"',"+item.shopPrice;   
-     content += "<li><img class='wsgoods_count' src='static/img/bt_minus.png' onclick=\""+func+",-1)\"><input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='wsgoods_value'><img class='wsgoods_count add' src='static/img/bt_add.png' onclick=\""+func+",1)\">"
+     content += "<li><img class='goods_countbutton' src='static/img/bt_minus.png' onclick=\""+func+",-1)\">"
+     content += "<input type=\"text\" id=\"goodsCount"+item.goodsId+"\" value=\"0\" class='goods_countvalue'>"
+     content += "<img class='goods_countbutton' src='static/img/bt_add.png' onclick=\""+func+",1)\">"
     }
     else
      content += "已售空"
@@ -107,7 +110,7 @@ function queryGroup()
 	content += "<div class='header'>"
 	content += group.actName;
 	content += "</div>"
-	content += "<div class='groupDesc'>"
+	content += "<div class='goods_item_desc'>"
 	var desc = group.actDesc;
 	content += desc;
 	content += "</div>"
@@ -131,7 +134,7 @@ function queryGroup()
 	//}
 		
 	content = ""
-	content += "<select id='region_province' class='ws_province' onchange=\"selectRegion(this[selectedIndex].text)\">"
+	content += "<select id='region_province' class='main_region' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	 content += "<option value='-1'>-省份/直辖市-</option>";
 	for (var i=0;i<data_region.length;i++){
 	 var pro = data_region[i];

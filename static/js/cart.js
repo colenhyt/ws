@@ -99,55 +99,56 @@ Cart.prototype.address = function(){
 Cart.prototype.show = function(){
 
 var check = this.check();
-if (!check) return;
+//if (!check) return;
 
  var freight = this.freight();
 
  var tag = document.getElementById(this.pagename);
  var content = "";
  var totalps = 0;
- content += "<table class='goods items'>";
-  content += "<tr>"
-  content += "<td>商品</td>"
-  content += "<td>数量</td>"
-  content += "<td>单价</td>"
-  content += "<td>小计(元)</td>"
+ content += "<table class='orderlist_items'>";
+  content += "<tr class='orderlist_title'>"
+  content += "<td class='orderlist_td'>商品</td>"
+  content += "<td class='orderlist_td'>数量</td>"
+  content += "<td class='orderlist_td'>单价</td>"
+  content += "<td class='orderlist_td'>小计(元)</td>"
      content += "</tr>"
  for (var key in this.data){
   var item = this.data[key];
   if (item==null||item.count<=0) continue;
   content += "<tr>"
- content += "<td>"+item.goodsName+"</td>";
- content += "<td style='text-align:center'>"+item.goodsNumber+"</td>";
- content += "<td style='text-align:center'>￥&nbsp"+ForDight(item.shopPrice)+".00</td>";
- content += "<td style='text-align:right'>￥&nbsp"+ForDight((item.shopPrice*item.goodsNumber))+".00</td>";
+ content += "<td class='orderlist_td'>"+item.goodsName+"</td>";
+ content += "<td class='orderlist_td'>"+item.goodsNumber+"</td>";
+ content += "<td class='orderlist_td'>￥&nbsp"+ForDight(item.shopPrice)+".00</td>";
+ content += "<td class='orderlist_td'>￥&nbsp"+ForDight((item.shopPrice*item.goodsNumber))+".00</td>";
  totalps += item.goodsNumber*item.shopPrice
      content += "</tr>"
  }
  totalps += freight;
  
   if (freight>0){
-  content += "<tr><td colspan=3 style='text-align:right'>"
+  content += "<tr><td class='orderlist_td' colspan=3 style='text-align:right'>"
  content += "该地区运费:</td>"
-  content += "<td style='text-align:right'>￥&nbsp"+ForDight(freight);
+  content += "<td class='orderlist_td'>￥&nbsp"+ForDight(freight);
      content += ".00</td></tr>"
   
   }
-  content += "<tr><td colspan=3 style='text-align:right'>"
+  content += "<tr><td class='orderlist_td' colspan=3 style='text-align:right'>"
  content += "订单金额总计:</td>"
- content += "<td style='text-align:right'>￥&nbsp<span style='color:red;font-size:130%'>"+ForDight(totalps)+".00</span>";
+ content += "<td class='orderlist_td'>￥&nbsp<span style='color:red;font-size:130%'>"+ForDight(totalps)+".00</span>";
      content += "</td></tr>"
  	content += "</table>";
  	
   	var contact = document.getElementById('region_provice');
   	var address = this.address();
- 	content += "<div class='goods contact'>送货地址: "+address+"<br>"
+ 	content += "<table class='orderlist_address'><tr><td style='width:15%'>送货地址: </td><td>"+address+"</td></tr>"
   	contact = document.getElementById('contact');
- 	content += "<p>收货人: "+contact.value+"<br>"
+ 	content += "<tr><td style='width:15%'>收货人: </td><td>"+contact.value+"</td></tr>"
   	contact = document.getElementById('phone');
- 	content += "联系电话: "+contact.value+"</div>"
+ 	content += "<tr><td style='width:15%'>联系电话: </td><td>"+contact.value+"</td></tr>"
+ 	content += "</table>"
  	
-    content += " <button onclick=\"g_cart.doBuy()\" class='button2 buy'>确认订单</button>"
+    content += " <button onclick=\"g_cart.doBuy()\" class='button_confirm order'>确认订单</button>"
 	
  tag.innerHTML = content;
  
@@ -243,6 +244,7 @@ Cart.prototype.buyCallback = function(data){
   content = '您的订单号已生成,订单号('+info.orderSn+"),向微信发起支付....";
   this.currOrder = info;
   //this.wxpayCallback(true);
+  var g_wx = new WxCaller();
   g_wx.reqWxpay(req);
  }else {
   content = "购买失败:"

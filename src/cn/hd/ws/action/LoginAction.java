@@ -122,7 +122,7 @@ public class LoginAction extends BaseAction {
 		info.setUserId(user.getUserId());
 		DataManager.getInstance().addUser(info);
 		getHttpRequest().setAttribute("userinfo", "{'userId':"+info.getUserId()+",'openid':'333','nickname':'aaeee','province':'广东','city':'深圳','address':'abcd南山','contact':'colenhh','mobile':'134'}");
-		return "group";
+		return "error";
 	}
 	
     

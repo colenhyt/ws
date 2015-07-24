@@ -8,46 +8,21 @@ margin-left:30px;
   background-color:#FAFAD2;
 }
 
-.goods {
+table {
+background-color:#ffffff;
 width:100%;
 }
 
-.goods.items {
-margin:20px;
-font-size:70%;
-width:90%;
-}
-.goods.contact {
-margin:20px;
-font-size:70%;
-}
-.goods {
+td {
 border:none;
-}
-.goods.img {
-width:30%;
-}
-
-.goods.ps {
-color:red;
-width:30%;
+padding:5px;
+padding-left:20px;
+height:200%;
 }
 
-.goods.no {
-text-align:right;
-font-size:30px;
-}
 
-.goods.title{
-font-size:30px;
-}
-
-.goods.desc{
-font-size:25px;
-}
-
-.ws_province {
-width:260px;
+input {
+width: 100%;
 }
 
 .line {
@@ -71,63 +46,45 @@ margin-top:20px;
 margin-bottom:20px;
 }
 
-.groupDesc {
-font-size:25px;
-width:100%;
-}
-
-.button2 {
+.button_confirm {
 background-color:#EECFA1;
 width:100%;
 }
 
-.button2.buy {
+.button_confirm.order {
 margin:20px;
-text-align:center;
 width:90%;
 }
 
-table {
-background-color:#ffffff;
+.main_radio {
+width:5%;
+}
+
+.main_region {
+width:40%;
+}
+
+.goods_menu
+{
+  background-color:#EECFA1;
+
+}
+
+.goods_table {
+width:100%;
+border:none;
+}
+
+.goods_item_name{
+font-size:30px;
+}
+
+.goods_item_desc {
+font-size:25px;
 width:100%;
 }
 
-td {
-border:1px solid #D9D9D9;
-padding:5px;
-padding-left:20px;
-height:200%;
-}
-
-
-input {
-width: 100%;
-}
-
-.rr {
-width:5%;
-}
-.menu2
-{
-  background-color:#EECFA1;
-
-}
-.nav.cat{
-  background-color:#EECFA1;
-}
-
-.nav.nav-primary
-{
- background-color:#EECFA1;
-
-}
-
-.wsgoods_value {
-width:70%;
-text-align:center;
-}
-
-.wsgoods_count {
+.goods_countbutton {
 width:80px;
 height:58px;
 margin-top:0px;
@@ -136,7 +93,50 @@ border:none;
     background-size:100% 100%;  
 }
 
-.wsgoods_count.add {
--moz-background-size:100% 100%;  
-    background-size:100% 100%;  
+.goods_countvalue {
+width:70%;
+text-align:center;
 }
+
+.goods_item_img {
+width:30%;
+}
+
+.goods_item_ps {
+color:red;
+width:30%;
+}
+
+.goods_item_number {
+text-align:right;
+font-size:30px;
+}
+
+
+tr.orderlist_title{
+background-color:#F2F2F2;
+}
+
+td.orderlist_td{
+border:1px solid #D9D9D9;
+text-align:center;
+}
+
+td.orderlist_td{
+border:1px solid #D9D9D9;
+text-align:center;
+}
+
+.orderlist_items {
+margin:20px;
+font-size:70%;
+width:90%;
+}
+
+table.orderlist_address{
+width:90%;
+margin:20px;
+font-size:60%;
+text-align:left;
+}
+
