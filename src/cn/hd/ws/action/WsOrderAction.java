@@ -100,7 +100,7 @@ public class WsOrderAction extends BaseAction {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
 			intTotalFee = 2;
-			String body = "e美农场购买("+orderTitle+")";
+			String body = orderTitle;
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,body,order.getOrderSn(),intTotalFee,ipAddress);
 	    	UnifiedOrderResData rst = new UnifiedOrderResData();
 //	    	rst.setResult_code("SUCCESS");
@@ -171,14 +171,17 @@ public class WsOrderAction extends BaseAction {
 			//更新商品库存:
 			List<EcsOrderGoods> goods = ecsorderService.findGoods(orderInfo.getOrderId());
 			ecsGoodsService.updateByOrderGoods(goods);
+			orderInfo.setPayStatus(true);
+			ecsorderService.updateStatus(orderInfo);
+			DataManager.getInstance().addOrder(orderInfo);
 			
-			if (checkWxOrder(orderInfo)){
-				orderInfo.setPayStatus(true);
-				ecsorderService.updateStatus(orderInfo);
-				DataManager.getInstance().addOrder(orderInfo);
-			}else {
-				Util.log("支付单据查询对账错误"+orderInfo.getOrderSn());
-			}
+//			if (checkWxOrder(orderInfo)){
+//				orderInfo.setPayStatus(true);
+//				ecsorderService.updateStatus(orderInfo);
+//				DataManager.getInstance().addOrder(orderInfo);
+//			}else {
+//				Util.log("支付单据查询对账错误"+orderInfo.getOrderSn());
+//			}
 		}
 		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
 		writeMsg2(RetMsg.MSG_OK,retstr);
