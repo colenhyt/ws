@@ -82,6 +82,7 @@ public class EcsUserService extends BaseService {
 		criteria.andProvinceEqualTo(order.getProvince());
 		criteria.andCityEqualTo(order.getCity());
 		criteria.andAddressEqualTo(order.getAddress().toLowerCase());
+		criteria.andMobileEqualTo(order.getMobile());
 		List<EcsUserAddress> list = ecsUserAddressMapper.selectByExample(example);
 		EcsUserAddress address;
 		if (list.size()>0){
