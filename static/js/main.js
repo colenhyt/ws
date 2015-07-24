@@ -74,7 +74,7 @@ function queryGroupGoods(catId){
      imgSrc = "/ec/images/upload/Image/"+item.goodsSn+".jpg";
     var goodsno = item.goodsNumber;
 	content += "<table class='goods_table'>";
-    content += "<tr><td class='goods_item_img'><img src='"+imgSrc+"' class='goodsImg'></td>"
+    content += "<tr><td class='goods_item_img_td'><img src='"+imgSrc+"' class='goods_item_img'></td>"
     content += "<td class='goods_item_name'>"+item.goodsName+"</td></tr>"
     content += "<tr><td class='goods_item_desc' colspan=2>"+item.goodsDesc+"</td></tr>"
     content += "    <tr><td class='goods_item_ps'> ￥"+item.shopPrice+"</td>"
@@ -107,7 +107,7 @@ function queryGroup()
 	var dataobj = $.ajax({type:"post",url:"/ec/goods_group.do",async:false});
 	var group = cfeval(dataobj.responseText);
 	var content = "";
-	content += "<div class='header'>"
+	content += "<div class='main_header'>"
 	content += group.actName;
 	content += "</div>"
 	content += "<div class='goods_item_desc'>"
@@ -133,7 +133,7 @@ function queryGroup()
 	//  g_wx.init();
 	//}
 		
-	content = ""
+	content = "<div>"
 	content += "<select id='region_province' class='main_region' onchange=\"selectRegion(this[selectedIndex].text)\">"
 	 content += "<option value='-1'>-省份/直辖市-</option>";
 	for (var i=0;i<data_region.length;i++){
@@ -152,7 +152,7 @@ function queryGroup()
 	if (data_subregion[g_user.province]){
 	 cities = data_subregion[g_user.province];
 	}
-	content += "<select id='region_city' class='ws_province'>"
+	content += "<select id='region_city' class='main_region'>"
 	 content += "<option value='-1'>-市-</option>";
 	for (var i=0;i<cities.length;i++){
 	var city = cities[i];
@@ -162,7 +162,7 @@ function queryGroup()
 	 content += ">"
 	 content += city[1]+"</option>"
 	}
-	content += "</select>"	
+	content += "</select></div>"	
 	var tagRegion = document.getElementById("regionDIV");
 	tagRegion.innerHTML = content;
 	
