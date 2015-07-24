@@ -166,7 +166,7 @@ width:95%;
 table.orderlist_address{
 width:95%;
 margin:10px;
-font-size:60%;
+font-size:70%;
 text-align:left;
 }
 
