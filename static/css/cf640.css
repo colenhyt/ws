@@ -52,8 +52,8 @@ width:100%;
 }
 
 .button_confirm.order {
-margin:20px;
-width:90%;
+margin:10px;
+width:95%;
 }
 
 .main_radio {
@@ -127,15 +127,19 @@ border:1px solid #D9D9D9;
 text-align:center;
 }
 
+.modal-dialog.orderlist_page{
+width:600px;
+}
+
 .orderlist_items {
-margin:20px;
+margin:10px;
 font-size:70%;
-width:90%;
+width:95%;
 }
 
 table.orderlist_address{
-width:90%;
-margin:20px;
+width:95%;
+margin:10px;
 font-size:60%;
 text-align:left;
 }

@@ -4,7 +4,7 @@ PageUtil = function(id){
 	this.id = id;
 	var head = ""; 
 	head += "<div class='modal fade' id='"+id+"'>";
-	head += "<div class='modal-dialog' id='"+id+"_dialog'>";		
+	head += "<div class='modal-dialog orderlist_page' id='"+id+"_dialog'>";		
     
     var footer = "";
 	footer += "</div>";

@@ -10,7 +10,7 @@
     <link href="dist/css/zui.css" rel="stylesheet">	
   <link href="static/css/cf640.css" rel="stylesheet">
     <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
-		<title>ws</title>
+		<title>e美农场</title>
 	</head>
   <script src="dist/js/jquery-2.0.3.min.js"></script>
   <script src="dist/js/sea.js"></script>
@@ -35,17 +35,7 @@
 <nav class="menu" data-toggle="menu" style="width: 100%">
   <ul class="nav nav-primary"  id="catDiv">
     <li>
-      <a href="#" class='menu2'>一，手工定制产品(肉粽，咸鸭蛋)</a>
-      <ul class="nav">
-        <table><tr><td>fdafad</td></tr><tr><td>fdafad</td></tr></table>
-        <table>
-        <tr><td><img src="static/img/bt_minus.png">茅山网</td></tr>
-        <tr><td>desc</td></tr>
-        <tr><td>ps</td></tr>
-        <tr><td><li><img class='wsgoods_count'><input type="text" id="goodsCount" value="0" class='wsgoods_value'><img class='wsgoods_count add'></td></tr>
-        </table>
-        ...
-      </ul>
+      <a href="#" class='goods_menu'></a>
     </li>
   </ul>
 </nav>	      
@@ -56,7 +46,7 @@
        付款方式*:<br>
        <table>
        <tr onclick='choosePay(0)'><td>
-       <input name="paytype" id="paytype" type="radio" checked="true" value=2 class='rr'> 微信支付
+       <input name="paytype" id="paytype" type="radio" checked="true" value=2 class='main_radio'> 微信支付
        </td></tr>
        </table>
        </div>
@@ -66,7 +56,7 @@
        <div id='regionDIV'></div>
        <input name="address" id="address" type="text" value=""></div>
        <div>备注: <br><input name="remark" id="remark" type="text" value=""></div>
-       <button onclick="g_cart.show()" class='button2'>确定</button><br><br>
+       <button onclick="g_cart.show()" class='button_confirm'>确认订单</button><br><br>
         <script type="text/javascript" src="static/js/main.js"></script>
        
     	</body>	

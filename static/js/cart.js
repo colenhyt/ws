@@ -141,14 +141,14 @@ var check = this.check();
  	
   	var contact = document.getElementById('region_provice');
   	var address = this.address();
- 	content += "<table class='orderlist_address'><tr><td style='width:15%'>送货地址: </td><td>"+address+"</td></tr>"
+ 	content += "<table class='orderlist_address'><tr><td style='width:30%'>送货地址: </td><td>"+address+"</td></tr>"
   	contact = document.getElementById('contact');
- 	content += "<tr><td style='width:15%'>收货人: </td><td>"+contact.value+"</td></tr>"
+ 	content += "<tr><td style='width:30%'>收货人: </td><td>"+contact.value+"</td></tr>"
   	contact = document.getElementById('phone');
- 	content += "<tr><td style='width:15%'>联系电话: </td><td>"+contact.value+"</td></tr>"
+ 	content += "<tr><td style='width:30%'>联系电话: </td><td>"+contact.value+"</td></tr>"
  	content += "</table>"
  	
-    content += " <button onclick=\"g_cart.doBuy()\" class='button_confirm order'>确认订单</button>"
+    content += " <button onclick=\"g_cart.doBuy()\" class='button_confirm order'>提交订单</button>"
 	
  tag.innerHTML = content;
  
