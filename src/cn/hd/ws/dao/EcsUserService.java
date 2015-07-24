@@ -64,6 +64,7 @@ public class EcsUserService extends BaseService {
 		EcsUserAddressExample example = new EcsUserAddressExample();
 		EcsUserAddressExample.Criteria criteria = example.createCriteria();
 		criteria.andUserIdEqualTo(userid);
+		example.setOrderByClause("address_id desc");
 		List<EcsUserAddress> list = ecsUserAddressMapper.selectByExample(example);	
 		if (list.size()>0){
 			return list.get(0);

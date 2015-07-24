@@ -141,11 +141,11 @@ if (!check) return;
  	
   	var contact = document.getElementById('region_provice');
   	var address = this.address();
- 	content += "<table class='orderlist_address'><tr><td style='width:30%'>送货地址: </td><td>"+address+"</td></tr>"
+ 	content += "<table class='orderlist_address'><tr><td style='width:20%'>送货地址: </td><td>"+address+"</td></tr>"
   	contact = document.getElementById('contact');
- 	content += "<tr><td style='width:30%'>收货人: </td><td>"+contact.value+"</td></tr>"
+ 	content += "<tr><td style='width:20%'>收货人: </td><td>"+contact.value+"</td></tr>"
   	contact = document.getElementById('phone');
- 	content += "<tr><td style='width:30%'>联系电话: </td><td>"+contact.value+"</td></tr>"
+ 	content += "<tr><td style='width:20%'>联系电话: </td><td>"+contact.value+"</td></tr>"
  	content += "</table>"
  	
     content += " <button onclick=\"g_cart.doBuy()\" class='button_confirm order'>提交订单</button>"
