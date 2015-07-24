@@ -215,13 +215,13 @@ public class WsOrderAction extends BaseAction {
 		JSONObject jsonobj = JSONObject.fromObject(userinfo);
 		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
 		if (info.getOpenid()==null||info.getOpenid().length()<=0){
-			writeMsg(RetMsg.MSG_UserInfoMissing);	
+			writeMsg(RetMsg.MSG_OpenidInvalid);	
 			return null;			
 		}
 		//未经过登陆的用户下单
 		WxUserInfo info2 = DataManager.getInstance().findUser(info.getUserId());
 		if (info2==null){
-			writeMsg(RetMsg.MSG_UserInfoMissing);	
+			writeMsg(RetMsg.MSG_NotLoginUser);	
 			return null;				
 		}
 		//下单ip跟登陆ip不一致:
@@ -269,7 +269,7 @@ public class WsOrderAction extends BaseAction {
 			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
 		}
 		if (wrongStock){
-			writeMsg(RetMsg.StockNotEnough);
+			writeMsg(RetMsg.MSG_StockNotEnough);
 			return null;
 		}else if (nogoods!=null){
 			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);

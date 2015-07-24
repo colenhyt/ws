@@ -17,8 +17,10 @@ var MSG_OrderHadPaid = 14;
 var MSG_UserInfoMissing = 15;
 var MSG_InvalidOrderScene = 16;
 var MSG_OrderSequenceWrong = 17;
-var StockNotEnough = 18;
-	
+var MSG_StockNotEnough = 18;
+var MSG_OpenidInvalid = 19;
+var MSG_NotLoginUser = 20;	
+
 var ERR_MSG ={};
 ERR_MSG[MSG_SQLExecuteError] = "sql出错";
 ERR_MSG[MSG_PrepayReqFail] = "微信支付申请失败";
@@ -37,7 +39,9 @@ ERR_MSG[MSG_OrderHadPaid] = "订单已被付款";
 ERR_MSG[MSG_UserInfoMissing] = "用户信息缺失";
 ERR_MSG[MSG_InvalidOrderScene] = "无效订购场景";
 ERR_MSG[MSG_OrderSequenceWrong] = "下单频率过高";
-ERR_MSG[StockNotEnough] = "库存不足";
+ERR_MSG[MSG_StockNotEnough] = "库存不足";
+ERR_MSG[MSG_OpenidInvalid] = "无效的openid";
+ERR_MSG[MSG_NotLoginUser] = "非微信登陆用户";
 
 //sc();
 //aa();

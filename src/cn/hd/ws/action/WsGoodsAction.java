@@ -44,7 +44,7 @@ public class WsGoodsAction extends BaseAction {
 		List<EcsCategory> cats = ecsGoodsService.cats();
 		JSONArray jsonObject = JSONArray.fromObject(cats);
 		write(jsonObject.toString());
-		System.out.println("cat:"+cats.size());
+		//System.out.println("cat:"+cats.size());
 		return null;
 	}
 	
@@ -54,7 +54,7 @@ public class WsGoodsAction extends BaseAction {
 		EcsGoodsActivityWithBLOBs group = ecsGoodsService.activeGroup();
 		JSONObject jsonObject = JSONObject.fromObject(group);
 		write(jsonObject.toString());
-		System.out.println("group:"+jsonObject);
+		//System.out.println("group:"+jsonObject);
 		return null;
 	}
 		
@@ -65,7 +65,7 @@ public class WsGoodsAction extends BaseAction {
 		
 		JSONArray jsonObject = JSONArray.fromObject(goods);
 		write(jsonObject.toString());
-		System.out.println("goods:"+jsonObject.toString());
+		//System.out.println("goods:"+jsonObject.toString());
 		return null;
 	}	
 }

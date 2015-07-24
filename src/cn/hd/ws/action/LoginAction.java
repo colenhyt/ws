@@ -120,8 +120,22 @@ public class LoginAction extends BaseAction {
 		info.setIpAddress(loginIp);
 		EcsUsers user = ecsuserService.findUserOrAdd(info);		
 		info.setUserId(user.getUserId());
+		
+		EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
+		if (add!=null){
+			EcsRegion region = ecsuserService.findRegion(add.getProvince());
+			if (region!=null)
+				info.setProvince(region.getRegionName());
+			region = ecsuserService.findRegion(add.getCity());
+			if (region!=null)
+				info.setCity(region.getRegionName());
+			
+			info.setAddress(add.getAddress());
+			info.setMobile(add.getMobile());
+			info.setContact(add.getConsignee());
+		}		
 		DataManager.getInstance().addUser(info);
-		getHttpRequest().setAttribute("userinfo", "{'userId':"+info.getUserId()+",'openid':'333','nickname':'aaeee','province':'广东','city':'深圳','address':'abcd南山','contact':'colenhh','mobile':'134'}");
+		getHttpRequest().setAttribute("userinfo", "{'userId':"+info.getUserId()+",'openid':'333','nickname':'aaeee','province':'"+info.getProvince()+"','city':'"+info.getCity()+"','address':'"+info.getAddress()+"','contact':'colenhh','mobile':'"+info.getMobile()+"'}");
 		return "error";
 	}
 	

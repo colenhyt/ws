@@ -6,7 +6,7 @@
 <struts>
 	<package name="login" extends="struts-default" namespace="/">
 		<action name="login_*" method="{1}" class="cn.hd.ws.action.LoginAction">
-		    <result  name="error">/index.html</result>
+		    <result  name="error">/error.jsp</result>
 		    <result  name="group">/tuangou.jsp?userinfo=${userinfo}</result>
 		</action>
 	</package>

@@ -19,5 +19,7 @@ public interface RetMsg {
 	public static int MSG_UserInfoMissing = 15;
 	public static int MSG_InvalidOrderScene = 16;
 	public static int MSG_OrderSequenceWrong = 17;
-	public static int StockNotEnough = 18;
+	public static int MSG_StockNotEnough = 18;
+	public static int MSG_OpenidInvalid = 19;
+	public static int MSG_NotLoginUser = 20;
 }
