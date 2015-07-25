@@ -29,6 +29,13 @@ import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderReqData;
 import com.tencent.protocol.unifiedorder_protocol.UnifiedOrderResData;
 
 public class WsOrderAction extends BaseAction {
+	public final static int INFO_STATUS_ORDERCHECKFAIL		= 	0;
+	public final static int INFO_STATUS_ORDERSAVE			= 	1;
+	public final static int INFO_STATUS_UNIFIEDORDER_OK		= 	2;
+	public final static int INFO_STATUS_UNIFIEDORDER_FAIL	= 	3;
+	public final static int INFO_STATUS_COMMIT_CHECKFAIL	= 	4;
+	public final static int INFO_STATUS_WXPAY_OK			= 	5;
+	public final static int INFO_STATUS_WXPAY_FAIL			= 	6;
 	private EcsOrderInfo wxorder;
 	private EcsOrderService ecsorderService;
 	private EcsUserService ecsuserService;
@@ -136,44 +143,43 @@ public class WsOrderAction extends BaseAction {
 	//支付完毕/失败，订单状态修改
 	public String commit(){
 		String orderSn = this.getHttpRequest().getParameter("orderSn");
+		int retCode = RetMsg.MSG_OK;
+		
 		if (orderSn==null||orderSn.equalsIgnoreCase("null")){
-			writeMsg(RetMsg.MSG_NoOrderSn);	
-			return null;
+			retCode = RetMsg.MSG_NoOrderSn;	
 		}			
 		String orderStr = DataManager.getInstance().findOrder(orderSn);
 		if (orderStr==null){
-			writeMsg(RetMsg.MSG_OrderNotExist);	
-			return null;			
+			retCode = RetMsg.MSG_OrderNotExist;	
 		}
 		String payOk = this.getHttpRequest().getParameter("payOk");
 		if (payOk==null||payOk.equalsIgnoreCase("null")){
-			writeMsg(RetMsg.MSG_NoPayOk);	
-			return null;
+			retCode = RetMsg.MSG_NoPayOk;	
 		}	
 		String userId = this.getHttpRequest().getParameter("userId");
 		Pattern pattern = Pattern.compile("[0-9]*");
 		 Matcher matcher = pattern.matcher(userId);
 		if (userId==null||userId.equalsIgnoreCase("null")||!matcher.matches()){
-			writeMsg(RetMsg.MSG_UserIdMissing);	
-			return null;
+			retCode = RetMsg.MSG_UserIdMissing;	
 		}	
 		JSONObject orderobj = JSONObject.fromObject(orderStr);
 		EcsOrderInfo orderInfo = (EcsOrderInfo)JSONObject.toBean(orderobj, EcsOrderInfo.class);
 		if (orderInfo.getUserId().intValue()!=Integer.valueOf(userId).intValue()){
-			writeMsg(RetMsg.MSG_OrderNotExist);	
-			return null;				
+			retCode = RetMsg.MSG_OrderNotExist;	
 		}
 		if (orderInfo.getPayStatus().booleanValue()==true){
-			writeMsg(RetMsg.MSG_OrderHadPaid);
-			return null;				
+			retCode = RetMsg.MSG_OrderHadPaid;
 		}
-		if (payOk.endsWith("true")){
+		
+		
+		if (retCode!=RetMsg.MSG_OK){
+			orderInfo.setInfoStatus(INFO_STATUS_COMMIT_CHECKFAIL);
+		}else if (payOk.endsWith("true")){
 			//更新商品库存:
 			List<EcsOrderGoods> goods = ecsorderService.findGoods(orderInfo.getOrderId());
 			ecsGoodsService.updateByOrderGoods(goods);
 			orderInfo.setPayStatus(true);
-			ecsorderService.updateStatus(orderInfo);
-			DataManager.getInstance().addOrder(orderInfo);
+			orderInfo.setInfoStatus(INFO_STATUS_WXPAY_OK);
 			
 //			if (checkWxOrder(orderInfo)){
 //				orderInfo.setPayStatus(true);
@@ -182,10 +188,18 @@ public class WsOrderAction extends BaseAction {
 //			}else {
 //				Util.log("支付单据查询对账错误"+orderInfo.getOrderSn());
 //			}
+		}else
+			orderInfo.setInfoStatus(INFO_STATUS_WXPAY_FAIL);
+		
+		DataManager.getInstance().addOrder(orderInfo);
+		ecsorderService.updateStatus(orderInfo);
+		Util.log("订单完成：校验结果"+retCode+",支付返回:"+payOk+",订单信息:"+orderobj.toString());
+		if (retCode!=RetMsg.MSG_OK){
+			writeMsg(retCode);						
+		}else {
+			String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
+			writeMsg2(RetMsg.MSG_OK,retstr);			
 		}
-		Util.log("订单完成：支付("+payOk+"),订单号:"+orderInfo.getOrderSn()+",联系人:"+orderInfo.getConsignee());
-		String retstr = "{'payOk':"+payOk+",'orderSn':'"+orderInfo.getOrderSn()+"'}";
-		writeMsg2(RetMsg.MSG_OK,retstr);
 		return null;
 	}
 	
@@ -207,28 +221,41 @@ public class WsOrderAction extends BaseAction {
 	
 	public String order(){
 		String ipAddress = getIpAddress();
-		
+
 		String userinfo = this.getHttpRequest().getParameter("userinfo");
+		String paytype = this.getHttpRequest().getParameter("paytype");
+		String contact = this.getHttpRequest().getParameter("contact");
+		String phone = this.getHttpRequest().getParameter("phone");
+		String remark = this.getHttpRequest().getParameter("remark");
+		String province = this.getHttpRequest().getParameter("province");
+		String city = this.getHttpRequest().getParameter("city");
+		String address = this.getHttpRequest().getParameter("address");
+		
+		WxUserInfo cacheUser = null;
+		int retCode = RetMsg.MSG_OK;
+		
 		if (userinfo==null||userinfo.equalsIgnoreCase("null")){
-			writeMsg(RetMsg.MSG_UserInfoMissing);	
-			return null;
-		}		
-		JSONObject jsonobj = JSONObject.fromObject(userinfo);
-		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
-		if (info.getOpenid()==null||info.getOpenid().length()<=0){
-			writeMsg(RetMsg.MSG_OpenidInvalid);	
-			return null;			
+			retCode = RetMsg.MSG_UserInfoMissing;	
 		}
-		//未经过登陆的用户下单
-		WxUserInfo info2 = DataManager.getInstance().findUser(info.getUserId());
-		if (info2==null){
-			writeMsg(RetMsg.MSG_NotLoginUser);	
-			return null;				
+		if (retCode==RetMsg.MSG_OK){
+			JSONObject jsonobj = JSONObject.fromObject(userinfo);
+			WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj, WxUserInfo.class);
+			if (info.getOpenid()==null||info.getOpenid().length()<=0){
+				retCode = RetMsg.MSG_OpenidInvalid;	
+			}else{
+				//未经过登陆的用户下单
+				cacheUser = DataManager.getInstance().findUser(info.getUserId());
+				if (cacheUser==null){
+					retCode = RetMsg.MSG_NotLoginUser;	
+				}
+			}
 		}
+		
+		if (retCode==RetMsg.MSG_OK){
 		//下单ip跟登陆ip不一致:
-		if (!info2.getIpAddress().equalsIgnoreCase(ipAddress)){
-			writeMsg(RetMsg.MSG_InvalidOrderScene);	
-			return null;
+		if (!cacheUser.getIpAddress().equalsIgnoreCase(ipAddress)){
+			retCode = RetMsg.MSG_InvalidOrderScene;	
+		}
 		}
 		//频繁下单:
 		long now = System.currentTimeMillis();
@@ -236,12 +263,12 @@ public class WsOrderAction extends BaseAction {
 //			writeMsg(RetMsg.MSG_OrderSequenceWrong);	
 //			return null;			
 //		}
+		
 		float totalFee = 0;
 		String orderTitle = "";
 		String strgoods = this.getHttpRequest().getParameter("goods");
-		if (strgoods==null){
-			writeMsg(RetMsg.MSG_NoAnyGoods);	
-			return null;			
+		if (retCode==RetMsg.MSG_OK&&strgoods==null){
+			retCode = RetMsg.MSG_NoAnyGoods;	
 		}
 		List<EcsGoods> items = BaseService.jsonToBeanList(strgoods, EcsGoods.class);
 		String nogoods = null;
@@ -269,32 +296,26 @@ public class WsOrderAction extends BaseAction {
 				
 			totalFee += item.getShopPrice().floatValue() * item.getGoodsNumber();
 		}
-		if (wrongStock){
-			writeMsg(RetMsg.MSG_StockNotEnough);
-			return null;
-		}else if (nogoods!=null){
-			writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
-			return null;
-		}else if (totalFee<=0){
-			writeMsg(RetMsg.MSG_OrderAmountInvalid);	
-			return null;			
+		if (retCode==RetMsg.MSG_OK){
+			if (wrongStock){
+				retCode = RetMsg.MSG_StockNotEnough;
+			}else if (nogoods!=null){
+				writeMsg2(RetMsg.MSG_GoodsNotFound,nogoods);
+				return null;
+			}else if (totalFee<=0){
+				retCode = RetMsg.MSG_OrderAmountInvalid;	
+			}
 		}
-
-		String paytype = this.getHttpRequest().getParameter("paytype");
-		String contact = this.getHttpRequest().getParameter("contact");
-		String phone = this.getHttpRequest().getParameter("phone");
-		String remark = this.getHttpRequest().getParameter("remark");
-		String province = this.getHttpRequest().getParameter("province");
-		String city = this.getHttpRequest().getParameter("city");
-		String address = this.getHttpRequest().getParameter("address");
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
-		orderInfo.setUserId(info.getUserId());
+		if (cacheUser!=null)
+			orderInfo.setUserId(cacheUser.getUserId());
+		else
+			orderInfo.setUserId(0);
 		orderInfo.setProvince(Short.valueOf(province));
 		orderInfo.setCity(Short.valueOf(city));
 		orderInfo.setAddress(address);
-		orderInfo.setGoodsAmount(BigDecimal.valueOf(totalFee));
 		orderInfo.setConsignee(contact);
 		orderInfo.setMobile(phone);
 		orderInfo.setOrderStatus(false);
@@ -303,49 +324,71 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayId(Integer.valueOf(paytype).byteValue());
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
-
-		boolean ret = false;
+		orderInfo.setInfoStatus(INFO_STATUS_ORDERSAVE);
 		
-		//校验地址，如果是新地址，进行新增;
-		ret = ecsuserService.validAddress(orderInfo);
-		if (ret==false){
-			writeMsg(RetMsg.MSG_AddressInvalid);	
+		boolean ret2 = false;
+		if (retCode!=RetMsg.MSG_OK){
+			orderInfo.setReturnCode(String.valueOf(retCode));
+			orderInfo.setInfoStatus(INFO_STATUS_ORDERCHECKFAIL);
+			ecsorderService.add(orderInfo);
+			writeMsg(retCode);	
 			return null;			
 		}
 		
-		ret = ecsorderService.add(orderInfo);
-		if (ret==false){
+		orderInfo.setGoodsAmount(BigDecimal.valueOf(totalFee));
+		ret2 = ecsorderService.add(orderInfo);
+		if (ret2==false){
 			writeMsg(RetMsg.MSG_OrderSaveFail);	
 			return null;			
 		}
-		ret = ecsorderService.addGoods(items, orderInfo.getOrderId());
-		if (ret==false){
+		ret2 = ecsorderService.addGoods(items, orderInfo.getOrderId());
+		if (ret2==false){
 			writeMsg(RetMsg.MSG_OrderGoodsSaveFail);	
 			return null;			
 		}
 		
+		//校验地址，如果是新地址，进行新增;
+		ret2 = ecsuserService.validAddress(orderInfo);
+		if (ret2==false){
+			JSONObject infoobj = JSONObject.fromObject(orderInfo);
+			Util.log("保存新地址失败:订单信息:"+infoobj.toString());
+		}
+		
 		//add to cache:
 		DataManager.getInstance().addOrder(orderInfo);
-		info2.setLastOrderTime(System.currentTimeMillis());
-		DataManager.getInstance().addUser(info2);
+		cacheUser.setLastOrderTime(System.currentTimeMillis());
+		DataManager.getInstance().addUser(cacheUser);
 		
 		//统一下单,向微信申请prepay_id:
-		ret = queryWxpay(orderInfo,info.getOpenid(),orderTitle,ipAddress);
-		if (ret==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
-			orderInfo.setOrderStatus(false);
+		ret2 = queryWxpay(orderInfo,cacheUser.getOpenid(),orderTitle,ipAddress);
+		if (ret2==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
+			orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_FAIL);
 			ecsorderService.update(orderInfo);
 			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
-			Util.log("统一下单申请prepay_id失败");
+			Util.log("统一下单申请prepay_id失败:userId="+orderInfo.getUserId());
 			return null;
 		}
+		//更新infostatus,微信支付返回数据:
+		orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_OK);
+		ecsorderService.update(orderInfo);
 		
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
 		JSONObject reqobj = JSONObject.fromObject(req);
 		String desc = "["+infoobj.toString()+","+reqobj.toString()+"]";
 		writeMsg2(RetMsg.MSG_OK,desc);			
-		System.out.println("goods:"+strgoods+";userinfo:"+userinfo+"pay:"+paytype+",address:"+address);
+		Util.log("订单提交成功:订单信息:"+infoobj.toString()+", 商品: "+strgoods);
 		return null;
 	}
 
+	public void test(){
+		EcsOrderInfo info = new EcsOrderInfo();
+		queryWxpay(info,"a","b","d");
+	}
+	public static void main(String[] args) {
+		WsOrderAction a = new WsOrderAction();
+		List<EcsGoods> items = BaseService.jsonToBeanList(null, EcsGoods.class);
+		Util.log(items.size());
+		
+	}
 }

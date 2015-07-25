@@ -99,7 +99,7 @@ Cart.prototype.address = function(){
 Cart.prototype.show = function(){
 
 var check = this.check();
-if (!check) return;
+//if (!check) return;
 
  var freight = this.freight();
 
@@ -228,6 +228,14 @@ Cart.prototype.doBuy = function(){
    	tag = document.getElementById('paytype');
   	dataParam += "&paytype="+tag.value; 	
   	
+  	var content ="<div class='orderlist_wait_msg' id='orderlist_msg'>正在提交您的订单，请稍等...."
+  	var cc = "<div class='orderlist_wait_img' id='orderlist_wait'><img src='static/img/w1.gif'></div>"
+  	content += "</div>"
+  	content += cc;
+  	
+ var tag = document.getElementById(this.pagename);
+ tag.innerHTML = content;  
+   	
 	//alert(dataParam);
 	try    {
 		$.ajax({type:"post",url:"/ec/order_order.do",data:dataParam,success:function(data){
@@ -258,7 +266,12 @@ Cart.prototype.buyCallback = function(data){
   }
     content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
  }
- var tag = document.getElementById(this.pagename);
+ 
+ var my = document.getElementById("orderlist_wait");
+    if (my != null)
+        my.innerHTML = ""
+        
+ var tag = document.getElementById('orderlist_msg');
  tag.innerHTML = content;  
  
 }
@@ -291,16 +304,16 @@ Cart.prototype.commitCallback = function(ret){
  var content;
  if (ret.code==0){
 	 var desc = cfeval(ret.desc);
-	  content = "订单"+desc.orderSn+"提交失败或被取消!!"
+	  content = "订单"+desc.orderSn+"支付失败或被取消!!"
 	  if (desc.payOk==true){
 	    content = "订单"+desc.orderSn+"提交成功!!"
 	  }
   }else {
    content = "订单提交失败或被取消!!:"+ERR_MSG[ret.code];
   }
-    content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
+    content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>关闭</button>"
   
-  var tag = document.getElementById(this.pagename);
+  var tag = document.getElementById('orderlist_msg');
   tag.innerHTML = content;  
   
 }

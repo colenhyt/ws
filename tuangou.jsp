@@ -85,6 +85,7 @@ width:5%;
 width:260px;
 }
 
+
 .goods_menu
 {
   background-color:#EECFA1;
@@ -157,6 +158,23 @@ text-align:center;
 width:600px;
 }
 
+
+.orderlist_wait_msg {
+font-size:70%;
+text-align:center;
+height:150px;
+width:100%;
+}
+
+.orderlist_wait_img {
+position:relative;
+left:250px;
+top:10px;
+width:100px;
+height:100px;
+}
+
+
 .orderlist_items {
 margin:10px;
 font-size:70%;
@@ -213,7 +231,6 @@ text-align:left;
        <div>备注: <br><input name="remark" id="remark" type="text" value=""></div>
        <button onclick="g_cart.show()" class='button_confirm'>确认订单</button><br><br>
         <script type="text/javascript" src="static/js/main.js"></script>
-       
     	</body>	
     	
 </html>

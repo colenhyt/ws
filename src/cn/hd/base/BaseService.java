@@ -72,12 +72,14 @@ public class BaseService extends Base{
      * @return  
      */
 	static public <T> List<T> jsonToBeanList(String jsonString, Class<T> beanClass) {
-    	 
+        List<T> list = new ArrayList<T>();
+    	
+        if (jsonString==null) return list;
+        
         JSONArray jsonArray = JSONArray.fromObject(jsonString);
         JSONObject jsonObject;
         T bean;
         int size = jsonArray.size();
-        List<T> list = new ArrayList<T>(size);
  
         for (int i = 0; i < size; i++) {
  

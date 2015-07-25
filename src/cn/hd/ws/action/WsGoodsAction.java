@@ -60,7 +60,7 @@ public class WsGoodsAction extends BaseAction {
 		
 	
 	public String goods(){
-		System.out.println("query goods cat:"+ecsgoods.getCatId());
+		//System.out.println("query goods cat:"+ecsgoods.getCatId());
 		List<EcsGoods> goods = ecsGoodsService.goods(ecsgoods.getCatId());
 		
 		JSONArray jsonObject = JSONArray.fromObject(goods);
