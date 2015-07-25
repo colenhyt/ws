@@ -70,6 +70,7 @@ width:100%;
 .button_confirm.order {
 margin:10px;
 width:95%;
+font-size:100%;
 }
 
 .main_header{
@@ -77,6 +78,11 @@ font-size:120%;
 width:100%;
 }
 
+.main_icon {
+width:40px;
+height:40px;
+margin-right:10px;
+}
 .main_radio {
 width:5%;
 }
@@ -162,7 +168,6 @@ width:600px;
 .orderlist_wait_msg {
 font-size:70%;
 text-align:center;
-height:150px;
 width:100%;
 }
 
