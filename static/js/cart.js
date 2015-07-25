@@ -99,7 +99,7 @@ Cart.prototype.address = function(){
 Cart.prototype.show = function(){
 
 var check = this.check();
-//if (!check) return;
+if (!check) return;
 
  var freight = this.freight();
 
@@ -253,23 +253,24 @@ Cart.prototype.buyCallback = function(data){
  var rets = cfeval(ret.desc);
   var info = rets[0];
   var req = rets[1];
-  content = '您的订单号已生成,订单号('+info.orderSn+"),向微信发起支付....";
+  content = "订单号生成:<span style='color:red'>"+info.orderSn+"</span><br>向微信发起支付....";
   this.currOrder = info;
   //this.wxpayCallback(true);
   var g_wx = new WxCaller();
-  g_wx.reqWxpay(req);
+  //g_wx.reqWxpay(req);
  }else {
-  content = "购买失败:"
+  content = "<img src='static/img/error.png' class='main_icon'>购买失败:"
   content += ERR_MSG[ret.code];
   if (ret.desc.length>0){
    content += ","+ret.desc;
   }
-    content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
- }
- 
- var my = document.getElementById("orderlist_wait");
+    content += "<br><br><br><br><button onclick=\"g_cart.close()\" class='button_confirm order'>退出</button>"
+
+  var my = document.getElementById("orderlist_wait");
     if (my != null)
         my.innerHTML = ""
+ }
+ 
         
  var tag = document.getElementById('orderlist_msg');
  tag.innerHTML = content;  
@@ -304,12 +305,12 @@ Cart.prototype.commitCallback = function(ret){
  var content;
  if (ret.code==0){
 	 var desc = cfeval(ret.desc);
-	  content = "订单"+desc.orderSn+"支付失败或被取消!!"
+	  content = "<img src='static/img/error.png' class='main_icon'>"+desc.orderSn+"支付失败或被取消!!"
 	  if (desc.payOk==true){
-	    content = "订单"+desc.orderSn+"提交成功!!"
+	    content = "<img src='static/img/ok.png' class='main_icon'>订单"+desc.orderSn+"提交成功!!"
 	  }
   }else {
-   content = "订单提交失败或被取消!!:"+ERR_MSG[ret.code];
+   content = "<img src='static/img/error.png' class='main_icon'>订单提交失败或被取消:"+ERR_MSG[ret.code];
   }
     content += " <button onclick=\"g_cart.close()\" class='button_confirm order'>关闭</button>"
   
