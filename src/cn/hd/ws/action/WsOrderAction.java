@@ -2,6 +2,7 @@ package cn.hd.ws.action;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,6 +114,7 @@ public class WsOrderAction extends BaseAction {
 //	    	rst.setResult_code("SUCCESS");
 //	    	rst.setPrepay_id("aaa");
 	    	rst = bus.run(reqdata);
+	    	Util.log("统一下单返回码:"+rst.getReturn_code());
     		order.setReturnCode(rst.getReturn_code());
     		order.setReturnMsg(rst.getReturn_msg());
     		order.setResultCode(rst.getResult_code());
@@ -192,7 +194,7 @@ public class WsOrderAction extends BaseAction {
 			orderInfo.setInfoStatus(INFO_STATUS_WXPAY_FAIL);
 		
 		DataManager.getInstance().addOrder(orderInfo);
-		ecsorderService.updateStatus(orderInfo);
+		ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
 		Util.log("订单完成：校验结果"+retCode+",支付返回:"+payOk+",订单信息:"+orderobj.toString());
 		if (retCode!=RetMsg.MSG_OK){
 			writeMsg(retCode);						
@@ -335,6 +337,7 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayStatus(false);
 		orderInfo.setPayNote(remark);
 		orderInfo.setInfoStatus(INFO_STATUS_ORDERSAVE);
+		orderInfo.setCrDate(new Date());
 		
 		boolean ret2 = false;
 		if (retCode!=RetMsg.MSG_OK){
@@ -365,7 +368,6 @@ public class WsOrderAction extends BaseAction {
 		}
 		
 		//add to cache:
-		DataManager.getInstance().addOrder(orderInfo);
 		cacheUser.setLastOrderTime(System.currentTimeMillis());
 		DataManager.getInstance().addUser(cacheUser);
 		
@@ -373,14 +375,18 @@ public class WsOrderAction extends BaseAction {
 		ret2 = queryWxpay(orderInfo,cacheUser.getOpenid(),orderTitle,ipAddress);
 		if (ret2==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
 			orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_FAIL);
-			ecsorderService.update(orderInfo);
+			ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
 			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
 			Util.log("统一下单申请prepay_id失败:userId="+orderInfo.getUserId());
 			return null;
 		}
+		
+		//add order to cache:
+		DataManager.getInstance().addOrder(orderInfo);
+		
 		//更新infostatus,微信支付返回数据:
 		orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_OK);
-		ecsorderService.update(orderInfo);
+		ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
 		
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
