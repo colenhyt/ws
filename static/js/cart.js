@@ -306,9 +306,9 @@ Cart.prototype.commitCallback = function(ret){
  var content;
  if (ret.code==0){
 	 var desc = cfeval(ret.desc);
-	  content = "<br><img src='static/img/error.png' class='main_icon'>订单<span style='color:red'>"+desc.orderSn+"</span><br>支付失败或被取消!!"
+	  content = "<br><img src='static/img/error.png' class='main_icon'>订单 <span style='color:red'>"+desc.orderSn+"</span><br>支付失败或被取消!!"
 	  if (desc.payOk==true){
-	    content = "<br><img src='static/img/ok.png' class='main_icon'>订单"+desc.orderSn+"提交成功!!"
+	    content = "<br><img src='static/img/ok.png' class='main_icon'>订单 <span style='color:red'>"+desc.orderSn+"</span><br>提交成功!!"
 	  }
   }else {
    content = "<br><img src='static/img/error.png' class='main_icon'>订单提交失败或被取消:"+ERR_MSG[ret.code];
