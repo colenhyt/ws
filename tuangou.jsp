@@ -73,6 +73,12 @@ width:95%;
 font-size:100%;
 }
 
+.button_confirm.quit {
+margin:10px;
+width:95%;
+font-size:130%;
+}
+
 .main_header{
 font-size:120%;
 width:100%;

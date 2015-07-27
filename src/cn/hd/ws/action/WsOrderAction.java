@@ -230,6 +230,7 @@ public class WsOrderAction extends BaseAction {
 		String province = this.getHttpRequest().getParameter("province");
 		String city = this.getHttpRequest().getParameter("city");
 		String address = this.getHttpRequest().getParameter("address");
+		String strTotalfee = this.getHttpRequest().getParameter("totalfee");
 		
 		WxUserInfo cacheUser = null;
 		int retCode = RetMsg.MSG_OK;
@@ -306,7 +307,16 @@ public class WsOrderAction extends BaseAction {
 				retCode = RetMsg.MSG_OrderAmountInvalid;	
 			}
 		}
-		
+		EcsRegion region = ecsuserService.findRegion(Short.valueOf(city));
+		float fFreight = 0;
+		if (region!=null&&region.getFreight()!=null){
+			fFreight = region.getFreight().intValue();
+		}
+		totalFee += fFreight;
+		float reqTotalfee = Float.valueOf(strTotalfee).floatValue();
+		if (Math.abs(reqTotalfee-totalFee)>0.1) {
+			retCode = RetMsg.MSG_WrongTotalfee;
+		}
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
 		if (cacheUser!=null)

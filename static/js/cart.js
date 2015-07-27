@@ -134,7 +134,7 @@ if (!check) return;
   }
   content += "<tr><td class='orderlist_td' colspan=3 style='text-align:right'>"
  content += "订单金额总计:</td>"
- content += "<td class='orderlist_td'>￥&nbsp<span style='color:red;font-size:130%'>"+ForDight(totalps)+".00</span>";
+ content += "<td class='orderlist_td'>￥&nbsp<span style='color:red;font-size:130%' id='goods_totalfee'>"+ForDight(totalps)+".00</span>";
      content += "</td></tr>"
  	content += "</table>";
  	
@@ -227,6 +227,9 @@ Cart.prototype.doBuy = function(){
   	dataParam += "&remark="+tag.value;
    	tag = document.getElementById('paytype');
   	dataParam += "&paytype="+tag.value; 	
+   	tag = document.getElementById('goods_totalfee');
+  	dataParam += "&totalfee="+tag.innerText; 	
+  	
   	
   	var content ="<div class='orderlist_wait_msg' id='orderlist_msg'><br>正在提交您的订单，请稍等....</div>"
   	var cc = "<div class='orderlist_wait_img' id='orderlist_wait'><img src='static/img/w1.gif'></div>"

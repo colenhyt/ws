@@ -20,6 +20,7 @@ var MSG_OrderSequenceWrong = 17;
 var MSG_StockNotEnough = 18;
 var MSG_OpenidInvalid = 19;
 var MSG_NotLoginUser = 20;	
+var MSG_WrongTotalfee = 21;	
 
 var ERR_MSG ={};
 ERR_MSG[MSG_SQLExecuteError] = "sql出错";
@@ -42,6 +43,7 @@ ERR_MSG[MSG_OrderSequenceWrong] = "下单频率过高";
 ERR_MSG[MSG_StockNotEnough] = "库存不足";
 ERR_MSG[MSG_OpenidInvalid] = "无效的openid";
 ERR_MSG[MSG_NotLoginUser] = "非微信登陆用户";
+ERR_MSG[MSG_WrongTotalfee] = "订单总额错误";
 
 //sc();
 //aa();

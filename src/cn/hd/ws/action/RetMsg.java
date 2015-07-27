@@ -22,4 +22,5 @@ public interface RetMsg {
 	public static int MSG_StockNotEnough = 18;
 	public static int MSG_OpenidInvalid = 19;
 	public static int MSG_NotLoginUser = 20;
+	public static int MSG_WrongTotalfee = 21;
 }
