@@ -106,7 +106,7 @@ public class WsOrderAction extends BaseAction {
 		try {
 			bus = new UnifiedOrderBusiness();
 			int intTotalFee = (int)(order.getGoodsAmount().floatValue()*100);	//单位是分
-			intTotalFee = 2;
+			//intTotalFee = 2;
 			String body = orderTitle;
 	    	UnifiedOrderReqData  reqdata = new UnifiedOrderReqData(openid,body,order.getOrderSn(),intTotalFee,ipAddress);
 	    	UnifiedOrderResData rst = new UnifiedOrderResData();
