@@ -375,7 +375,7 @@ public class WsOrderAction extends BaseAction {
 		ret2 = queryWxpay(orderInfo,cacheUser.getOpenid(),orderTitle,ipAddress);
 		if (ret2==false||orderInfo.getPrepayId()==null||orderInfo.getPrepayId().length()<=0)	{//统一下单请求失败:
 			orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_FAIL);
-			ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
+			ecsorderService.update(orderInfo);
 			writeMsg2(RetMsg.MSG_PrepayReqFail,orderInfo.getErrCodeDes());
 			Util.log("统一下单申请prepay_id失败:userId="+orderInfo.getUserId());
 			return null;
@@ -386,7 +386,7 @@ public class WsOrderAction extends BaseAction {
 		
 		//更新infostatus,微信支付返回数据:
 		orderInfo.setInfoStatus(INFO_STATUS_UNIFIEDORDER_OK);
-		ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
+		ecsorderService.update(orderInfo);
 		
 		JSONObject infoobj = JSONObject.fromObject(orderInfo);
 		JSChooseWXPayReqData req = new JSChooseWXPayReqData(orderInfo.getPrepayId());
