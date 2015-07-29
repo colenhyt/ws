@@ -88,6 +88,7 @@ public class EcsGoodsService extends BaseService {
 		if (catID>0){
 			Criteria criteria = example.createCriteria();
 			criteria.andCatIdEqualTo(catID);
+			criteria.andIsOnSaleEqualTo(true);
 		}
 		return ecsgoodsMapper.selectByExampleWithBLOBs(example);
 		}catch (Exception e){
