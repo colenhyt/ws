@@ -85,11 +85,12 @@ public class EcsGoodsService extends BaseService {
 	public List<EcsGoods> goods(short catID){
 		EcsGoodsExample example = new EcsGoodsExample();
 		try {		
-		if (catID>0){
 			Criteria criteria = example.createCriteria();
+		if (catID>0){
 			criteria.andCatIdEqualTo(catID);
-			criteria.andIsOnSaleEqualTo(true);
 		}
+		criteria.andIsOnSaleEqualTo(true);
+		criteria.andIsDeleteEqualTo(false);
 		return ecsgoodsMapper.selectByExampleWithBLOBs(example);
 		}catch (Exception e){
 			e.printStackTrace();
