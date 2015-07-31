@@ -1,7 +1,9 @@
 package cn.hd.ws.action;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -174,9 +176,36 @@ public class LoginAction extends BaseAction {
 	}
 	
 	public static void main(String[] args){
-		Exception e = new Exception("二次调用回调堆栈");
-		e.printStackTrace();
+		Exception e2 = new Exception("二次调用回调堆栈");
+		//e2.printStackTrace();
 		Util.log("heehehe");
-		
+        Runtime rt = Runtime.getRuntime();  
+        String[] command1=new String[]{"cmd","cd C:/tomcat-7.0.57/bin"};  
+        String command = "taskkill /F /IM java.exe";      
+        try  
+        {  
+          rt.exec(command1);//返回一个进程  
+          rt.exec(command);  
+          System.out.println("success closed");  
+          Thread.sleep(1000 * 1);
+          rt.exec(command1);//返回一个进程  
+          Process  p = rt.exec("startup.bat");
+          InputStream in = p.getInputStream();
+
+			int c;
+
+			while ((c = in.read()) != -1) {
+
+				System.out.print(c);//如果你不需要看输出，这行可以注销掉
+
+			}
+
+			in.close();
+          System.out.println("success start");  
+        }  
+        catch (Exception e)  
+        {  
+          e.printStackTrace();  
+        }		
 	}
 }

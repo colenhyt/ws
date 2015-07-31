@@ -2,6 +2,8 @@ package cn.hd.ws.action;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -338,6 +340,10 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayNote(remark);
 		orderInfo.setInfoStatus(INFO_STATUS_ORDERSAVE);
 		orderInfo.setCrDate(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间  
+        sdf.applyPattern("yyyyMMddHHmmss");// a为am/pm的标记  
+        int itime = (int)System.currentTimeMillis()	;
+		orderInfo.setAddTime(itime);
 		
 		boolean ret2 = false;
 		if (retCode!=RetMsg.MSG_OK){
@@ -401,10 +407,34 @@ public class WsOrderAction extends BaseAction {
 		EcsOrderInfo info = new EcsOrderInfo();
 		queryWxpay(info,"a","b","d");
 	}
+	public static Integer StringToTimestamp(String time){
+	    
+        int times = 0;
+        try {  
+            times = (int) ((Timestamp.valueOf(time).getTime())/1000);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }
+        if(times==0){
+            System.out.println("String转10位时间戳失败");
+        }
+        return times; 
+         
+    }
+	
 	public static void main(String[] args) {
 		WsOrderAction a = new WsOrderAction();
 		List<EcsGoods> items = BaseService.jsonToBeanList(null, EcsGoods.class);
-		Util.log(items.size());
+		Date time = new Date();
+		Timestamp ts = new Timestamp(time.getTime());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间  
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");// a为am/pm的标记  
+        Date date = new Date();// 获取当前时间  
+        String strTime = sdf.format(date);
+        
+		int itime = (int)((ts.getTime())/1000)	;
+		Util.log(WsOrderAction.StringToTimestamp(strTime));
 		
 	}
 }
