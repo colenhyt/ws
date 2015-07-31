@@ -61,16 +61,14 @@ public class LoginAction extends BaseAction {
 	private JSONObject queryWxUserInfo(String code)
 	{
 		String ip = super.getIpAddress();
-		JSONObject jsonobj = null;
-		String strLogin2 = DataManager.getInstance().getLoginStrByCode(code);
 		if (code==null){
 			String state = this.getHttpRequest().getParameter("state");
 			Util.log("微信用户授权回调取不到code:state:"+state+",ip:"+ip);
-			return jsonobj;
+			return null;
 		}
 		
 		String url = Configure.getAuthTokonAPI(code);
-		jsonobj = request.sendUrlPost(url);
+		JSONObject jsonobj = request.sendUrlPost(url);
 		if (jsonobj.toString().indexOf("errmsg")>0){
 			Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
 			//看是否有:
@@ -80,13 +78,16 @@ public class LoginAction extends BaseAction {
 				e.printStackTrace();
 				Util.log("用户二次回调信息获取成功:"+strLogin);
 				jsonobj = JSONObject.fromObject(strLogin);
+				return jsonobj;
 			}else {
-				jsonobj = null;
+				return null;
 			}
 		}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
 			Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
 			return null;				
 		}
+		
+		//根据token取用户信息:
 		String access_token = jsonobj.getString("access_token");
 		String openid = jsonobj.getString("openid");
 		url = Configure.getUserInfoAPI(access_token, openid);
@@ -103,17 +104,13 @@ public class LoginAction extends BaseAction {
 		String ip = super.getIpAddress();
 		String code = this.getHttpRequest().getParameter("code");
 		JSONObject jsonobj = queryWxUserInfo(code);
-		WxUserInfo info = null;
-		//沒有取到授权，无授权进入:
+		//沒有取到授权，不允许进入:
 		if (jsonobj==null){		//
-			info = new WxUserInfo();
-			String strOpenid = String.valueOf(System.currentTimeMillis());
-	        info.setOpenid(strOpenid);			
-	        code = info.getOpenid();
-	        Util.log("无授权用户进入:openid:"+strOpenid);
-		}else {
-			info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
+	        Util.log("无授权用户不允许进入:ip:"+ip);
+	        return "error";
 		}
+		
+		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 		
 		EcsUsers user = ecsuserService.findUserOrAdd(info);
 		if (user==null)
@@ -144,7 +141,7 @@ public class LoginAction extends BaseAction {
 		
 		jsonstr = jsonstr.replace("\"", "'");
 		getHttpRequest().setAttribute("userinfo", jsonstr);
-		Util.log("跳转到团购页 :"+jsonstr);
+		Util.log("进入团购页 :"+jsonstr);
 		return "group";
 	}
 	
