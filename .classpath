@@ -33,7 +33,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/jedis-2.4.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/json-lib-2.3-jdk15.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jtds-1.2.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/mail-1.4.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/mybatis-3.0.4.jar"/>
@@ -50,7 +49,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/poi-scratchpad-3.11-beta3-20141111.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/quartz-1.8.6.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/sitecapturer.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-jdk14-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/struts2-core-2.3.14.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/struts2-json-plugin-2.3.14.jar"/>

@@ -58,80 +58,71 @@ public class LoginAction extends BaseAction {
 		}
     }
     
+	private JSONObject queryWxUserInfo(String code)
+	{
+		String ip = super.getIpAddress();
+		JSONObject jsonobj = null;
+		String strLogin2 = DataManager.getInstance().getLoginStrByCode(code);
+		if (code==null){
+			String state = this.getHttpRequest().getParameter("state");
+			Util.log("微信用户授权回调取不到code:state:"+state+",ip:"+ip);
+			return jsonobj;
+		}
+		
+		String url = Configure.getAuthTokonAPI(code);
+		jsonobj = request.sendUrlPost(url);
+		if (jsonobj.toString().indexOf("errmsg")>0){
+			Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
+			//看是否有:
+			String strLogin = DataManager.getInstance().getLoginStrByCode(code);
+			if (strLogin!=null){
+				Exception e = new Exception("二次调用回调堆栈");
+				e.printStackTrace();
+				Util.log("用户二次回调信息获取成功:"+strLogin);
+				jsonobj = JSONObject.fromObject(strLogin);
+			}else {
+				jsonobj = null;
+			}
+		}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
+			Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
+			return null;				
+		}
+		String access_token = jsonobj.getString("access_token");
+		String openid = jsonobj.getString("openid");
+		url = Configure.getUserInfoAPI(access_token, openid);
+		jsonobj = request.sendUrlPost(url);
+		if (jsonobj.toString().indexOf("nickname")>0){
+			Util.log("微信用户信息获取成功:"+jsonobj.toString()+",ip:"+ip);
+		}else
+			jsonobj = null;
+		return jsonobj;
+	}
+	
 	public String wxlogincallback()
 	{
 		String ip = super.getIpAddress();
 		String code = this.getHttpRequest().getParameter("code");
-		String state = this.getHttpRequest().getParameter("state");
-		if (code==null){
-			Util.log("微信用户授权回调取不到code:"+state+",ip:"+ip);
-		}else 
-		{
-			String url = Configure.getAuthTokonAPI(code);
-			JSONObject jsonobj = request.sendUrlPost(url);
-			if (jsonobj.toString().indexOf("errmsg")>0){
-				Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
-				//看是否有:
-				String strLogin = DataManager.getInstance().getLoginStrByCode(code);
-				if (strLogin!=null){
-					Exception e = new Exception("二次调用回调堆栈");
-					e.printStackTrace();
-					getHttpRequest().setAttribute("userinfo", strLogin);
-					Util.log("用户二次回调信息获取成功，跳转到团购页 :"+strLogin);
-					return "group";	
-				}else {
-					return "error";
-				}
-			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
-				Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
-				return "error";				
-			}
-			String access_token = jsonobj.getString("access_token");
-			String openid = jsonobj.getString("openid");
-			url = Configure.getUserInfoAPI(access_token, openid);
-			jsonobj = request.sendUrlPost(url);
-			if (jsonobj.toString().indexOf("nickname")>0){
-				Util.log("微信用户信息获取成功:"+jsonobj.toString()+",ip:"+ip);
-				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
-				EcsUsers user = ecsuserService.findUserOrAdd(info);
-				if (user==null)
-				{
-					Util.log("user 获取数据失败:"+jsonobj.toString());
-					return "error";
-				}
-				String jsonstr = jsonobj.toString();
-				info.setUserId(user.getUserId());
-				EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
-				if (add!=null){
-					EcsRegion region = ecsuserService.findRegion(add.getProvince());
-					if (region!=null)
-						info.setProvince(region.getRegionName());
-					region = ecsuserService.findRegion(add.getCity());
-					if (region!=null)
-						info.setCity(region.getRegionName());
-					
-					info.setAddress(add.getAddress());
-					info.setMobile(add.getMobile());
-					info.setContact(add.getConsignee());
-				}
-				String loginIp = getIpAddress();
-				info.setIpAddress(loginIp);
-				DataManager.getInstance().addUser(info);
-				jsonstr = JSON.toJSONString(info);
-				jsonstr = jsonstr.replace("\"", "'");
-				getHttpRequest().setAttribute("userinfo", jsonstr);
-				DataManager.getInstance().addCode(code, jsonstr);
-				Util.log("用户信息获取成功，跳转到团购页 :"+jsonstr);
-				return "group";						
-			}
+		JSONObject jsonobj = queryWxUserInfo(code);
+		WxUserInfo info = null;
+		//沒有取到授权，无授权进入:
+		if (jsonobj==null){		//
+			info = new WxUserInfo();
+			String strOpenid = String.valueOf(System.currentTimeMillis());
+	        info.setOpenid(strOpenid);			
+	        code = info.getOpenid();
+	        Util.log("无授权用户进入:openid:"+strOpenid);
+		}else {
+			info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 		}
-		String loginIp = getIpAddress();
-		WxUserInfo info = new WxUserInfo();
-		info.setOpenid("333");
-		info.setIpAddress(loginIp);
-		EcsUsers user = ecsuserService.findUserOrAdd(info);		
-		info.setUserId(user.getUserId());
 		
+		EcsUsers user = ecsuserService.findUserOrAdd(info);
+		if (user==null)
+		{
+			Util.log("userinfo 增加到数据库失败:");
+			return "error";
+		}
+		
+		info.setUserId(user.getUserId());
 		EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
 		if (add!=null){
 			EcsRegion region = ecsuserService.findRegion(add.getProvince());
@@ -144,10 +135,17 @@ public class LoginAction extends BaseAction {
 			info.setAddress(add.getAddress());
 			info.setMobile(add.getMobile());
 			info.setContact(add.getConsignee());
-		}		
-		DataManager.getInstance().addUser(info);
-		getHttpRequest().setAttribute("userinfo", "{'userId':"+info.getUserId()+",'openid':'333','nickname':'aaeee','province':'"+info.getProvince()+"','city':'"+info.getCity()+"','address':'"+info.getAddress()+"','contact':'colenhh','mobile':'"+info.getMobile()+"'}");
-		return "error";
+		}
+		info.setIpAddress(ip);
+		
+		DataManager.getInstance().addUser(info);	
+		String jsonstr  = JSON.toJSONString(info);
+		DataManager.getInstance().addCode(code, jsonstr);
+		
+		jsonstr = jsonstr.replace("\"", "'");
+		getHttpRequest().setAttribute("userinfo", jsonstr);
+		Util.log("跳转到团购页 :"+jsonstr);
+		return "group";
 	}
 	
     
@@ -176,5 +174,12 @@ public class LoginAction extends BaseAction {
 		}
 
 		return jsonstr;
+	}
+	
+	public static void main(String[] args){
+		Exception e = new Exception("二次调用回调堆栈");
+		e.printStackTrace();
+		Util.log("heehehe");
+		
 	}
 }

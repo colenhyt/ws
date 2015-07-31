@@ -123,7 +123,7 @@ function queryGroup()
 	if (g_user==null){
 	 g_user = {userId:0};
 	}else {
-	 if (g_user.city.length>0)
+	 if (g_user.city&&g_user.city.length>0)
 	  g_user.city += "市"
 	}	
 	
