@@ -9,7 +9,7 @@
 		<meta charset='utf-8'>
     <link href="dist/css/zui.css" rel="stylesheet">	
     <meta name="viewport" content="width=640, height=1236, target-densitydpi=device-dpi" />  
-		<title>e美农场</title>
+		<title>e美农场当前团购，火爆热销中！！</title>
 	</head>
   <script src="dist/js/jquery-2.0.3.min.js"></script>
   <script src="dist/js/sea.js"></script>

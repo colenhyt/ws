@@ -18,6 +18,7 @@ public class DataManager {
 	private BlockingQueue<String> queue;
 	private Map<Integer,String>	userInfoMap;
 	private Map<String,String> orderInfoMap;
+	private Map<String,String> codeMap;
 	public TokenReqData tokenReq;
     private static DataManager uniqueInstance = null;  
 	
@@ -33,10 +34,28 @@ public class DataManager {
     	tokenReq = new TokenReqData();
     	orderInfoMap = new HashMap<String,String>();
     	userInfoMap  = new HashMap<Integer,String>();
+    	codeMap = new HashMap<String,String>();
      }
     
     public TokenReqData findReq(){
     	return tokenReq;
+    }
+    
+    public String getLoginStrByCode(String strCode){
+    	synchronized(DataManager.class){
+    		if (codeMap.containsKey(strCode))
+    			return codeMap.get(strCode);
+    				
+    		return null;
+    	}
+    }
+    
+    public void addCode(String strCode,String jsonStr){
+    	synchronized(DataManager.class){
+    		if (!codeMap.containsKey(strCode)){
+    			codeMap.put(strCode, jsonStr);
+    		}
+    	}
     }
     
     public void addUser(WxUserInfo info){

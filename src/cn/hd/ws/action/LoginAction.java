@@ -71,7 +71,17 @@ public class LoginAction extends BaseAction {
 			JSONObject jsonobj = request.sendUrlPost(url);
 			if (jsonobj.toString().indexOf("errmsg")>0){
 				Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
-				return "error";
+				//看是否有:
+				String strLogin = DataManager.getInstance().getLoginStrByCode(code);
+				if (strLogin!=null){
+					Exception e = new Exception("二次调用回调堆栈");
+					e.printStackTrace();
+					getHttpRequest().setAttribute("userinfo", strLogin);
+					Util.log("用户二次回调信息获取成功，跳转到团购页 :"+strLogin);
+					return "group";	
+				}else {
+					return "error";
+				}
 			}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
 				Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
 				return "error";				
@@ -81,7 +91,7 @@ public class LoginAction extends BaseAction {
 			url = Configure.getUserInfoAPI(access_token, openid);
 			jsonobj = request.sendUrlPost(url);
 			if (jsonobj.toString().indexOf("nickname")>0){
-				Util.log("微信用户信息获取成功:"+jsonobj.toString());
+				Util.log("微信用户信息获取成功:"+jsonobj.toString()+",ip:"+ip);
 				WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 				EcsUsers user = ecsuserService.findUserOrAdd(info);
 				if (user==null)
@@ -110,6 +120,7 @@ public class LoginAction extends BaseAction {
 				jsonstr = JSON.toJSONString(info);
 				jsonstr = jsonstr.replace("\"", "'");
 				getHttpRequest().setAttribute("userinfo", jsonstr);
+				DataManager.getInstance().addCode(code, jsonstr);
 				Util.log("用户信息获取成功，跳转到团购页 :"+jsonstr);
 				return "group";						
 			}
