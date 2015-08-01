@@ -18,6 +18,7 @@ import cn.hd.ws.dao.EcsOrderGoods;
 import cn.hd.ws.dao.EcsOrderInfo;
 import cn.hd.ws.dao.EcsOrderService;
 import cn.hd.ws.dao.EcsRegion;
+import cn.hd.ws.dao.EcsUserAddress;
 import cn.hd.ws.dao.EcsUserService;
 import cn.hd.wx.WxUserInfo;
 
@@ -249,7 +250,7 @@ public class WsOrderAction extends BaseAction {
 				retCode = RetMsg.MSG_OpenidInvalid;	
 			}else{
 				//未经过登陆的用户下单
-				cacheUser = DataManager.getInstance().findUser(info.getUserId());
+				cacheUser = DataManager.getInstance().findUser(info.getOpenid());
 				if (cacheUser==null){
 					retCode = RetMsg.MSG_NotLoginUser;	
 				}
@@ -340,9 +341,7 @@ public class WsOrderAction extends BaseAction {
 		orderInfo.setPayNote(remark);
 		orderInfo.setInfoStatus(INFO_STATUS_ORDERSAVE);
 		orderInfo.setCrDate(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间  
-        sdf.applyPattern("yyyyMMddHHmmss");// a为am/pm的标记  
-        int itime = (int)System.currentTimeMillis()	;
+        int itime = (int)(System.currentTimeMillis()/1000)	;
 		orderInfo.setAddTime(itime);
 		
 		boolean ret2 = false;
@@ -367,7 +366,7 @@ public class WsOrderAction extends BaseAction {
 		}
 		
 		//校验地址，如果是新地址，进行新增;
-		ret2 = ecsuserService.validAddress(orderInfo);
+		ret2 = DataManager.getInstance().validUserAddress(cacheUser,orderInfo);
 		if (ret2==false){
 			JSONObject infoobj = JSONObject.fromObject(orderInfo);
 			Util.log("保存新地址失败:订单信息:"+infoobj.toString());

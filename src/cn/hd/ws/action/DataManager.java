@@ -3,12 +3,19 @@ package cn.hd.ws.action;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import net.sf.json.JSONObject;
 import cn.hd.ws.dao.EcsOrderInfo;
+import cn.hd.ws.dao.EcsRegion;
+import cn.hd.ws.dao.EcsUserAddress;
+import cn.hd.ws.dao.EcsUserService;
+import cn.hd.ws.dao.EcsUsers;
 import cn.hd.wx.WxUserInfo;
 
 import com.tencent.common.TokenReqData;
@@ -16,10 +23,10 @@ import com.tencent.common.TokenReqData;
 
 public class DataManager {
 	private BlockingQueue<String> queue;
-	private Map<Integer,String>	userInfoMap;
+	private Map<String,String>	userInfoMap;
 	private Map<String,String> orderInfoMap;
-	private Map<String,String> codeMap;
 	public TokenReqData tokenReq;
+	private EcsUserService userService;
     private static DataManager uniqueInstance = null;  
 	
     public static DataManager getInstance() {  
@@ -33,41 +40,90 @@ public class DataManager {
     	queue  = new LinkedBlockingQueue<String>();
     	tokenReq = new TokenReqData();
     	orderInfoMap = new HashMap<String,String>();
-    	userInfoMap  = new HashMap<Integer,String>();
-    	codeMap = new HashMap<String,String>();
+    	userInfoMap  = new HashMap<String,String>();
      }
+    private void _setAddress(WxUserInfo info,EcsUserAddress add){
+		if (add!=null){
+			EcsRegion region = userService.findRegion(add.getProvince());
+			if (region!=null){
+				info.setProvince(region.getRegionName());
+				info.setProvinceid(region.getRegionId());
+			}
+			region = userService.findRegion(add.getCity());
+			if (region!=null){
+				info.setCity(region.getRegionName());
+				info.setCityid(region.getRegionId());
+			}
+			
+			info.setAddress(add.getAddress());
+			info.setMobile(add.getMobile());
+			info.setContact(add.getConsignee());
+		}    	
+    }
+    
+    public void initData(){
+    	userService = new EcsUserService();
+    	List<EcsUsers> users = userService.findUsers();
+    	for (int i=0;i<users.size();i++){
+    		EcsUsers user = users.get(i);
+    		WxUserInfo info = new WxUserInfo();
+    		info.setUserId(user.getUserId());
+    		info.setOpenid(user.getOpenid());
+    		info.setNickname(user.getUserName());
+    		if (info.getOpenid().equalsIgnoreCase("olcTqjimfsr539BUa5dR9fEAM74c"))
+    			info.setCode("aaa");
+    		EcsUserAddress add = userService.findActiveAddress(user.getUserId());
+    		_setAddress(info,add);
+    		addUser(info);
+    	}
+    }
     
     public TokenReqData findReq(){
     	return tokenReq;
     }
     
-    public String getLoginStrByCode(String strCode){
+    public String findUserByCode(String strCode){
     	synchronized(DataManager.class){
-    		if (codeMap.containsKey(strCode))
-    			return codeMap.get(strCode);
-    				
+    		Set<String> keyset = userInfoMap.keySet();
+    		Iterator iter = keyset.iterator();
+    		while (iter.hasNext()){
+    			String jsonstr = userInfoMap.get(iter.next());
+            	JSONObject obj = JSONObject.fromObject(jsonstr);
+            	if (obj.get("code").toString().equalsIgnoreCase(strCode)){
+            		return obj.toString();
+            	}
+    		}
     		return null;
     	}
     }
     
-    public void addCode(String strCode,String jsonStr){
-    	synchronized(DataManager.class){
-    		if (!codeMap.containsKey(strCode)){
-    			codeMap.put(strCode, jsonStr);
-    		}
-    	}
-    }
-    
     public void addUser(WxUserInfo info){
-    	JSONObject infoobj = JSONObject.fromObject(info);
     	synchronized(DataManager.class){
-    		userInfoMap.put(info.getUserId(), infoobj.toString());  
+        	JSONObject infoobj = JSONObject.fromObject(info);
+    		userInfoMap.put(info.getOpenid(), infoobj.toString());  
     	}
     }
     
-    public WxUserInfo findUser(int userId){
+    public boolean validUserAddress(WxUserInfo userInfo,EcsOrderInfo order){
     	synchronized(DataManager.class){
-    	String str = userInfoMap.get(userId);
+    		//new address:
+    		if (!userInfo.getContact().equalsIgnoreCase(order.getConsignee())||!userInfo.getAddress().equalsIgnoreCase(order.getAddress())||
+    				!userInfo.getMobile().equalsIgnoreCase(order.getMobile())||userInfo.getProvinceid()!=order.getProvince().shortValue()
+    				||userInfo.getCityid()!=order.getCity().shortValue()){
+    			EcsUserService userService = new EcsUserService();
+    			EcsUserAddress add = userService.addAddressWithOrder(order);
+    			if (add!=null)
+    				_setAddress(userInfo,add);
+    			else
+    				return false;
+    		}
+    		return true;
+    	}
+    }
+    
+    public WxUserInfo findUser(String openId){
+    	synchronized(DataManager.class){
+    	String str = userInfoMap.get(openId);
     	if (str==null) return null;
     	
     	JSONObject obj = JSONObject.fromObject(str);
@@ -75,6 +131,32 @@ public class DataManager {
     	}
     }
     
+    public WxUserInfo findUserByInfo(WxUserInfo userInfo){
+    	synchronized(DataManager.class){
+    	WxUserInfo info = findUser(userInfo.getOpenid());
+    	if (info==null){
+    		EcsUserService ecsuserService = new EcsUserService();
+    		EcsUsers user = ecsuserService.addWithInfo(userInfo);
+    		if (user!=null){
+	    		JSONObject jsonobj = JSONObject.fromObject(userInfo);
+	    		info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
+	    		info.setUserId(user.getUserId());
+	    		EcsRegion region = ecsuserService.findRegion(userInfo.getProvince());
+				if (region!=null){
+					info.setProvince(region.getRegionName());
+					info.setProvinceid(region.getRegionId());
+				}
+				region = ecsuserService.findRegion(userInfo.getCity());
+				if (region!=null){
+					info.setCity(region.getRegionName());
+					info.setCityid(region.getRegionId());
+				}
+    		}
+    		info.setAddress(userInfo.getAddress());
+    	}
+    	return info;
+    	}
+    }
     public boolean addOrder(EcsOrderInfo orderInfo){
     	JSONObject infoobj = JSONObject.fromObject(orderInfo);
     	synchronized(DataManager.class){

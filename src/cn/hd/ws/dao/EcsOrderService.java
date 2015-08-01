@@ -103,7 +103,7 @@ public class EcsOrderService extends BaseService {
 		WxUserInfo userinfo = new WxUserInfo();
 		userinfo.setNickname("aaa");
 		userinfo.setOpenid("1334");
-		EcsUsers user = userService.findUserOrAdd(userinfo);
+		EcsUsers user = userService.addWithInfo(userinfo);
 		
 		EcsOrderInfo orderInfo = new EcsOrderInfo();
 		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());

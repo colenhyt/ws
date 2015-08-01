@@ -16,6 +16,27 @@ public class WxUserInfo {
 	private String contact;
 	private String ipAddress;
 	private long lastOrderTime;
+	private String code;
+	private short provinceid;
+	private short cityid;
+	public short getProvinceid() {
+		return provinceid;
+	}
+	public void setProvinceid(short provinceid) {
+		this.provinceid = provinceid;
+	}
+	public short getCityid() {
+		return cityid;
+	}
+	public void setCityid(short cityid) {
+		this.cityid = cityid;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public long getLastOrderTime() {
 		return lastOrderTime;
 	}

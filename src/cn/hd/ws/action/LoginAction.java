@@ -74,10 +74,10 @@ public class LoginAction extends BaseAction {
 		if (jsonobj.toString().indexOf("errmsg")>0){
 			Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
 			//看是否有:
-			String strLogin = DataManager.getInstance().getLoginStrByCode(code);
+			String strLogin = DataManager.getInstance().findUserByCode(code);
 			if (strLogin!=null){
-				Exception e = new Exception("二次调用回调堆栈");
-				e.printStackTrace();
+//				Exception e = new Exception("二次调用回调堆栈");
+//				e.printStackTrace();
 				Util.log("用户二次回调信息获取成功:"+strLogin);
 				jsonobj = JSONObject.fromObject(strLogin);
 				return jsonobj;
@@ -105,6 +105,7 @@ public class LoginAction extends BaseAction {
 	{
 		String ip = super.getIpAddress();
 		String code = this.getHttpRequest().getParameter("code");
+		code = "aaa";
 		JSONObject jsonobj = queryWxUserInfo(code);
 		//沒有取到授权，不允许进入:
 		if (jsonobj==null){		//
@@ -112,34 +113,21 @@ public class LoginAction extends BaseAction {
 	        return "error";
 		}
 		
-		WxUserInfo info = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
+		WxUserInfo info0 = (WxUserInfo)JSONObject.toBean(jsonobj,WxUserInfo.class);
 		
-		EcsUsers user = ecsuserService.findUserOrAdd(info);
-		if (user==null)
+		WxUserInfo info = DataManager.getInstance().findUserByInfo(info0);
+		if (info==null)
 		{
-			Util.log("userinfo 增加到数据库失败:");
+			Util.log("取 userinfo/增加到数据库失败:");
 			return "error";
 		}
 		
-		info.setUserId(user.getUserId());
-		EcsUserAddress add = ecsuserService.findActiveAddress(user.getUserId());
-		if (add!=null){
-			EcsRegion region = ecsuserService.findRegion(add.getProvince());
-			if (region!=null)
-				info.setProvince(region.getRegionName());
-			region = ecsuserService.findRegion(add.getCity());
-			if (region!=null)
-				info.setCity(region.getRegionName());
-			
-			info.setAddress(add.getAddress());
-			info.setMobile(add.getMobile());
-			info.setContact(add.getConsignee());
-		}
+
 		info.setIpAddress(ip);
+		info.setCode(code);
 		
 		DataManager.getInstance().addUser(info);	
 		String jsonstr  = JSON.toJSONString(info);
-		DataManager.getInstance().addCode(code, jsonstr);
 		
 		jsonstr = jsonstr.replace("\"", "'");
 		getHttpRequest().setAttribute("userinfo", jsonstr);
