@@ -3,11 +3,10 @@ package cn.hd.ws.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.rmi.CORBA.Util;
-
 import cn.hd.base.BaseService;
 import cn.hd.ws.action.WsGoodsAction;
 import cn.hd.ws.dao.EcsGoodsExample.Criteria;
+import com.tencent.common.Util;
 
 public class EcsGoodsService extends BaseService {
 	private EcsGoodsMapper ecsgoodsMapper;
@@ -94,6 +93,11 @@ public class EcsGoodsService extends BaseService {
 		return ecsgoodsMapper.selectByExampleWithBLOBs(example);
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}					
 			return null;
 		}			
 	}
@@ -104,6 +108,11 @@ public class EcsGoodsService extends BaseService {
 			DBCommit();
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 		return false;
@@ -128,6 +137,11 @@ public class EcsGoodsService extends BaseService {
 			DBCommit();
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 		return true;
@@ -139,6 +153,11 @@ public class EcsGoodsService extends BaseService {
 			DBCommit();
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 		return true;

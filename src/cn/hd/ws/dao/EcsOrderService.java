@@ -2,6 +2,8 @@ package cn.hd.ws.dao;
 
 import java.util.List;
 
+import com.tencent.common.Util;
+
 import cn.hd.base.BaseService;
 import cn.hd.ws.action.DataManager;
 import cn.hd.ws.dao.EcsUsersExample.Criteria;
@@ -59,6 +61,11 @@ public class EcsOrderService extends BaseService {
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 	}	
@@ -69,6 +76,11 @@ public class EcsOrderService extends BaseService {
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 	}
@@ -83,6 +95,11 @@ public class EcsOrderService extends BaseService {
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 	}
@@ -94,6 +111,11 @@ public class EcsOrderService extends BaseService {
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}				
 			return false;
 		}		
 	}
