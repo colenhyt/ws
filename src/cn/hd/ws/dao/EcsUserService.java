@@ -2,6 +2,8 @@ package cn.hd.ws.dao;
 
 import java.util.List;
 
+import com.tencent.common.Util;
+
 import cn.hd.base.BaseService;
 import cn.hd.ws.dao.EcsUsersExample.Criteria;
 import cn.hd.wx.WxUserInfo;
@@ -60,6 +62,11 @@ public class EcsUserService extends BaseService {
 			DBCommit();
 			return true;
 		}catch (Exception e){
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}			
 			e.printStackTrace();
 			return false;
 		}
@@ -79,24 +86,7 @@ public class EcsUserService extends BaseService {
 		return null;
 	}
 	
-	public EcsUserAddress addAddressWithOrder(EcsOrderInfo order)
-	{
-		EcsUserAddress address = new EcsUserAddress();
-		address.setUserId(order.getUserId());
-		address.setConsignee(order.getConsignee());
-		address.setProvince(order.getProvince());
-		address.setCity(order.getCity());
-		address.setAddress(order.getAddress());
-		address.setMobile(order.getMobile());
-		address.setZipcode(order.getZipcode());
-		address.setTel(order.getTel());
-		address.setEmail(order.getEmail());
-		address.setCountry(order.getCountry());
-		addAddress(address);
-		return address;
-	}
-	
-	public EcsUserAddress validAddress(EcsOrderInfo order)
+	public boolean validAddress(EcsOrderInfo order)
 	{
 		EcsUserAddressExample example = new EcsUserAddressExample();
 		EcsUserAddressExample.Criteria criteria = example.createCriteria();
@@ -109,7 +99,8 @@ public class EcsUserService extends BaseService {
 		List<EcsUserAddress> list = ecsUserAddressMapper.selectByExample(example);
 		EcsUserAddress address;
 		if (list.size()>0){
-			return list.get(0);
+			address = list.get(0);
+			return true;
 		}else {
 			address = new EcsUserAddress();
 			address.setUserId(order.getUserId());
@@ -122,27 +113,33 @@ public class EcsUserService extends BaseService {
 			address.setTel(order.getTel());
 			address.setEmail(order.getEmail());
 			address.setCountry(order.getCountry());
-			addAddress(address);
-			return address;
+			return addAddress(address);
 		}
 	}
 	
-	public EcsUsers addWithInfo(WxUserInfo userInfo){
-		EcsUsers record = new EcsUsers();
-		record.setUserName(userInfo.getNickname());
-		record.setOpenid(userInfo.getOpenid());
-		if (userInfo.getSex()!=null&&userInfo.getSex().length()>0){
-			Integer sex = Integer.valueOf(userInfo.getSex());
-			if (sex==1)
-				record.setSex(true);
+	public EcsUsers findUserOrAdd(WxUserInfo userInfo){
+		EcsUsers user = findUser(userInfo.getOpenid());
+		if (user!=null){
+			return user;
+		}else {
+			EcsUsers record = new EcsUsers();
+			record.setUserName(userInfo.getNickname());
+			record.setOpenid(userInfo.getOpenid());
+			if (userInfo.getSex()!=null&&userInfo.getSex().length()>0){
+				Integer sex = Integer.valueOf(userInfo.getSex());
+				if (sex==1)
+					record.setSex(true);
+				else
+					record.setSex(false);				
+			}
+
+//			record.setSex(userInfo.);
+			boolean added = add(record);
+			if (added)
+			 return record;
 			else
-				record.setSex(false);				
+			 return null;
 		}
-		boolean added = add(record);
-		if (added)
-		 return record;
-		else
-		 return null;			
 	}
 	
 	public EcsUserService(){
@@ -176,6 +173,11 @@ public class EcsUserService extends BaseService {
 			DBCommit();
 			return true;
 		}catch (Exception e){
+			Util.log(e.getMessage());
+			StackTraceElement[] traces = e.getStackTrace();
+			for (int i=0;i<traces.length;i++){
+				Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+			}
 			e.printStackTrace();
 			return false;
 		}		
