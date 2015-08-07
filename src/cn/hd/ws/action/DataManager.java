@@ -24,6 +24,7 @@ import com.tencent.common.TokenReqData;
 public class DataManager {
 	private BlockingQueue<String> queue;
 	private Map<String,String>	userInfoMap;
+	private Map<String,String>	tokenInfoMap;
 	private Map<String,String> orderInfoMap;
 	public TokenReqData tokenReq;
 	private EcsUserService userService;
@@ -41,7 +42,9 @@ public class DataManager {
     	tokenReq = new TokenReqData();
     	orderInfoMap = new HashMap<String,String>();
     	userInfoMap  = new HashMap<String,String>();
+    	tokenInfoMap = new HashMap<String,String>();
      }
+    
     private void _setAddress(WxUserInfo info,EcsUserAddress add){
 		if (add!=null){
 			EcsRegion region = userService.findRegion(add.getProvince());
@@ -82,20 +85,21 @@ public class DataManager {
     	return tokenReq;
     }
     
-    public String findUserByCode(String strCode){
+    public String findUserByKey(String strKey,String strValue){
     	synchronized(DataManager.class){
     		Set<String> keyset = userInfoMap.keySet();
-    		Iterator iter = keyset.iterator();
+    		Iterator<String> iter = keyset.iterator();
     		while (iter.hasNext()){
     			String jsonstr = userInfoMap.get(iter.next());
             	JSONObject obj = JSONObject.fromObject(jsonstr);
-            	if (obj.get("code").toString().equalsIgnoreCase(strCode)){
+            	if (obj.get(strKey).toString().equalsIgnoreCase(strValue)){
             		return obj.toString();
             	}
     		}
     		return null;
     	}
     }
+    
     
     public void addUser(WxUserInfo info){
     	synchronized(DataManager.class){
@@ -157,6 +161,22 @@ public class DataManager {
     	return info;
     	}
     }
+    
+    public String findToken(String code){
+    	synchronized(DataManager.class){
+    		if (tokenInfoMap.containsKey(code))
+    			return tokenInfoMap.get(code);
+    		return null;
+    	}
+    } 
+    
+    public boolean addToken(String code,String tokenStr){
+    	synchronized(DataManager.class){
+    	tokenInfoMap.put(code, tokenStr);
+    	}
+    	return true;
+    } 
+    
     public boolean addOrder(EcsOrderInfo orderInfo){
     	JSONObject infoobj = JSONObject.fromObject(orderInfo);
     	synchronized(DataManager.class){

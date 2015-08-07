@@ -125,18 +125,18 @@ public class EcsOrderService extends BaseService {
 		WxUserInfo userinfo = new WxUserInfo();
 		userinfo.setNickname("aaa");
 		userinfo.setOpenid("1334");
-//		EcsUsers user = userService.addWithInfo(userinfo);
-//		
-//		EcsOrderInfo orderInfo = new EcsOrderInfo();
-//		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
-//		orderInfo.setUserId(user.getUserId());
-//		orderInfo.setAddress("add");
-//		orderInfo.setConsignee("contact");
-//		orderInfo.setMobile("123");
-//		orderInfo.setOrderStatus(false);
-//		orderInfo.setShippingStatus(false);
-//		orderInfo.setPayStatus(false);
-//		orderInfo.setPayNote("remark");
+		EcsUsers user = userService.addWithInfo(userinfo);
+		
+		EcsOrderInfo orderInfo = new EcsOrderInfo();
+		orderInfo.setOrderSn(DataManager.getInstance().assignOrderSn());
+		orderInfo.setUserId(user.getUserId());
+		orderInfo.setAddress("add");
+		orderInfo.setConsignee("contact");
+		orderInfo.setMobile("123");
+		orderInfo.setOrderStatus(false);
+		orderInfo.setShippingStatus(false);
+		orderInfo.setPayStatus(false);
+		orderInfo.setPayNote("remark");
 		
 		EcsOrderService ecsorderService = new EcsOrderService();
 		boolean ret = false;

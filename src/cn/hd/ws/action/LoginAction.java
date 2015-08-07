@@ -65,39 +65,64 @@ public class LoginAction extends BaseAction {
 		String ip = super.getIpAddress();
 		if (code==null){
 			String state = this.getHttpRequest().getParameter("state");
-			Util.log("微信用户授权回调取不到code:state:"+state+",ip:"+ip);
+			Util.log("微信回调返回code为空:state:"+state+",ip:"+ip);
 			return null;
 		}
 		
+		String tokenStr = DataManager.getInstance().findToken(code);
+		if (tokenStr!=null){
+			Util.log("ip:"+ip+",code:"+code+", 从cache 得到userinfo:"+tokenStr);
+			return JSONObject.fromObject(tokenStr);
+		}
+		Util.log("ip:"+ip+",请求token:code="+code);
 		String url = Configure.getAuthTokonAPI(code);
-		JSONObject jsonobj = request.sendUrlPost(url);
+		int retrycount = 10;
+		JSONObject jsonobj = null;
+		for (int i=0;i<retrycount;i++){
+			jsonobj = request.sendUrlPost(url);
+			if (jsonobj.toString().indexOf("access_token")>0){
+				break;
+			}
+		}
 		if (jsonobj.toString().indexOf("errmsg")>0){
-			Util.log("获取授权token失败,errmsg:"+jsonobj.getString("errmsg")+",ip:"+ip);
+			Util.log("ip:"+ip+",请求token失败,code"+code+",errmsg:"+jsonobj.getString("errmsg"));
 			//看是否有:
-			String strLogin = DataManager.getInstance().findUserByCode(code);
-			if (strLogin!=null){
-//				Exception e = new Exception("二次调用回调堆栈");
-//				e.printStackTrace();
-				Util.log("用户二次回调信息获取成功:"+strLogin);
+			String strLogin = DataManager.getInstance().findUserByKey("code",code);
+			if (strLogin==null){
+				Util.log("ip:"+ip+",code:"+code+",无法从code取缓存用户信息,尝试用ipaddress取....");
+				strLogin = DataManager.getInstance().findUserByKey("ipAddress",ip);
+				if (strLogin==null){
+					Util.log("ip:"+ip+",code:"+code+",用ip取缓存用户信息失败.");
+					return null;
+				}
+			}else {
+				Util.log("ip:"+ip+",取缓存用户信息:"+strLogin);
 				jsonobj = JSONObject.fromObject(strLogin);
 				return jsonobj;
-			}else {
-				return null;
 			}
 		}else if (jsonobj.toString().indexOf("access_token")<0||jsonobj.toString().indexOf("openid")<0){
-			Util.log("token返回没找到token/openid字段: "+jsonobj.toString()+",ip:"+ip);
+			Util.log("token返回字段失败: "+jsonobj.toString()+",ip:"+ip);
 			return null;				
 		}
 		
+		Util.log("ip:"+ip+",code:"+code+",得到token,请求userinfo...:");
 		//根据token取用户信息:
 		String access_token = jsonobj.getString("access_token");
 		String openid = jsonobj.getString("openid");
 		url = Configure.getUserInfoAPI(access_token, openid);
-		jsonobj = request.sendUrlPost(url);
+		for (int i=0;i<retrycount;i++){
+			jsonobj = request.sendUrlPost(url);
+			if (jsonobj.toString().indexOf("nickname")>0){
+				break;
+			}
+		}
 		if (jsonobj.toString().indexOf("nickname")>0){
-			Util.log("微信用户信息获取成功:"+jsonobj.toString()+",ip:"+ip);
-		}else
+			Util.log("ip:"+ip+",code:"+code+",userinfo获取成功:"+jsonobj.toString());
+			DataManager.getInstance().addToken(code, jsonobj.toString());
+		}else {
+			Util.log("ip:"+ip+",userinfo获取失败:"+jsonobj.toString());
 			jsonobj = null;
+		}
 		return jsonobj;
 	}
 	
@@ -105,7 +130,7 @@ public class LoginAction extends BaseAction {
 	{
 		String ip = super.getIpAddress();
 		String code = this.getHttpRequest().getParameter("code");
-		code = "aaa";
+		Util.log("用户进入:ip:"+ip);
 		JSONObject jsonobj = queryWxUserInfo(code);
 		//沒有取到授权，不允许进入:
 		if (jsonobj==null){		//
@@ -164,36 +189,14 @@ public class LoginAction extends BaseAction {
 	}
 	
 	public static void main(String[] args){
-		Exception e2 = new Exception("二次调用回调堆栈");
+		Exception e = new Exception("二次调用回调堆栈");
 		//e2.printStackTrace();
-		Util.log("heehehe");
-        Runtime rt = Runtime.getRuntime();  
-        String[] command1=new String[]{"cmd","cd C:/tomcat-7.0.57/bin"};  
-        String command = "taskkill /F /IM java.exe";      
-        try  
-        {  
-          rt.exec(command1);//返回一个进程  
-          rt.exec(command);  
-          System.out.println("success closed");  
-          Thread.sleep(1000 * 1);
-          rt.exec(command1);//返回一个进程  
-          Process  p = rt.exec("startup.bat");
-          InputStream in = p.getInputStream();
-
-			int c;
-
-			while ((c = in.read()) != -1) {
-
-				System.out.print(c);//如果你不需要看输出，这行可以注销掉
-
-			}
-
-			in.close();
-          System.out.println("success start");  
-        }  
-        catch (Exception e)  
-        {  
-          e.printStackTrace();  
-        }		
+		Util.log("heehehe".indexOf("aa"));
+		
+		Util.log(e.getMessage());
+		StackTraceElement[] traces = e.getStackTrace();
+		for (int i=0;i<traces.length;i++){
+			Util.log(traces[i].getLineNumber()+traces[i].getMethodName()+traces[i].getFileName());
+		}		
 	}
 }
