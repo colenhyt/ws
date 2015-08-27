@@ -85,11 +85,12 @@ public class EcsOrderService extends BaseService {
 		}		
 	}
 	
-	public boolean updateStatus(int orderId,int infoStatus){
+	public boolean updateStatus(int orderId,int infoStatus,boolean payStatus){
 		try {
 			EcsOrderInfo record = new EcsOrderInfo();
 			record.setOrderId(orderId);
 			record.setInfoStatus(infoStatus);
+			record.setPayStatus(payStatus);
 			ecsOrderInfoMapper.updateByPrimaryKeySelective(record);
 			DBCommit();
 			return true;

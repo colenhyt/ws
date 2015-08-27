@@ -197,7 +197,7 @@ public class WsOrderAction extends BaseAction {
 			orderInfo.setInfoStatus(INFO_STATUS_WXPAY_FAIL);
 		
 		DataManager.getInstance().addOrder(orderInfo);
-		ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus());
+		ecsorderService.updateStatus(orderInfo.getOrderId(),orderInfo.getInfoStatus(),orderInfo.getPayStatus());
 		Util.log("订单完成：校验结果"+retCode+",支付返回:"+payOk+",订单信息:"+orderobj.toString());
 		if (retCode!=RetMsg.MSG_OK){
 			writeMsg(retCode);						
