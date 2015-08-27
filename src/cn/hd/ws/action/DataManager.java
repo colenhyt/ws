@@ -73,7 +73,7 @@ public class DataManager {
     		info.setUserId(user.getUserId());
     		info.setOpenid(user.getOpenid());
     		info.setNickname(user.getUserName());
-    		if (info.getOpenid().equalsIgnoreCase("olcTqjimfsr539BUa5dR9fEAM74c"))
+    		if (info.getOpenid()!=null&&info.getOpenid().equalsIgnoreCase("olcTqjimfsr539BUa5dR9fEAM74c"))
     			info.setCode("aaa");
     		EcsUserAddress add = userService.findActiveAddress(user.getUserId());
     		_setAddress(info,add);
