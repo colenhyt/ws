@@ -235,26 +235,10 @@
   </tr>
   <tr>
     <td><div align="right">{$lang.label_goods_amount}<strong>{$order.formated_goods_amount}</strong>
-- {$lang.label_discount}<strong>{$order.formated_discount}</strong>     + {$lang.label_tax}<strong>{$order.formated_tax}</strong>
       + {$lang.label_shipping_fee}<strong>{$order.formated_shipping_fee}</strong>
-      + {$lang.label_insure_fee}<strong>{$order.formated_insure_fee}</strong>
-      + {$lang.label_pay_fee}<strong>{$order.formated_pay_fee}</strong>
-      + {$lang.label_pack_fee}<strong>{$order.formated_pack_fee}</strong>
-      + {$lang.label_card_fee}<strong>{$order.formated_card_fee}</strong></div></td>
+        </div></td>
   <tr>
     <td><div align="right"> = {$lang.label_order_amount}<strong>{$order.formated_total_fee}</strong></div></td>
-  </tr>
-  <tr>
-    <td><div align="right">
-      - {$lang.label_money_paid}<strong>{$order.formated_money_paid}</strong> - {$lang.label_surplus} <strong>{$order.formated_surplus}</strong>
-      - {$lang.label_integral} <strong>{$order.formated_integral_money}</strong>
-      - {$lang.label_bonus} <strong>{$order.formated_bonus}</strong>
-    </div></td>
-  <tr>
-    <td><div align="right"> = {if $order.order_amount >= 0}{$lang.label_money_dues}<strong>{$order.formated_order_amount}</strong>
-      {else}{$lang.label_money_refund}<strong>{$order.formated_money_refund}</strong>
-      <input name="refund" type="button" value="{$lang.refund}" onclick="location.href='order.php?act=process&func=load_refund&anonymous={if $order.user_id <= 0}1{else}0{/if}&order_id={$order.order_id}&refund_amount={$order.money_refund}'" />
-      {/if}{if $order.extension_code eq "group_buy"}<br />{$lang.notice_gb_order_amount}{/if}</div></td>
   </tr>
 </table>
 </div>
